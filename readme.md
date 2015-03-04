@@ -30,7 +30,7 @@ t7`
       }
     </ul>
   </div>
-`
+`;
 ```
 Would return the follow virtual DOM object:
 
