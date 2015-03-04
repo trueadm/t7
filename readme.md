@@ -8,7 +8,7 @@ into virtual DOM objects.
 [Template strings](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/template_strings)
 allow for JavaScript expressions to be embedded within literal strings. With that in mind,
 it made logical sense to build a small framework around them to assist developers
-wanting to work virtual DOM frameworks without the overhead of learning a new
+wanting to work with virtual DOM frameworks without the overhead of learning a new
 syntax/language. t7 does not introduce a new syntax or language into the mix like
 other templating engines do, it simply uses pure JavaScript and HTML.
 
