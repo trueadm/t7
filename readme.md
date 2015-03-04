@@ -17,7 +17,7 @@ templates that anyone with JavaScript knowledge can easily understand.
 Long gone are the days of having to learn something like Mustache, Handlebars, Jade or Underscore.
 
 Unlike JSX, t7 is fully web compliant, resulting in templates that can easily be linted.
-Furthermore, IDEs should play nicely with your syntax and there isn't a need to setup
+Furthermore, IDEs should play nicely with the syntax and there isn't a need to setup
 in-browser transformers or NodeJS transpilers to start developing.
 
 
