@@ -295,7 +295,7 @@ var t7 = (function() {
     }
   };
 
-  t7.forEach = function(array, callback) {
+  t7.each = function(array, callback) {
     var i = 0, length = array.length, results = [], item = null;
     for(i = 0; i < length; i++) {
       item = array[i];
