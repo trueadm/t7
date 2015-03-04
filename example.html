@@ -13,7 +13,7 @@
         <h1>Hello ${ welcome }</h1>
         <ul id="bar">
           ${
-            t7.each(items, item => t7`
+            items.map( item => t7`
               <li class="item">
                 <span>The item is: ${ item }</span>
               </li>

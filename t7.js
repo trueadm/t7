@@ -295,6 +295,7 @@ var t7 = (function() {
     }
   };
 
+  //TODO return a list of keys to map the collection
   t7.each = function(array, callback) {
     var i = 0, length = array.length, results = [], item = null;
     for(i = 0; i < length; i++) {

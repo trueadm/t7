@@ -22,7 +22,7 @@ t7`
     <h1>Hello ${ welcome }</h1>
     <ul id="bar">
       ${
-        t7.each(items, item => t7`
+        items.map( item => t7`
           <li class="item">
             <span>The item is: ${ item }</span>
           </li>
@@ -95,10 +95,10 @@ control flow functions, represented in Vanilla JS. Control flow functions remove
 the need to write callbacks all over your project and keep simple things confined
 to the context of the template.
 
-Control flow functions will also be able to intelligently apply key values to objects
-to help improve performance without you ever needing to know about them.
-
 ### Collections
+
+Similar to the native Array.map() function, except 7.each() can automatically
+add keys to the virtual DOM node – improving performance.
 
 ```javascript
 
