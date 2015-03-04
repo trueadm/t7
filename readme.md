@@ -4,17 +4,20 @@
 
 t7.js is a small, lightweight library for compiling ES2015 template strings
 into virtual DOM objects. [Template strings](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/template_strings)
-allow for JavaScript expressions to be embedded within strings. This means that they make a great
-foundation for a templating library without the overhead of learning a new syntax/language. t7 does not introduce a new syntax or language into the mix
+allow for JavaScript expressions to be embedded within strings.
+
+With that ind mind, it made logical sense to build a small framework around them
+to assist developers wanting to work virtual DOM frameworks
+without the overhead of learning a new syntax/language. t7 does not introduce a new syntax or language into the mix
 like other templating engines do, it simply uses pure JavaScript and HTML.
 
-This project aims to provide developers with a simple layer above frameworks or libraries
-that make use of virtual DOMs (such as React, Inferno, Mitrhil and Cito) without the need
-to write cluttered object literal code that represents the DOM.
+Essentially, t7 provides designers and developers with a way to create awesome
+templates that anyone with JavaScript knowledge can easily understand.
+Long gone are the days of having to learn something like Mustache, Jade or Underscore.
 
 Unlike JSX, t7 is fully web compliant, resulting in templates that can easily be debugged and
 linted. Furthermore, IDEs should play nicely with your syntax and there isn't a need to setup
-in-browser transformers or NodeJS transpilers to start developing (unlike JSX).
+in-browser transformers or NodeJS transpilers to start developing.
 
 
 ## Usage
