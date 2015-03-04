@@ -8,13 +8,15 @@ like other templating engines do, it simply uses pure JavaScript and HTML.
 
 This project aims to provide developers with a simple layer above frameworks or libraries
 that make use of virtual DOMs (such as React, Inferno, Mitrhil and Cito) without the need
-to write cluttered object literal code that represents the DOM. Unlike JSX, t7 is fully
-web compliant as it's only JavaScript. As such, it can linted and IDEs should play nicely with
-your code. Furthermore, i7 doesn't require an in-browser transformer, transpiler or special
-script tags to start developing like JSX does.
+to write cluttered object literal code that represents the DOM.
+
+Unlike JSX, t7 is fully web compliant, which means your templates can easily be debugged,
+linted and IDEs should play nicely with your syntax. Furthermore, i7 doesn't require an
+in-browser transformer, transpiler or special script tags to start developing like JSX does.
 
 [Template strings](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/template_strings) are string literals allowing embedded expressions. They were built
-for exactly this purpose and allow for embedding JavaScript variables and functions.
+for exactly this purpose and allow for literal usage JavaScript variables and functions within
+templates without the overhead of learning a new syntax/language.
 
 ## Usage
 
