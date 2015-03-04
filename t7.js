@@ -110,7 +110,6 @@ var t7 = (function() {
                   //set the child to null so we don't then append it to the parent's child below
                   childText = null;
                   break;
-
                 } else if( typeof props[s] === "string" ) {
                   childText = childText.replace(placeholders[s], "${" + placeholders[s] + "}");
                 }
@@ -275,7 +274,7 @@ var t7 = (function() {
     }
 
     return cache[template].apply(window, props);
-  }
+  };
 
   //a lightweight flow control function
   //expects truthy and falsey to be functions
@@ -294,11 +293,20 @@ var t7 = (function() {
         }
       }
     }
-  }
+  };
+
+  t7.forEach = function(array, callback) {
+    var i = 0, length = array.length, results = [], item = null;
+    for(i = 0; i < length; i++) {
+      item = array[i];
+      results.push(callback.call(this, item, i. array));
+    }
+    return results;
+  };
 
   return t7;
 })();
 
-if(module && module.exports) {
+if(typeof module != "undefined" && module.exports != null) {
   module.exports = t7;
 }

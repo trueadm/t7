@@ -22,7 +22,7 @@ t7`
     <h1>Hello ${ welcome }</h1>
     <ul id="bar">
       ${
-        items.forEach( item => t7`
+        t7.forEach(items, item => t7`
           <li class="item">
             <span>The item is: ${ item }</span>
           </li>
@@ -32,6 +32,7 @@ t7`
   </div>
 `;
 ```
+
 Would return the follow virtual DOM object:
 
 ```javascript
@@ -87,8 +88,38 @@ Would return the follow virtual DOM object:
 
 ```
 
-The virtual DOM object can then be used in a variety of different virtual DOM
-frameworks and libraries that support the format.
+## Control Flow
+
+To help reduce boilerplate and speed up development, t7 comes with a few essential
+control flow functions, represented in Vanilla JS. Control flow functions remove
+the need to write callbacks all over your project and keep simple things confined
+to the context of the template.
+
+### For Each loops
+
+```javascript
+
+  ${
+
+    t7.forEach(expression, callback);
+
+  }
+
+```
+
+### If/Else statements
+
+```javascript
+
+  ${
+
+    t7.if(expression, truthy callback).else(falsey callback);
+
+  }
+
+```
+
+More control flow functions to come soon!
 
 ## Support
 

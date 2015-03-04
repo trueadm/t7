@@ -1,0 +1,29 @@
+<html>
+<head>
+  <title>t7 Example</title>
+</head>
+<body>
+  <script src="t7.js"></script>
+  <script>
+    var items = ['Ball', 'Boat'];
+    var welcome = "World";
+
+    var example = t7`
+      <div class="foo">
+        <h1>Hello ${ welcome }</h1>
+        <ul id="bar">
+          ${
+            t7.forEach(items, item => t7`
+              <li class="item">
+                <span>The item is: ${ item }</span>
+              </li>
+            `)
+          }
+        </ul>
+      </div>
+    `;
+    //console log the example value
+    console.log(example);
+  </script>
+</body>
+</html>
