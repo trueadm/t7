@@ -92,4 +92,4 @@ frameworks and libraries that support the format.
 ## Support
 
 Currently, only Firefox 34+ and Chrome 41+ support ES2015 template strings. However,
-there are transpilers (such as Babel or Traceur) that provide support for ES2015 templates.
+there are transpilers (such as [Babel](https://babeljs.io/) or Traceur) that provide support for ES2015 templates.
