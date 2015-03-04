@@ -9,7 +9,7 @@ into virtual DOM objects.
 allow for JavaScript expressions to be embedded within literal strings. With that in mind,
 it made logical sense to build a small framework around them to assist developers
 wanting to work with virtual DOM frameworks without the overhead of learning a new
-syntax/language. t7 does not introduce a new syntax or language into the mix like
+language. t7 does not introduce new syntax into the mix like
 other templating engines do, it simply uses pure JavaScript and HTML.
 
 Essentially, t7 provides designers and developers with a way to create awesome
