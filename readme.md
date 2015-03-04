@@ -3,9 +3,18 @@
 ## Overview
 
 t7.js is a small, lightweight library for compiling ES2015 template strings
-into virtual DOM objects. The project was inspired by the work done JSX. This
-project aims to be a solid replacement to JSX with web compliance and performance
-key features.
+into virtual DOM objects. t7 does not introduce a new syntax or language into the mix
+like other templating engines do, it simply uses pure JavaScript and HTML. t7 fully supports
+browser, NodeJS and Browserify usage.
+
+This project aims to provide developers with a simple layer above frameworks or libraries
+that make use of virtual DOMs (such as React, Inferno, Mitrhil and Cito) without the need
+to write cluttered object literal code that represents the DOM. Unlike JSX, t7 is fully
+web compliant as it's only JavaScript. As such, it can linted and IDEs should play nicely with
+your code. Furthermore, i7 doesn't require an in-browser transformer, transpiler or special
+script tags to start developing like JSX does.
+
+For enhanced performance, a NodeJS pre-compiler will be available for i7 (recommended for production).
 
 [Template strings](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/template_strings) are string literals allowing embedded expressions. They were built
 for exactly this purpose and allow for embedding JavaScript variables and functions.

@@ -37,7 +37,7 @@ var t7 = (function() {
       tagParams.push((childrenProp ? "children: " : "") + childrenText.join(""));
 
     } else if(root.children != null && typeof root.children === "string") {
-      tagParams.push((childrenProp ? "children: " : "") + "`" + root.children + "`");
+      tagParams.push((childrenProp ? "children: " : "") + '"' + root.children + '"');
     }
   };
 
