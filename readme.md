@@ -97,8 +97,8 @@ to the context of the template.
 
 ### Collections
 
-Similar to the native Array.map() function, except 7.each() can automatically
-add keys to the virtual DOM node – improving performance.
+Similar to the native Array.map() function, except 7.each() attempts to automatically
+add keys to the virtual DOM nodes where possible. This in turn improves performance.
 
 ```javascript
 
