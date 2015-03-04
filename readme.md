@@ -12,7 +12,7 @@ wanting to work with virtual DOM frameworks without the overhead of learning a n
 language. t7 does not introduce new syntax into the mix like
 other templating engines do, it simply uses pure JavaScript and HTML.
 
-Essentially, t7 provides designers and developers with a way to create awesome
+t7 provides designers and developers with a way to create awesome
 templates that anyone with JavaScript knowledge can easily understand.
 Long gone are the days of having to learn something like Mustache, Handlebars, Jade or Underscore.
 
