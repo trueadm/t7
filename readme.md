@@ -89,11 +89,7 @@ Would return the follow virtual DOM object:
 The virtual DOM object can then be used in a variety of different virtual DOM
 frameworks and libraries that support the format.
 
-## Dependencies
-
-ES2015 template strings support, either natively or through a transpiler, such
-as Traceur or Babel.
-
 ## Support
 
-Currently, only Firefox 34+ and Chrome 41+ support ES2015 template literals.
+Currently, only Firefox 34+ and Chrome 41+ support ES2015 template strings. However,
+there are transpilers (such as Babel or Traceur) that provide support for ES2015 templates.
