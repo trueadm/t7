@@ -139,14 +139,14 @@ var t7 = (function() {
             //check if childText contains one of our placeholders
             for(s = 0 ; s < placeholders.length; s++) {
               if(childText.indexOf(placeholders[s]) > -1) {
-                if(Array.isArray(props[s])) {
+                if(Array.isArray(props[placeholders[s]])) {
                   //set the children to this object
-                  parent.children.push(placeholders[s]);
+                  parent.children.push('props.' + placeholders[s]);
                   //set the child to null so we don't then append it to the parent's child below
                   childText = null;
                   break;
-                } else if( typeof props[s] === "string" ) {
-                  childText = childText.replace(placeholders[s], '" + ' + placeholders[s] + ' + "');
+                } else if( typeof props[placeholders[s]] === "string" ) {
+                  childText = childText.replace(placeholders[s], '" + props.' + placeholders[s] + ' + "');
                 }
               }
             }
@@ -272,7 +272,7 @@ var t7 = (function() {
         if(placeholders.indexOf(attrParts[1]) === -1) {
           attrs[attrParts[0]] = attrParts[1];
         } else {
-          attrs[attrParts[0]] = "' + " + attrParts[1] + " + '";
+          attrs[attrParts[0]] = "' + props." + attrParts[1] + " + '";
         }
       }
     }
@@ -286,7 +286,7 @@ var t7 = (function() {
 
   //main t7 compiling function
   function t7(template) {
-    var props = [];
+    var props = {};
     var placeholders = [];
     var fullHtml = '';
     var i = 0;
@@ -294,7 +294,7 @@ var t7 = (function() {
     var functionString = [];
 
     for(i = 1; i < arguments.length; i++) {
-      props.push(arguments[i])
+      props["$" + i] = arguments[i];
       placeholders.push("$" + i);
     };
 
@@ -313,31 +313,11 @@ var t7 = (function() {
       //once we have our vDom array, build an optimal function to improve performance
       buildFunction(vDom, functionString, false)
 
-      //build a new Function based off how many placeholders we need to inject into it
-      switch(placeholders.length) {
-        //TODO there has to be a better way then doing this?
-        case 0:
-          cache[template] = new Function("return " + functionString.join(''));
-          break;
-        case 1:
-          cache[template] = new Function(placeholders[0], "return " + functionString.join(''));
-          break;
-        case 2:
-          cache[template] = new Function(placeholders[0], placeholders[1], "return " + functionString.join(''));
-          break;
-        case 3:
-          cache[template] = new Function(placeholders[0], placeholders[1], placeholders[2], "return " + functionString.join(''));
-          break;
-        case 4:
-          cache[template] = new Function(placeholders[0], placeholders[1], placeholders[2], placeholders[3], "return " + functionString.join(''));
-          break;
-        case 5:
-          cache[template] = new Function(placeholders[0], placeholders[1], placeholders[2], placeholders[3], placeholders[4], "return " + functionString.join(''));
-          break;
-      }
+      //build a new Function
+      cache[template] = new Function("props", "return " + functionString.join(''));
     }
 
-    return cache[template].apply(window, props);
+    return cache[template].call(window, props);
   };
 
   //a lightweight flow control function
