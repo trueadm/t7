@@ -139,6 +139,12 @@ add keys to the virtual DOM nodes where possible. This in turn improves performa
 
 More control flow functions to come soon!
 
+## Syntax Highlighting
+
+Due to the fact HTML is entered into template strings, your IDE/editor will likely not default to highlighting your HTML syntax. This will be addressed with independent plugins/packages for the various popular IDEs/editors.
+
+- [GitHub Atom edtior](https://github.com/trueadm/atom-t7)
+
 ## Performance
 
 t7 will cache templates where possible for a solid performance when developing.
