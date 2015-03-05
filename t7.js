@@ -13,6 +13,25 @@ var t7 = (function() {
   //we store created functions in the cache (key is the template string)
   var cache = {};
 
+  var selfClosingTags = [
+    'area',
+    'base',
+    'br',
+    'col',
+    'command',
+    'embed',
+    'hr',
+    'img',
+    'input',
+    'keygen',
+    'link',
+    'meta',
+    'param',
+    'source',
+    'track',
+    'wbr'
+  ];
+
   //when creating a new function from a vdom, we'll need to build the vdom's children
   function buildChildren(root, tagParams, childrenProp) {
     var childrenText = [];
@@ -41,12 +60,21 @@ var t7 = (function() {
     }
   };
 
+  function buildAttrsParams(root, attrsParams) {
+    var val = '';
+    for(var name in root.attrs) {
+      val = root.attrs[name];
+      attrsParams.push("'" + name + "':'" + val + "'");
+    }
+  };
+
   //This takes a vDom array and builds a new function from it, to improve
   //repeated performance at the cost of building new Functions()
   function buildFunction(root, functionText, isLast) {
     var i = 0;
     var tagParams = [];
     var literalParts = [];
+    var attrsParams = [];
 
     if(Array.isArray(root)) {
       functionText.push("[");
@@ -59,7 +87,14 @@ var t7 = (function() {
     } else {
       functionText.push("{");
 
+      //add the tag name
       tagParams.push("tag: '" + root.tag + "'");
+
+      //build the attrs
+      if(root.attrs != null) {
+        buildAttrsParams(root, attrsParams);
+        tagParams.push("attrs: {" + attrsParams.join(',') + "}");
+      }
 
       //build the children for this node
       buildChildren(root, tagParams, true);
@@ -111,7 +146,7 @@ var t7 = (function() {
                   childText = null;
                   break;
                 } else if( typeof props[s] === "string" ) {
-                  childText = childText.replace(placeholders[s], "${" + placeholders[s] + "}");
+                  childText = childText.replace(placeholders[s], '" + ' + placeholders[s] + ' + "');
                 }
               }
             }
@@ -128,27 +163,28 @@ var t7 = (function() {
             tagName = tagContent;
           } else {
             //get the tag data via the getTagData function
-            tagData = getTagData(tagContent);
+            tagData = getTagData(tagContent, placeholders);
             tagName = tagData.tag;
           }
-
           //now we create out vElement
           vElement = {
             tag: tagName,
             attrs: tagData.attrs || {},
             children: []
           };
-
           //push the node we've constructed to the relevant parent
           if (Array.isArray(parent)) {
             parent.push(vElement);
           } else {
             parent.children.push(vElement);
           }
-          //set our node's parent to our current parent
-          vElement.parent = parent;
-          //now assign the parent to our new node
-          parent = vElement;
+          //check if we've just made a self closing tag
+          if(selfClosingTags.indexOf(tagName) === -1) {
+            //set our node's parent to our current parent
+            vElement.parent = parent;
+            //now assign the parent to our new node
+            parent = vElement;
+          }
         }
         //reset our flags and strings
         insideTag = false;
@@ -166,7 +202,7 @@ var t7 = (function() {
     return root;
   }
 
-  function getTagData(tagText) {
+  function getTagData(tagText, placeholders) {
     var parts = [];
     var char = '';
     var lastChar = '';
@@ -185,9 +221,21 @@ var t7 = (function() {
         parts.push(currentString);
         currentString = '';
       } else if(char === "'") {
-        inQuotes = !inQuotes;
+        if(inQuotes === false) {
+          inQuotes = true;
+        } else {
+          inQuotes = false;
+          parts.push(currentString);
+          currentString = '';
+        }
       } else if(char === '"') {
-          inQuotes = !inQuotes;
+        if(inQuotes === false) {
+          inQuotes = true;
+        } else {
+          inQuotes = false;
+          parts.push(currentString);
+          currentString = '';
+        }
       } else {
         currentString += char;
       }
@@ -201,6 +249,8 @@ var t7 = (function() {
     //loop through the parts of the tag
     for(i = 1; i < parts.length; i++) {
       attrParts = [];
+      lastChar= '';
+      currentString = '';
 
       for(s = 0; s < parts[i].length; s++) {
         char = parts[i][s];
@@ -219,7 +269,11 @@ var t7 = (function() {
         attrParts.push(currentString);
       }
       if(attrParts.length > 1) {
-        attrs[attrParts[0]] = attrParts[1];
+        if(placeholders.indexOf(attrParts[1]) === -1) {
+          attrs[attrParts[0]] = attrParts[1];
+        } else {
+          attrs[attrParts[0]] = "' + " + attrParts[1] + " + '";
+        }
       }
     }
 
@@ -269,6 +323,9 @@ var t7 = (function() {
           break;
         case 2:
           cache[template] = new Function(placeholders[0], placeholders[1], "return " + functionString.join(''));
+          break;
+        case 3:
+          cache[template] = new Function(placeholders[0], placeholders[1], placeholders[2], "return " + functionString.join(''));
           break;
       }
     }
