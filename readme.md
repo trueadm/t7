@@ -2,8 +2,7 @@
 
 ## Overview
 
-t7.js is a small, lightweight library for compiling ES2015 template strings
-into virtual DOM objects.
+t7.js is a small, lightweight JavaScript template library that compiles ES2015 template strings into virtual DOM objects.
 
 [Template strings](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/template_strings)
 allow for JavaScript expressions to be embedded within literal strings. With that in mind,
