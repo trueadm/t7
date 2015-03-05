@@ -315,6 +315,7 @@ var t7 = (function() {
 
       //build a new Function based off how many placeholders we need to inject into it
       switch(placeholders.length) {
+        //TODO there has to be a better way then doing this?
         case 0:
           cache[template] = new Function("return " + functionString.join(''));
           break;
@@ -326,6 +327,12 @@ var t7 = (function() {
           break;
         case 3:
           cache[template] = new Function(placeholders[0], placeholders[1], placeholders[2], "return " + functionString.join(''));
+          break;
+        case 4:
+          cache[template] = new Function(placeholders[0], placeholders[1], placeholders[2], placeholders[3], "return " + functionString.join(''));
+          break;
+        case 5:
+          cache[template] = new Function(placeholders[0], placeholders[1], placeholders[2], placeholders[3], placeholders[4], "return " + functionString.join(''));
           break;
       }
     }
