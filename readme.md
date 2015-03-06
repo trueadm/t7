@@ -24,12 +24,37 @@ in-browser transformers or NodeJS transpilers to start developing.
 
 t7 fully supports in-browser, NodeJS and Browserify/Webpack usage.
 
+## Usage
+
+If you are using t7 in your browser, simply include the script:
+
+```html
+
+<script src="t7.js"></script>
+
+```
+
+The when you want to compile a template, `init()` t7 with the relevant
+information to help it do its job better. For example, if you want t7 to
+output a React virtual DOM, simply state so:
+
+```javascript
+
+t7.init( t7.Format.React );
+
+```
+
+Then use the ``` `t7`<html></html` ``` template string function to process your
+template code.
+
 ## Example
 
 ```javascript
 
 var items = ['Ball', 'Boat'];
 var welcome = "World";
+
+t7.init( t7.Format.React );
 
 t7`
   <div class="foo">
@@ -47,60 +72,7 @@ t7`
 `;
 ```
 
-Would return the follow virtual DOM object:
-
-```javascript
-
-  [
-    {
-      tag: "div",
-      attrs: {"class": "foo"},
-      children: [
-        {
-          tag: "h1",
-          children: "Hello World"
-        },
-        {
-          tag: "ul",
-          attrs: {id: "bar"},
-          children: [
-            {
-              tag: "li",
-              attr: {"class": "item"},
-              children: [
-                {
-                  tag: "span",
-                  children: [
-                    {
-                      tag: "span",
-                      children: ["The item is: Ball"]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              tag: "li",
-              attr: {"class": "item"},
-              children: [
-                {
-                  tag: "span",
-                  children: [
-                    {
-                      tag: "span",
-                      children: ["The item is: Boat"]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-  ]
-
-```
+The above will return a React compliant virtual DOM object that can be used in React render() functions
 
 ## Components
 
@@ -109,15 +81,25 @@ into managable parts that can be re-used. t7 understands this and has a simple
 syntax for defining components in relation to custom elements. Much like JSX, you
 can pass a HTML tag with a reference to a JavaScript object.
 
+To do so, simply let t7 know the name of the HTML tag that will be the local object in
+its `init()` function
+
 ```javascript
 
-var Navigation = Inferno.Component;
-var pages = ["Home", "About", "Skills", "Contact"];
+var Widget = React.createClass({
+  render: function() {
+    return t7`<div>This is a widget!</div>`;
+  }
+});
+
+t7.init( t7.Format.React, {
+  "Widget": Widget
+});
 
 t7`
   <div>
     <header>
-      <:${ Navigation } pages="${ pages }" />
+      <Widget pages="${ pages }" />
     </header>
   </div>
 `;

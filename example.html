@@ -11,19 +11,20 @@
     var welcome = "World";
     var inputName = "123";
 
-    var Sidebar = function() {
-
-    }
+    t7.init( t7.Format.React );
 
     var example = t7`
       <div class="foo">
         <h1>Hello ${ welcome }</h1>
-        <header>
-          <:${ Sidebar } name="${ foo }" number="${ bar }" />
-        </header>
-        <form>
-          <input type="text" name="${ inputName }">
-        </form>
+        <ul id="bar">
+          ${
+            items.map( item => t7`
+              <li class="item">
+                <span>The item is: ${ item }</span>
+              </li>
+            `)
+          }
+        </ul>
       </div>
     `;
     //console log the example value
