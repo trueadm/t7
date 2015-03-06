@@ -44,7 +44,7 @@ t7.init( t7.Format.React );
 
 ```
 
-Then use the ``` t7`<html></html` ``` template string function to process your
+Then use the ``` t7`<html>...</html>` ``` template string function to process your
 template code.
 
 ## Example
