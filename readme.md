@@ -36,7 +36,7 @@ If you are using t7 in your browser, simply include the script:
 
 The when you want to compile a template, `init()` t7 with the relevant
 information to help it do its job better. For example, if you want t7 to
-output a React virtual DOM, simply state so:
+output a React virtual DOM format, simply state the format to use:
 
 ```javascript
 
