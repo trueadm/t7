@@ -102,6 +102,28 @@ Would return the follow virtual DOM object:
 
 ```
 
+## Components
+
+Components and sub-components are essential for breaking down large applications
+into managable parts that can be re-used. t7 understands this and has a simple
+syntax for defining components in relation to custom elements. Much like JSX, you
+can pass a HTML tag with a reference to a JavaScript object.
+
+```javascript
+
+var Navigation = Inferno.Component;
+var pages = ["Home", "About", "Skills", "Contact"];
+
+t7`
+  <div>
+    <header>
+      <:${ Navigation } pages="${ pages }" />
+    </header>
+  </div>
+`;
+
+```
+
 ## Control Flow
 
 To help reduce boilerplate and speed up development, t7 comes with a few essential

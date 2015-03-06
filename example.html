@@ -6,22 +6,21 @@
   <div id="app"></div>
   <script src="t7.js"></script>
   <script>
+
     var items = ['Ball', 'Boat'];
     var welcome = "World";
     var inputName = "123";
 
+    var Sidebar = function() {
+
+    }
+
     var example = t7`
       <div class="foo">
         <h1>Hello ${ welcome }</h1>
-        <ul id="bar">
-          ${
-            items.map( item => t7`
-              <li class="item">
-                <span>The item is: ${ item }</span>
-              </li>
-            `)
-          }
-        </ul>
+        <header>
+          <:${ Sidebar } name="${ foo }" number="${ bar }" />
+        </header>
         <form>
           <input type="text" name="${ inputName }">
         </form>
