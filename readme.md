@@ -45,60 +45,6 @@ t7`
     </ul>
   </div>
 `;
-```
-
-Would return the follow virtual DOM object:
-
-```javascript
-
-  [
-    {
-      tag: "div",
-      attrs: {"class": "foo"},
-      children: [
-        {
-          tag: "h1",
-          children: "Hello World"
-        },
-        {
-          tag: "ul",
-          attrs: {id: "bar"},
-          children: [
-            {
-              tag: "li",
-              attr: {"class": "item"},
-              children: [
-                {
-                  tag: "span",
-                  children: [
-                    {
-                      tag: "span",
-                      children: ["The item is: Ball"]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              tag: "li",
-              attr: {"class": "item"},
-              children: [
-                {
-                  tag: "span",
-                  children: [
-                    {
-                      tag: "span",
-                      children: ["The item is: Boat"]
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
-      ]
-    }
-  ]
 
 ```
 

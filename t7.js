@@ -43,9 +43,10 @@ var t7 = (function() {
       childrenText.push("[");
 
       for(i = 0; i < root.children.length; i++) {
-        if(typeof root.children[i] === "string") {
-          //its a placeholder, so replace
-          childrenText.push(root.children[i]);
+        if(root.children[i][0] === "$") {
+          childrenText.push("{children:");
+          childrenText.push(root.children[i].substring(1));
+          childrenText.push("}");
         } else {
           buildFunction(root.children[i], childrenText, i === root.children.length - 1)
         }
@@ -56,6 +57,7 @@ var t7 = (function() {
       tagParams.push((childrenProp ? "children: " : "") + childrenText.join(""));
 
     } else if(root.children != null && typeof root.children === "string") {
+      root.children = root.children.replace(/(\r\n|\n|\r)/gm,"");
       tagParams.push((childrenProp ? "children: " : "") + '"' + root.children + '"');
     }
   };
@@ -77,13 +79,7 @@ var t7 = (function() {
     var attrsParams = [];
 
     if(Array.isArray(root)) {
-      functionText.push("[");
-
-      for(i = 0; i < root.length; i++) {
-        buildFunction(root[i], functionText, i === root.length - 1);
-      }
-
-      functionText.push("]");
+      //throw error about adjacent elements
     } else {
       functionText.push("{");
 
@@ -114,14 +110,14 @@ var t7 = (function() {
     var lastChar = '';
     var i = 0;
     var s = 0;
-    var root = [];
+    var root = null;
     var insideTag = false;
     var tagContent = '';
     var tagName = '';
     var vElement = null;
     var childText = '';
-    var parent = root;
-    var tagData = [];
+    var parent = null;
+    var tagData = null;
     var skipAppend = false;
     var newChild = null;
 
@@ -141,11 +137,12 @@ var t7 = (function() {
               if(childText.indexOf(placeholders[s]) > -1) {
                 if(Array.isArray(props[placeholders[s]])) {
                   //set the children to this object
-                  parent.children.push('props.' + placeholders[s]);
+                  parent.children.push('$props.' + placeholders[s]);
                   //set the child to null so we don't then append it to the parent's child below
                   childText = null;
                   break;
-                } else if( typeof props[placeholders[s]] === "string" ) {
+                } else if( typeof props[placeholders[s]] === "string"
+                  || typeof props[placeholders[s]] === "number" ) {
                   childText = childText.replace(placeholders[s], '" + props.' + placeholders[s] + ' + "');
                 }
               }
@@ -173,7 +170,10 @@ var t7 = (function() {
             children: []
           };
           //push the node we've constructed to the relevant parent
-          if (Array.isArray(parent)) {
+          if(parent === null) {
+            parent = vElement;
+            root = parent;
+          } else if (Array.isArray(parent)) {
             parent.push(vElement);
           } else {
             parent.children.push(vElement);
@@ -212,6 +212,7 @@ var t7 = (function() {
     var inQuotes = false;
     var attrParts = [];
     var attrs = {};
+    var key = '';
 
     //build the parts of the tag
     for(i = 0; i < tagText.length; i++) {
@@ -280,7 +281,8 @@ var t7 = (function() {
     //return the attributes and the tag name
     return {
       tag: parts[0],
-      attrs: attrs
+      attrs: attrs,
+      key: key
     }
   };
 
@@ -298,26 +300,25 @@ var t7 = (function() {
       placeholders.push("$" + i);
     };
 
-    if(cache[template] == null) {
-      //put our placeholders around the template parts
-      for(i = 0; i < template.length; i++) {
-        if(i === template.length - 1) {
-          fullHtml += template[i];
-        } else {
-          fullHtml += template[i] + placeholders[i];
-        }
+    //put our placeholders around the template parts
+    for(i = 0; i < template.length; i++) {
+      if(i === template.length - 1) {
+        fullHtml += template[i];
+      } else {
+        fullHtml += template[i] + placeholders[i];
       }
+    }
 
+    if(cache[fullHtml] == null) {
       //build a vDom from the HTML
       vDom = getVdom(fullHtml, placeholders, props);
       //once we have our vDom array, build an optimal function to improve performance
-      buildFunction(vDom, functionString, false)
-
+      buildFunction(vDom, functionString, true)
       //build a new Function
-      cache[template] = new Function("props", "return " + functionString.join(''));
+      cache[fullHtml] = new Function("props", "return " + functionString.join(''));
     }
 
-    return cache[template].call(window, props);
+    return cache[fullHtml].call(window, props);
   };
 
   //a lightweight flow control function
@@ -348,6 +349,18 @@ var t7 = (function() {
     }
     return results;
   };
+
+  t7._flattenArrayOfArrays = function(a, r){
+    if(!r){ r = []}
+    for(var i=0; i<a.length; i++){
+        if(a[i].constructor == Array){
+            t7._flattenArrayOfArrays(a[i], r);
+        }else{
+            r.push(a[i]);
+        }
+    }
+    return r;
+}
 
   return t7;
 })();
