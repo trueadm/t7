@@ -6,9 +6,12 @@
   <div id="app"></div>
   <script src="t7.js"></script>
   <script>
+
     var items = ['Ball', 'Boat'];
     var welcome = "World";
     var inputName = "123";
+
+    t7.init( t7.Format.React );
 
     var example = t7`
       <div class="foo">
@@ -22,9 +25,6 @@
             `)
           }
         </ul>
-        <form>
-          <input type="text" name="${ inputName }">
-        </form>
       </div>
     `;
     //console log the example value

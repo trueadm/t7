@@ -24,12 +24,35 @@ in-browser transformers or NodeJS transpilers to start developing.
 
 t7 fully supports in-browser, NodeJS and Browserify/Webpack usage.
 
+If you are using t7 in your browser, simply include the script:
+
+```html
+
+<script src="t7.js"></script>
+
+```
+
+The when you want to compile a template, `init()` t7 with the relevant
+information to help it do its job better. For example, if you want t7 to
+output a React virtual DOM format, simply state the format to use:
+
+```javascript
+
+t7.init( t7.Format.React );
+
+```
+
+Then use the ``` t7`<html>...</html>` ``` template string function to process your
+template code.
+
 ## Example
 
 ```javascript
 
 var items = ['Ball', 'Boat'];
 var welcome = "World";
+
+t7.init( t7.Format.React );
 
 t7`
   <div class="foo">
@@ -45,6 +68,42 @@ t7`
     </ul>
   </div>
 `;
+<<<<<<< HEAD
+=======
+```
+
+The above will return a React compliant virtual DOM object that can be used in React render() functions
+
+## Components
+
+Components and sub-components are essential for breaking down large applications
+into managable parts that can be re-used. t7 understands this and has a simple
+syntax for defining components in relation to custom elements. Much like JSX, you
+can pass a HTML tag with a reference to a JavaScript object.
+
+To do so, simply let t7 know the name of the HTML tag that will be the local object in
+its `init()` function
+
+```javascript
+
+var Widget = React.createClass({
+  render: function() {
+    return t7`<div>This is a widget!</div>`;
+  }
+});
+
+t7.init( t7.Format.React, {
+  "Widget": Widget
+});
+
+t7`
+  <div>
+    <header>
+      <Widget pages="${ pages }" />
+    </header>
+  </div>
+`;
+>>>>>>> a2cfb2d87312f453a67d2c99b46087e42431978e
 
 ```
 
@@ -88,7 +147,7 @@ More control flow functions to come soon!
 
 Due to the fact HTML is entered into template strings, your IDE/editor will likely not default to highlighting your HTML syntax. This will be addressed with independent plugins/packages for the various popular IDEs/editors.
 
-- [GitHub Atom edtior](https://github.com/trueadm/atom-t7)
+- [GitHub Atom](https://atom.io/packages/t7)
 
 ## Performance
 
