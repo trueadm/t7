@@ -22,9 +22,8 @@ in-browser transformers or NodeJS transpilers to start developing.
 
 ## Usage
 
-t7 fully supports in-browser, NodeJS and Browserify/Webpack usage.
-
-If you are using t7 in your browser, simply include the script:
+t7 fully supports in-browser, NodeJS and Browserify/Webpack usage. If you are using
+t7 in your browser, simply include the script:
 
 ```html
 
@@ -32,18 +31,8 @@ If you are using t7 in your browser, simply include the script:
 
 ```
 
-The when you want to compile a template, `init()` t7 with the relevant
-information to help it do its job better. For example, if you want t7 to
-output a React virtual DOM format, simply state the format to use:
-
-```javascript
-
-t7.init( t7.Format.React );
-
-```
-
-Then use the ``` t7`<html>...</html>` ``` template string function to process your
-template code.
+The when you want to compile a template, use the ``` t7`<html>...</html>` ``` template
+string function to process your template code.
 
 ## Example
 
@@ -51,8 +40,6 @@ template code.
 
 var items = ['Ball', 'Boat'];
 var welcome = "World";
-
-t7.init( t7.Format.React );
 
 t7`
   <div class="foo">
@@ -68,8 +55,7 @@ t7`
     </ul>
   </div>
 `;
-<<<<<<< HEAD
-=======
+
 ```
 
 The above will return a React compliant virtual DOM object that can be used in React render() functions
@@ -82,28 +68,29 @@ syntax for defining components in relation to custom elements. Much like JSX, yo
 can pass a HTML tag with a reference to a JavaScript object.
 
 To do so, simply let t7 know the name of the HTML tag that will be the local object in
-its `init()` function
+its `register()` function
 
 ```javascript
 
-var Widget = React.createClass({
-  render: function() {
-    return t7`<div>This is a widget!</div>`;
-  }
-});
+function Widget() {
+  return t7`
+    <div>
+      <span>I'm a widget</span>
+    </div>
+  `;
+}
 
-t7.init( t7.Format.React, {
-  "Widget": Widget
+t7.register({
+  "my-wiget": Widget
 });
 
 t7`
   <div>
     <header>
-      <Widget pages="${ pages }" />
+      <my-widget pages="${ pages }" />
     </header>
   </div>
 `;
->>>>>>> a2cfb2d87312f453a67d2c99b46087e42431978e
 
 ```
 
@@ -113,21 +100,6 @@ To help reduce boilerplate and speed up development, t7 comes with a few essenti
 control flow functions, represented in Vanilla JS. Control flow functions remove
 the need to write callbacks all over your project and keep simple things confined
 to the context of the template.
-
-### Collections
-
-Similar to the native Array.map() function, except 7.each() attempts to automatically
-add keys to the virtual DOM nodes where possible. This in turn improves performance.
-
-```javascript
-
-  ${
-
-    t7.each(expression, callback);
-
-  }
-
-```
 
 ### If/Else statements
 
@@ -161,3 +133,5 @@ template compile times.
 
 Currently, only Firefox 34+ and Chrome 41+ support ES2015 template strings. However,
 there are transpilers (such as [Babel](https://babeljs.io/) or Traceur) that provide support for ES2015 templates.
+This should not affect usae of t7 in produciton mode, as the precompiler will provide support for
+IE6+. 

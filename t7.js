@@ -340,16 +340,6 @@ var t7 = (function() {
     }
   };
 
-  //TODO return a list of keys to map the collection
-  t7.each = function(array, callback) {
-    var i = 0, length = array.length, results = [], item = null;
-    for(i = 0; i < length; i++) {
-      item = array[i];
-      results.push(callback.call(this, item, i. array));
-    }
-    return results;
-  };
-
   t7._flattenArrayOfArrays = function(a, r){
     if(!r){ r = []}
     for(var i=0; i<a.length; i++){
@@ -360,7 +350,15 @@ var t7 = (function() {
         }
     }
     return r;
-}
+  };
+
+  t7.setFormat = function( format ) {
+    //TODO
+  };
+
+  t7.register = function( structure ) {
+    //TODO
+  };
 
   return t7;
 })();
