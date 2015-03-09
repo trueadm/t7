@@ -11,13 +11,12 @@
     var welcome = "World";
     var inputName = "123";
 
-    t7.init( t7.Format.React );
-
     var example = t7`
       <div class="foo">
         <h1>Hello ${ welcome }</h1>
         <ul id="bar">
           ${
+            //this requires ES2015 arrow functions, available in Firefox
             items.map( item => t7`
               <li class="item">
                 <span>The item is: ${ item }</span>

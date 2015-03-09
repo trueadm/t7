@@ -33,7 +33,7 @@ var t7 = (function() {
   ];
 
   //when creating a new function from a vdom, we'll need to build the vdom's children
-  function buildChildren(root, tagParams, childrenProp) {
+  function buildChildren( root, tagParams, childrenProp ) {
     var childrenText = [];
     var i = 0;
 
@@ -62,7 +62,7 @@ var t7 = (function() {
     }
   };
 
-  function buildAttrsParams(root, attrsParams) {
+  function buildAttrsParams( root, attrsParams ) {
     var val = '';
     for(var name in root.attrs) {
       val = root.attrs[name];
@@ -72,7 +72,7 @@ var t7 = (function() {
 
   //This takes a vDom array and builds a new function from it, to improve
   //repeated performance at the cost of building new Functions()
-  function buildFunction(root, functionText, isLast) {
+  function buildFunction( root, functionText, isLast ) {
     var i = 0;
     var tagParams = [];
     var literalParts = [];
@@ -105,7 +105,7 @@ var t7 = (function() {
     }
   };
 
-  function getVdom(html, placeholders, props) {
+  function getVdom( html, placeholders, props ) {
     var char = '';
     var lastChar = '';
     var i = 0;
@@ -202,7 +202,7 @@ var t7 = (function() {
     return root;
   }
 
-  function getTagData(tagText, placeholders) {
+  function getTagData( tagText, placeholders ) {
     var parts = [];
     var char = '';
     var lastChar = '';
@@ -287,7 +287,7 @@ var t7 = (function() {
   };
 
   //main t7 compiling function
-  function t7(template) {
+  function t7( template ) {
     var props = {};
     var placeholders = [];
     var fullHtml = '';
@@ -323,7 +323,7 @@ var t7 = (function() {
 
   //a lightweight flow control function
   //expects truthy and falsey to be functions
-  t7.if = function(expression, truthy) {
+  t7.if = function( expression, truthy ) {
 
     if(expression) {
       return {
@@ -340,18 +340,6 @@ var t7 = (function() {
     }
   };
 
-  t7._flattenArrayOfArrays = function(a, r){
-    if(!r){ r = []}
-    for(var i=0; i<a.length; i++){
-        if(a[i].constructor == Array){
-            t7._flattenArrayOfArrays(a[i], r);
-        }else{
-            r.push(a[i]);
-        }
-    }
-    return r;
-  };
-
   t7.setFormat = function( format ) {
     //TODO
   };
@@ -359,6 +347,8 @@ var t7 = (function() {
   t7.register = function( structure ) {
     //TODO
   };
+
+  t7.debug = false;
 
   return t7;
 })();
