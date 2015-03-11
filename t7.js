@@ -166,7 +166,7 @@ var t7 = (function() {
           //now we create out vElement
           vElement = {
             tag: tagName,
-            attrs: tagData.attrs || {},
+            attrs: (tagData && tagData.attrs) ? tagData.attrs : {},
             children: []
           };
           //push the node we've constructed to the relevant parent
