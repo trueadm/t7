@@ -58,9 +58,11 @@ t7`
 
 ```
 
-## DBMonster
+The above will return a React compliant virtual DOM object that can be used in React render() functions
 
-Given that DBMonster is the new defacto performance benchmark, here are some examples of Cito+t7:
+## dbmonster
+
+How well can Cito+t7 render/update the dbmonster scenario? Take a look for yourself.
 
 ### Runtime Compilation (Development)
 
@@ -70,7 +72,6 @@ http://t7js.com/dbmonster/index.html
 
 http://t7js.com/dbmonster/precompiled.html
 
-The above will return a React compliant virtual DOM object that can be used in React render() functions
 
 ## Components
 
