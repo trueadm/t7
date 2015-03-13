@@ -33,7 +33,7 @@ var t7 = (function() {
   ];
 
   //when creating a new function from a vdom, we'll need to build the vdom's children
-  function buildChildren( root, tagParams, childrenProp ) {
+  function buildChildren(root, tagParams, childrenProp) {
     var childrenText = [];
     var i = 0;
 
@@ -62,7 +62,7 @@ var t7 = (function() {
     }
   };
 
-  function buildAttrsParams( root, attrsParams ) {
+  function buildAttrsParams(root, attrsParams) {
     var val = '';
     for(var name in root.attrs) {
       val = root.attrs[name];
@@ -72,7 +72,7 @@ var t7 = (function() {
 
   //This takes a vDom array and builds a new function from it, to improve
   //repeated performance at the cost of building new Functions()
-  function buildFunction( root, functionText, isLast ) {
+  function buildFunction(root, functionText, isLast) {
     var i = 0;
     var tagParams = [];
     var literalParts = [];
@@ -85,6 +85,10 @@ var t7 = (function() {
 
       //add the tag name
       tagParams.push("tag: '" + root.tag + "'");
+
+      if(root.key != null) {
+        tagParams.push("key: '" + root.key + "'");
+      }
 
       //build the attrs
       if(root.attrs != null) {
@@ -105,7 +109,7 @@ var t7 = (function() {
     }
   };
 
-  function getVdom( html, placeholders, props ) {
+  function getVdom(html, placeholders, props) {
     var char = '';
     var lastChar = '';
     var i = 0;
@@ -166,9 +170,12 @@ var t7 = (function() {
           //now we create out vElement
           vElement = {
             tag: tagName,
-            attrs: tagData.attrs || {},
+            attrs: (tagData && tagData.attrs) ? tagData.attrs : {},
             children: []
           };
+          if(tagData && tagData.key) {
+            vElement.key = tagData.key;
+          }
           //push the node we've constructed to the relevant parent
           if(parent === null) {
             parent = vElement;
@@ -202,7 +209,7 @@ var t7 = (function() {
     return root;
   }
 
-  function getTagData( tagText, placeholders ) {
+  function getTagData(tagText, placeholders) {
     var parts = [];
     var char = '';
     var lastChar = '';
@@ -273,7 +280,11 @@ var t7 = (function() {
         if(placeholders.indexOf(attrParts[1]) === -1) {
           attrs[attrParts[0]] = attrParts[1];
         } else {
-          attrs[attrParts[0]] = "' + props." + attrParts[1] + " + '";
+          if(attrParts[0] === "key") {
+            key = "' + props." + attrParts[1] + " + '";
+          } else {
+            attrs[attrParts[0]] = "' + props." + attrParts[1] + " + '";
+          }
         }
       }
     }
@@ -287,7 +298,7 @@ var t7 = (function() {
   };
 
   //main t7 compiling function
-  function t7( template ) {
+  function t7(template) {
     var props = {};
     var placeholders = [];
     var fullHtml = '';
@@ -323,7 +334,7 @@ var t7 = (function() {
 
   //a lightweight flow control function
   //expects truthy and falsey to be functions
-  t7.if = function( expression, truthy ) {
+  t7.if = function(expression, truthy) {
 
     if(expression) {
       return {
@@ -340,15 +351,27 @@ var t7 = (function() {
     }
   };
 
-  t7.setFormat = function( format ) {
-    //TODO
+  //TODO return a list of keys to map the collection
+  t7.each = function(array, callback) {
+    var i = 0, length = array.length, results = [], item = null;
+    for(i = 0; i < length; i++) {
+      item = array[i];
+      results.push(callback.call(this, item, i. array));
+    }
+    return results;
   };
 
-  t7.register = function( structure ) {
-    //TODO
-  };
-
-  t7.debug = false;
+  t7._flattenArrayOfArrays = function(a, r){
+    if(!r){ r = []}
+    for(var i=0; i<a.length; i++){
+        if(a[i].constructor == Array){
+            t7._flattenArrayOfArrays(a[i], r);
+        }else{
+            r.push(a[i]);
+        }
+    }
+    return r;
+}
 
   return t7;
 })();
