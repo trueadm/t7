@@ -58,6 +58,18 @@ t7`
 
 ```
 
+## DBMonster
+
+Given that DBMonster is the new defacto performance benchmark, here are some examples of Cito+t7:
+
+### Runtime Compilation (Development)
+
+http://t7js.com/dbmonster/index.html
+
+### Precompiled (Production)
+
+http://t7js.com/dbmonster/precompiled.html
+
 The above will return a React compliant virtual DOM object that can be used in React render() functions
 
 ## Components
@@ -134,4 +146,4 @@ template compile times.
 Currently, only Firefox 34+ and Chrome 41+ support ES2015 template strings. However,
 there are transpilers (such as [Babel](https://babeljs.io/) or Traceur) that provide support for ES2015 templates.
 This should not affect usae of t7 in produciton mode, as the precompiler will provide support for
-IE6+. 
+IE6+.
