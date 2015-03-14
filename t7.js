@@ -13,6 +13,13 @@ var t7 = (function() {
   //we store created functions in the cache (key is the template string)
   var cache = {};
 
+  //to save time later, we can pre-create a props object structure to re-use
+  var functionProps = {};
+
+  for(var ii = 1; ii < 15; ii++) {
+    functionProps["$" + ii] = null;
+  };
+
   var selfClosingTags = [
     'area',
     'base',
@@ -36,13 +43,14 @@ var t7 = (function() {
   function buildChildren(root, tagParams, childrenProp) {
     var childrenText = [];
     var i = 0;
+    var n = 0;
 
     //if the node has children that is an array, handle it with a loop
     if(root.children != null && Array.isArray(root.children)) {
       //we're building an array in code, so we need an open bracket
       childrenText.push("[");
 
-      for(i = 0; i < root.children.length; i++) {
+      for(i = 0, n = root.children.length; i < n; i++) {
         if(root.children[i][0] === "$") {
           childrenText.push("{children:");
           childrenText.push(root.children[i].substring(1));
@@ -114,6 +122,8 @@ var t7 = (function() {
     var lastChar = '';
     var i = 0;
     var s = 0;
+    var n = 0;
+    var n2 = 0;
     var root = null;
     var insideTag = false;
     var tagContent = '';
@@ -125,7 +135,7 @@ var t7 = (function() {
     var skipAppend = false;
     var newChild = null;
 
-    for(i = 0; i < html.length; i++) {
+    for(i = 0, n = html.length; i < n; i++) {
       //set the char to the current character in the string
       char = html[i];
 
@@ -137,7 +147,7 @@ var t7 = (function() {
           //when the childText is not empty
           if(childText.trim() !== "") {
             //check if childText contains one of our placeholders
-            for(s = 0 ; s < placeholders.length; s++) {
+            for(s = 0, n2 = placeholders.length; s < n2; s++) {
               if(childText.indexOf(placeholders[s]) > -1) {
                 if(Array.isArray(props[placeholders[s]])) {
                   //set the children to this object
@@ -215,6 +225,8 @@ var t7 = (function() {
     var lastChar = '';
     var i = 0;
     var s = 0;
+    var n = 0;
+    var n2 = 0;
     var currentString = '';
     var inQuotes = false;
     var attrParts = [];
@@ -222,7 +234,7 @@ var t7 = (function() {
     var key = '';
 
     //build the parts of the tag
-    for(i = 0; i < tagText.length; i++) {
+    for(i = 0, n = tagText.length; i < n; i++) {
       char = tagText[i];
 
       if(char === " " && inQuotes === false) {
@@ -255,12 +267,12 @@ var t7 = (function() {
     currentString = '';
 
     //loop through the parts of the tag
-    for(i = 1; i < parts.length; i++) {
+    for(i = 1, n = parts.length; i < n; i++) {
       attrParts = [];
       lastChar= '';
       currentString = '';
 
-      for(s = 0; s < parts[i].length; s++) {
+      for(s = 0, n2 = parts[i].length; s < n2; s++) {
         char = parts[i][s];
 
         //if the character is =, then we're able to split the attribute name and value
@@ -299,37 +311,38 @@ var t7 = (function() {
 
   //main t7 compiling function
   function t7(template) {
-    var props = {};
     var placeholders = [];
     var fullHtml = '';
     var i = 0;
+    var n = 0;
     var vDom = [];
     var functionString = [];
+    var templateKey = template.join("");
 
-    for(i = 1; i < arguments.length; i++) {
-      props["$" + i] = arguments[i];
+    for(i = 1, n = arguments.length; i < n; i++) {
+      functionProps["$" + i] = arguments[i];
       placeholders.push("$" + i);
     };
 
-    //put our placeholders around the template parts
-    for(i = 0; i < template.length; i++) {
-      if(i === template.length - 1) {
-        fullHtml += template[i];
-      } else {
-        fullHtml += template[i] + placeholders[i];
+    if(cache[templateKey] == null) {
+      //put our placeholders around the template parts
+      for(i = 0, n = template.length; i < n; i++) {
+        if(i === template.length - 1) {
+          fullHtml += template[i];
+        } else {
+          fullHtml += template[i] + placeholders[i];
+        }
       }
-    }
 
-    if(cache[fullHtml] == null) {
       //build a vDom from the HTML
-      vDom = getVdom(fullHtml, placeholders, props);
+      vDom = getVdom(fullHtml, placeholders, functionProps);
       //once we have our vDom array, build an optimal function to improve performance
       buildFunction(vDom, functionString, true)
       //build a new Function
-      cache[fullHtml] = new Function("props", "return " + functionString.join(''));
+      cache[templateKey] = new Function("props", '"use strict";return ' + functionString.join(''));
     }
 
-    return cache[fullHtml].call(window, props);
+    return cache[templateKey].call(window, functionProps);
   };
 
   //a lightweight flow control function
@@ -351,27 +364,9 @@ var t7 = (function() {
     }
   };
 
-  //TODO return a list of keys to map the collection
-  t7.each = function(array, callback) {
-    var i = 0, length = array.length, results = [], item = null;
-    for(i = 0; i < length; i++) {
-      item = array[i];
-      results.push(callback.call(this, item, i. array));
-    }
-    return results;
+  //TODO register tags
+  t7.register = function() {
   };
-
-  t7._flattenArrayOfArrays = function(a, r){
-    if(!r){ r = []}
-    for(var i=0; i<a.length; i++){
-        if(a[i].constructor == Array){
-            t7._flattenArrayOfArrays(a[i], r);
-        }else{
-            r.push(a[i]);
-        }
-    }
-    return r;
-}
 
   return t7;
 })();
