@@ -11,13 +11,16 @@ var t7 = (function() {
   "use strict";
 
   //we store created functions in the cache (key is the template string)
-  var cache = {};
+  var docHead = document.getElementsByTagName('head')[0];
+  window.t7cache = {};
 
   //to save time later, we can pre-create a props object structure to re-use
   var functionProps = {};
+  var functionPlaceholders = [];
 
   for(var ii = 1; ii < 15; ii++) {
     functionProps["$" + ii] = null;
+    functionPlaceholders.push("$" + ii);
   };
 
   var selfClosingTags = [
@@ -309,40 +312,58 @@ var t7 = (function() {
     }
   };
 
+  function addNewScriptFunction(scriptString, templateKey) {
+    var funcCode = scriptString + '\n//# sourceURL=' + templateKey;
+    var scriptElement = document.createElement('script');
+    scriptElement.textContent = funcCode;
+    docHead.appendChild(scriptElement);
+  }
+
   //main t7 compiling function
   function t7(template) {
-    var placeholders = [];
-    var fullHtml = '';
-    var i = 0;
-    var n = 0;
-    var vDom = [];
-    var functionString = [];
-    var templateKey = template.join("");
+    var fullHtml = null;
+    var i = 1;
+    var n = arguments.length;
+    var functionString = null;
+    var scriptString = null;
+    //we need to generate a very quick key that will be used as the function name
+    var templateKey = null;
+    var keyVal = n * 7;
 
-    for(i = 1, n = arguments.length; i < n; i++) {
+    for(; i < n; i++) {
       functionProps["$" + i] = arguments[i];
-      placeholders.push("$" + i);
+      keyVal *= template[i].length * i;
     };
 
-    if(cache[templateKey] == null) {
+    //set our unique key
+    templateKey = "t7" + keyVal;
+
+    if(window.t7cache[templateKey] == null) {
+      fullHtml = '';
       //put our placeholders around the template parts
       for(i = 0, n = template.length; i < n; i++) {
         if(i === template.length - 1) {
           fullHtml += template[i];
         } else {
-          fullHtml += template[i] + placeholders[i];
+          fullHtml += template[i] + functionPlaceholders[i];
         }
       }
-
-      //build a vDom from the HTML
-      vDom = getVdom(fullHtml, placeholders, functionProps);
       //once we have our vDom array, build an optimal function to improve performance
-      buildFunction(vDom, functionString, true)
+      functionString = [];
+      buildFunction(
+        //build a vDom from the HTML
+        getVdom(fullHtml, functionPlaceholders, functionProps),
+        functionString,
+        true
+      )
       //build a new Function
-      cache[templateKey] = new Function("props", '"use strict";return ' + functionString.join(''));
+      scriptString = 'window.t7cache["' + templateKey + '"]=function(props)';
+      scriptString += '{"use strict";return ' + functionString.join('') + '}';
+
+      addNewScriptFunction(scriptString, templateKey);
     }
 
-    return cache[templateKey].call(window, functionProps);
+    return window.t7cache[templateKey](functionProps);
   };
 
   //a lightweight flow control function
