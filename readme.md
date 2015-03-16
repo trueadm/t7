@@ -72,41 +72,6 @@ http://t7js.com/dbmonster/index.html
 
 http://t7js.com/dbmonster/precompiled.html
 
-
-## Components
-
-Components and sub-components are essential for breaking down large applications
-into managable parts that can be re-used. t7 understands this and has a simple
-syntax for defining components in relation to custom elements. Much like JSX, you
-can pass a HTML tag with a reference to a JavaScript object.
-
-To do so, simply let t7 know the name of the HTML tag that will be the local object in
-its `register()` function
-
-```javascript
-
-function Widget() {
-  return t7`
-    <div>
-      <span>I'm a widget</span>
-    </div>
-  `;
-}
-
-t7.register({
-  "my-wiget": Widget
-});
-
-t7`
-  <div>
-    <header>
-      <my-widget pages="${ pages }" />
-    </header>
-  </div>
-`;
-
-```
-
 ## Control Flow
 
 To help reduce boilerplate and speed up development, t7 comes with a few essential
