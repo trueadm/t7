@@ -17,6 +17,7 @@ var t7 = (function() {
   //to save time later, we can pre-create a props object structure to re-use
   var functionProps = {};
   var functionPlaceholders = [];
+  var output = null;
 
   for(var ii = 1; ii < 15; ii++) {
     functionProps["$" + ii] = null;
@@ -43,7 +44,7 @@ var t7 = (function() {
   ];
 
   //when creating a new function from a vdom, we'll need to build the vdom's children
-  function buildChildren(root, tagParams, childrenProp) {
+  function buildCitoChildren(root, tagParams, childrenProp) {
     var childrenText = [];
     var i = 0;
     var n = 0;
@@ -73,6 +74,35 @@ var t7 = (function() {
     }
   };
 
+  //when creating a new function from a vdom, we'll need to build the vdom's children
+  function buildReactChildren(root, tagParams, childrenProp) {
+    var childrenText = [];
+    var i = 0;
+    var n = 0;
+
+    //if the node has children that is an array, handle it with a loop
+    if(root.children != null && Array.isArray(root.children)) {
+      //we're building an array in code, so we need an open bracket
+      for(i = 0, n = root.children.length; i < n; i++) {
+        if(root.children[i][0] === "$") {
+          childrenText.push("{children:");
+          childrenText.push(root.children[i].substring(1));
+          childrenText.push("}");
+        } else {
+          buildFunction(root.children[i], childrenText, i === root.children.length - 1)
+        }
+      }
+      //push the children code into our tag params code
+      if(childrenText.length > 0) {
+        tagParams.push(childrenText.join(","));
+      }
+
+    } else if(root.children != null && typeof root.children === "string") {
+      root.children = root.children.replace(/(\r\n|\n|\r)/gm,"");
+      tagParams.push('"' + root.children + '"');
+    }
+  };
+
   function buildAttrsParams(root, attrsParams) {
     var val = '';
     for(var name in root.attrs) {
@@ -92,30 +122,45 @@ var t7 = (function() {
     if(Array.isArray(root)) {
       //throw error about adjacent elements
     } else {
-      functionText.push("{");
+      //Cito output
+      if(output === t7.Outputs.Cito) {
+        functionText.push("{");
 
-      //add the tag name
-      tagParams.push("tag: '" + root.tag + "'");
+        //add the tag name
+        tagParams.push("tag: '" + root.tag + "'");
 
-      if(root.key != null) {
-        tagParams.push("key: '" + root.key + "'");
+        if(root.key != null) {
+          tagParams.push("key: '" + root.key + "'");
+        }
+
+        //build the attrs
+        if(root.attrs != null) {
+          buildAttrsParams(root, attrsParams);
+          tagParams.push("attrs: {" + attrsParams.join(',') + "}");
+        }
+
+        //build the children for this node
+        buildCitoChildren(root, tagParams, true);
+
+        functionText.push(tagParams.join(','));
+        functionText.push("}");
+
+        //if we are at the end of building an array, do not add the comma after
+        if(isLast === false) {
+          functionText.push(",");
+        }
       }
+      //React output
+      else if(output === t7.Outputs.React) {
+        functionText.push("React.createElement('" + root.tag + "'");
 
-      //build the attrs
-      if(root.attrs != null) {
-        buildAttrsParams(root, attrsParams);
-        tagParams.push("attrs: {" + attrsParams.join(',') + "}");
-      }
+        //the props/attrs
+        tagParams.push("null");
 
-      //build the children for this node
-      buildChildren(root, tagParams, true);
+        //build the children for this node
+        buildReactChildren(root, tagParams, true);
 
-      functionText.push(tagParams.join(','));
-      functionText.push("}");
-
-      //if we are at the end of building an array, do not add the comma after
-      if(isLast === false) {
-        functionText.push(",");
+        functionText.push(tagParams.join(',') + ")");
       }
     }
   };
@@ -328,6 +373,7 @@ var t7 = (function() {
     var scriptString = null;
     //we need to generate a very quick key that will be used as the function name
     var templateKey = null;
+    var scriptCode = "";
     var keyVal = n * 7;
 
     for(; i < n; i++) {
@@ -355,10 +401,18 @@ var t7 = (function() {
         getVdom(fullHtml, functionPlaceholders, functionProps),
         functionString,
         true
-      )
+      );
+
+      //manage the different ways of joining code outputs
+      if(output === t7.Outputs.Cito) {
+        scriptCode = functionString.join('');
+      } else if(output === t7.Outputs.React) {
+        scriptCode = functionString.join(',');
+      }
+
       //build a new Function
       scriptString = 'window.t7cache["' + templateKey + '"]=function(props)';
-      scriptString += '{"use strict";return ' + functionString.join('') + '}';
+      scriptString += '{"use strict";return ' + scriptCode + '}';
 
       addNewScriptFunction(scriptString, templateKey);
     }
@@ -385,9 +439,26 @@ var t7 = (function() {
     }
   };
 
-  //TODO register tags
-  t7.register = function() {
+  t7.setOutput = function(newOutput) {
+    output = newOutput;
   };
+
+  t7.getOutput = function() {
+    return output;
+  };
+
+  //TODO register tags
+  t7.register = function(tags) {
+    //debugger;
+  };
+
+  t7.Outputs = {
+    Cito: "Cito",
+    React: "React"
+  }
+
+  //set the type to Cito as default
+  output = t7.Outputs.Cito;
 
   return t7;
 })();
