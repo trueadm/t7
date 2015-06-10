@@ -18,6 +18,7 @@ var t7 = (function() {
   var functionProps = {};
   var functionPlaceholders = [];
   var output = null;
+  var tags = {};
 
   for(var ii = 1; ii < 15; ii++) {
     functionProps["$" + ii] = null;
@@ -152,7 +153,12 @@ var t7 = (function() {
       }
       //React output
       else if(output === t7.Outputs.React) {
-        functionText.push("React.createElement('" + root.tag + "'");
+        //find out if the tag is a componenet
+        if(root.tag[0] === root.tag[0].toUpperCase()) {
+          functionText.push("React.createElement(t7.loadTag('" + root.tag + "')");
+        } else {
+          functionText.push("React.createElement('" + root.tag + "'");
+        }
 
         //the props/attrs
         if(root.attrs != null) {
@@ -454,8 +460,12 @@ var t7 = (function() {
   };
 
   //TODO register tags
-  t7.register = function(tags) {
-    //debugger;
+  t7.registerTag = function(tagName, tag) {
+    tags[tagName] = tag;
+  };
+
+  t7.loadTag = function(tagName) {
+    return tags[tagName];
   };
 
   t7.Outputs = {

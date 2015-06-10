@@ -8,16 +8,19 @@
   <script src="../t7.js"></script>
   <script>
 
-    function Widget() {
-      return t7`
-        <span>
-          This is a widget!
-        </span>
-      `;
-    }
-
     t7.setOutput(t7.Outputs.React);
-    t7.register([Widget]);
+
+    var Widget = React.createClass({
+      render: function() {
+        return t7`
+          <span>
+            This is a widget!
+          </span>
+        `;
+      }
+    });
+
+    t7.registerTag("Widget", Widget);
 
     var testVar = "Hello world";
 
