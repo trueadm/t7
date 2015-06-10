@@ -155,7 +155,12 @@ var t7 = (function() {
         functionText.push("React.createElement('" + root.tag + "'");
 
         //the props/attrs
-        tagParams.push("null");
+        if(root.attrs != null) {
+          buildAttrsParams(root, attrsParams);
+          tagParams.push("{" + attrsParams.join(',') + "}");
+        } else {
+          tagParams.push("null");
+        }
 
         //build the children for this node
         buildReactChildren(root, tagParams, true);
@@ -219,6 +224,7 @@ var t7 = (function() {
         } else {
           //check if there any spaces in the tagContent, if not, we have our tagName
           if(tagContent.indexOf(" ") === -1) {
+            tagData = {};
             tagName = tagContent;
           } else {
             //get the tag data via the getTagData function
