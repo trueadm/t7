@@ -11,21 +11,26 @@ var t7 = (function() {
   "use strict";
 
   //we store created functions in the cache (key is the template string)
-  var docHead = document.getElementsByTagName('head')[0];
-  window.t7cache = {};
-
+  var isBrowser = typeof window != "undefined" && document != null;
+  var docHead = null;
   //to save time later, we can pre-create a props object structure to re-use
   var functionProps = {};
   var functionPlaceholders = [];
   var output = null;
   var tags = {};
+  var ii = 1;
+  var selfClosingTags = [];
 
-  for(var ii = 1; ii < 15; ii++) {
+  if(isBrowser === true) {
+    docHead = document.getElementsByTagName('head')[0];
+  }
+
+  for(ii = 1; ii < 15; ii++) {
     functionProps["$" + ii] = null;
     functionPlaceholders.push("$" + ii);
   };
 
-  var selfClosingTags = [
+  selfClosingTags = [
     'area',
     'base',
     'br',
@@ -45,7 +50,7 @@ var t7 = (function() {
   ];
 
   //when creating a new function from a vdom, we'll need to build the vdom's children
-  function buildCitoChildren(root, tagParams, childrenProp) {
+  function buildUniversalChildren(root, tagParams, childrenProp) {
     var childrenText = [];
     var i = 0;
     var n = 0;
@@ -121,8 +126,8 @@ var t7 = (function() {
     if(Array.isArray(root)) {
       //throw error about adjacent elements
     } else {
-      //Cito output
-      if(output === t7.Outputs.Cito) {
+      //Universal output
+      if(output === t7.Outputs.Universal) {
         functionText.push("{");
 
         //add the tag name
@@ -139,7 +144,7 @@ var t7 = (function() {
         }
 
         //build the children for this node
-        buildCitoChildren(root, tagParams, true);
+        buildUniversalChildren(root, tagParams, true);
 
         functionText.push(tagParams.join(','));
         functionText.push("}");
@@ -399,7 +404,7 @@ var t7 = (function() {
     //set our unique key
     templateKey = "t7" + keyVal;
 
-    if(window.t7cache[templateKey] == null) {
+    if(t7._cache[templateKey] == null) {
       fullHtml = '';
       //put our placeholders around the template parts
       for(i = 0, n = template.length; i < n; i++) {
@@ -419,21 +424,28 @@ var t7 = (function() {
       );
 
       //manage the different ways of joining code outputs
-      if(output === t7.Outputs.Cito) {
+      if(output === t7.Outputs.Universal) {
         scriptCode = functionString.join('');
       } else if(output === t7.Outputs.React) {
         scriptCode = functionString.join(',');
       }
 
-      //build a new Function
-      scriptString = 'window.t7cache["' + templateKey + '"]=function(props)';
-      scriptString += '{"use strict";return ' + scriptCode + '}';
+      //build a new Function and store it depending if on node or browser
+      if(isBrowser === true) {
+        scriptString = 't7._cache["' + templateKey + '"]=function(props)';
+        scriptString += '{"use strict";return ' + scriptCode + '}';
 
-      addNewScriptFunction(scriptString, templateKey);
+        addNewScriptFunction(scriptString, templateKey);
+      } else {
+        t7._cache[templateKey] = new Function('"use strict";var props = arguments[0];return ' + scriptCode + '');
+      }
     }
 
-    return window.t7cache[templateKey](functionProps);
+    return t7._cache[templateKey](functionProps);
   };
+
+  //storage for the cache
+  t7._cache = {};
 
   //a lightweight flow control function
   //expects truthy and falsey to be functions
@@ -461,7 +473,6 @@ var t7 = (function() {
     return output;
   };
 
-  //TODO register tags
   t7.registerTag = function(tagName, tag) {
     tags[tagName] = tag;
   };
@@ -471,9 +482,9 @@ var t7 = (function() {
   };
 
   t7.Outputs = {
-    Cito: "Cito",
-    React: "React"
-  }
+    React: "React",
+    Universal: "Universal"
+  };
 
   //set the type to React as default
   output = t7.Outputs.React;
