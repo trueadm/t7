@@ -86,9 +86,7 @@ var t7 = (function() {
       //we're building an array in code, so we need an open bracket
       for(i = 0, n = root.children.length; i < n; i++) {
         if(root.children[i][0] === "$") {
-          childrenText.push("{children:");
           childrenText.push(root.children[i].substring(1));
-          childrenText.push("}");
         } else {
           buildFunction(root.children[i], childrenText, i === root.children.length - 1)
         }
@@ -163,6 +161,11 @@ var t7 = (function() {
         //the props/attrs
         if(root.attrs != null) {
           buildAttrsParams(root, attrsParams);
+
+          if(root.key != null) {
+            attrsParams.push("'key':'" + root.key + "'");
+          }
+
           tagParams.push("{" + attrsParams.join(',') + "}");
         } else {
           tagParams.push("null");
@@ -435,7 +438,6 @@ var t7 = (function() {
   //a lightweight flow control function
   //expects truthy and falsey to be functions
   t7.if = function(expression, truthy) {
-
     if(expression) {
       return {
         else: function() {
@@ -473,8 +475,8 @@ var t7 = (function() {
     React: "React"
   }
 
-  //set the type to Cito as default
-  output = t7.Outputs.Cito;
+  //set the type to React as default
+  output = t7.Outputs.React;
 
   return t7;
 })();

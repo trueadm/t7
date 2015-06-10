@@ -14,7 +14,7 @@
       render: function() {
         return t7`
           <span>
-            This is a widget!
+            This is a widget! ${ this.props.testVar }!
           </span>
         `;
       }
@@ -23,16 +23,17 @@
     t7.registerTag("Widget", Widget);
 
     var testVar = "Hello world";
+    var test = "hello";
 
     var example = t7`
-      <div className="foo">
+      <div className="foo" id=${test}>
         <h1>Components</h1>
         <span>${ testVar }</span>
         <ul>
           <li>1</li>
           <li>2</li>
         </ul>
-        <Widget testVar="${ testVar }"></Widget>
+        <Widget testVar=${ testVar }></Widget>
       </div>
     `;
 
