@@ -61,12 +61,14 @@ var t7 = (function() {
       childrenText.push("[");
 
       for(i = 0, n = root.children.length; i < n; i++) {
-        if(root.children[i][0] === "$") {
-          childrenText.push("{children:");
-          childrenText.push(root.children[i].substring(1));
-          childrenText.push("}");
-        } else {
-          buildFunction(root.children[i], childrenText, i === root.children.length - 1)
+        if(root.children[i] != null) {
+          if(root.children[i][0] === "$") {
+            childrenText.push("{children:");
+            childrenText.push(root.children[i].substring(1));
+            childrenText.push("}");
+          } else {
+            buildFunction(root.children[i], childrenText, i === root.children.length - 1)
+          }
         }
       }
       //we now need to close the array we've constructed
@@ -90,10 +92,12 @@ var t7 = (function() {
     if(root.children != null && Array.isArray(root.children)) {
       //we're building an array in code, so we need an open bracket
       for(i = 0, n = root.children.length; i < n; i++) {
-        if(root.children[i][0] === "$") {
-          childrenText.push(root.children[i].substring(1));
-        } else {
-          buildFunction(root.children[i], childrenText, i === root.children.length - 1)
+        if(root.children[i] != null) {
+          if(root.children[i][0] === "$") {
+            childrenText.push(root.children[i].substring(1));
+          } else {
+            buildFunction(root.children[i], childrenText, i === root.children.length - 1)
+          }
         }
       }
       //push the children code into our tag params code
@@ -128,58 +132,70 @@ var t7 = (function() {
     } else {
       //Universal output
       if(output === t7.Outputs.Universal) {
-        functionText.push("{");
+        //if we have a tag, add an element
+        if(root.tag != null) {
+          functionText.push("{");
 
-        //add the tag name
-        tagParams.push("tag: '" + root.tag + "'");
+          //add the tag name
+          tagParams.push("tag: '" + root.tag + "'");
 
-        if(root.key != null) {
-          tagParams.push("key: '" + root.key + "'");
-        }
+          if(root.key != null) {
+            tagParams.push("key: '" + root.key + "'");
+          }
 
-        //build the attrs
-        if(root.attrs != null) {
-          buildAttrsParams(root, attrsParams);
-          tagParams.push("attrs: {" + attrsParams.join(',') + "}");
-        }
+          //build the attrs
+          if(root.attrs != null) {
+            buildAttrsParams(root, attrsParams);
+            tagParams.push("attrs: {" + attrsParams.join(',') + "}");
+          }
 
-        //build the children for this node
-        buildUniversalChildren(root, tagParams, true);
+          //build the children for this node
+          buildUniversalChildren(root, tagParams, true);
 
-        functionText.push(tagParams.join(','));
-        functionText.push("}");
+          functionText.push(tagParams.join(','));
+          functionText.push("}");
 
-        //if we are at the end of building an array, do not add the comma after
-        if(isLast === false) {
-          functionText.push(",");
+          //if we are at the end of building an array, do not add the comma after
+          if(isLast === false) {
+            functionText.push(",");
+          }
+        } else {
+          //add a text entry
+          functionText.push("'" + root + "'");
         }
       }
       //React output
       else if(output === t7.Outputs.React) {
-        //find out if the tag is a componenet
-        if(root.tag[0] === root.tag[0].toUpperCase()) {
-          functionText.push("React.createElement(t7.loadTag('" + root.tag + "')");
-        } else {
-          functionText.push("React.createElement('" + root.tag + "'");
-        }
-
-        //the props/attrs
-        if(root.attrs != null) {
-          buildAttrsParams(root, attrsParams);
-
-          if(root.key != null) {
-            attrsParams.push("'key':'" + root.key + "'");
+        //if we have a tag, add an element
+        if(root.tag != null) {
+          //find out if the tag is a componenet
+          if(root.tag[0] === root.tag[0].toUpperCase()) {
+            functionText.push("React.createElement(t7.loadTag('" + root.tag + "')");
+          } else {
+            functionText.push("React.createElement('" + root.tag + "'");
           }
 
-          tagParams.push("{" + attrsParams.join(',') + "}");
+          //the props/attrs
+          if(root.attrs != null) {
+            buildAttrsParams(root, attrsParams);
+
+            if(root.key != null) {
+              attrsParams.push("'key':'" + root.key + "'");
+            }
+
+            tagParams.push("{" + attrsParams.join(',') + "}");
+          } else {
+            tagParams.push("null");
+          }
+
+          //build the children for this node
+          buildReactChildren(root, tagParams, true);
+
+          functionText.push(tagParams.join(',') + ")");
         } else {
-          tagParams.push("null");
+          //add a text entry
+          functionText.push("'" + root + "'");
         }
-
-        //build the children for this node
-        buildReactChildren(root, tagParams, true);
-
-        functionText.push(tagParams.join(',') + ")");
       }
     }
   };
@@ -229,13 +245,20 @@ var t7 = (function() {
               }
             }
 
-            if(childText !== null) {
+            if(childText !== null && parent.children.length === 0) {
               parent.children = childText;
+            } else {
+              parent.children.push(childText);
             }
           }
           //move back up the vDom tree
           parent = parent.parent;
         } else {
+          //check if we have any content in the childText, if so, it was a text node that needs to be added
+          if(childText.trim().length > 0 && !Array.isArray(parent)) {
+            parent.children.push(childText);
+            childText = "";
+          }
           //check if there any spaces in the tagContent, if not, we have our tagName
           if(tagContent.indexOf(" ") === -1) {
             tagData = {};

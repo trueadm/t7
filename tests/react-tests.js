@@ -30,11 +30,23 @@ describe("React tests", function() {
     assert(output === expected);
   });
 
+  it('should handle a dnyamic list of elements', function() {
+    var items = ["one", "two", "three", "four"];
+    var mapping = function(item, index) {
+      return t7`<li className="item" id=${ "item-" + index }>${ item } - #${index}</li>`;
+    };
+
+    var input = t7`<ul className="items">${ items.map(mapping) }</ul>`;
+    var output = React.renderToStaticMarkup(input);
+    var expected = '<ul class="items"><li class="item" id="item-0">one - #0</li><li class="item" id="item-1">two - #1</li>'
+                  + '<li class="item" id="item-2">three - #2</li><li class="item" id="item-3">four - #3</li></ul>';
+    assert(output === expected);
+  });
+
   it('should handle a complex set of elements', function() {
     var input = t7`<div><span>Here is </span><br />another<span>span!</span><div>this is </div>a block!</div>`;
     var output = React.renderToStaticMarkup(input);
-    console.log(output);
-    var expected = '<div>Hello world</div>';
+    var expected = '<div><span>Here is </span><br>another<span>span!</span><div>this is </div>a block!</div>';
     assert(output === expected);
   });
 });
