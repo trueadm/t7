@@ -76,8 +76,9 @@ http://t7js.com/dbmonster/precompiled.html
 
 By default t7 will attempt to check to see if React is available. If it is, t7 will
 automatically produce React elements as its output. This allows developers to easily
-swap in t7 for JSX code. t7 can also produce "universal" virtual DOM output. To switch
-the output, use `t7.setOutput(t7.Outputs.Universal)`. To force React output, you can use
+swap in t7 for JSX code. t7 can also produce "universal" virtual DOM output. Universal DOM
+output should be compatible with most other virtual DOM frameworks out there (Mithril, Mercury, Cito and Virtal-dom).
+To switch the output, use `t7.setOutput(t7.Outputs.Universal)`. To use React output, you can use
 `t7.setOutput(t7.Outputs.React)`.
 
 ## Components
