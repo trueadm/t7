@@ -57,9 +57,6 @@ var t7 = (function() {
 
     //if the node has children that is an array, handle it with a loop
     if(root.children != null && Array.isArray(root.children)) {
-      //we're building an array in code, so we need an open bracket
-      childrenText.push("[");
-
       for(i = 0, n = root.children.length; i < n; i++) {
         if(root.children[i] != null) {
           if(root.children[i][0] === "$") {
@@ -67,14 +64,12 @@ var t7 = (function() {
             childrenText.push(root.children[i].substring(1));
             childrenText.push("}");
           } else {
-            buildFunction(root.children[i], childrenText, i === root.children.length - 1)
+            buildFunction(root.children[i], childrenText)
           }
         }
       }
-      //we now need to close the array we've constructed
-      childrenText.push("]");
       //push the children code into our tag params code
-      tagParams.push((childrenProp ? "children: " : "") + childrenText.join(""));
+      tagParams.push((childrenProp ? "children: " : "") + "[" + childrenText.join(",") + "]");
 
     } else if(root.children != null && typeof root.children === "string") {
       root.children = root.children.replace(/(\r\n|\n|\r)/gm,"");
@@ -121,7 +116,7 @@ var t7 = (function() {
 
   //This takes a vDom array and builds a new function from it, to improve
   //repeated performance at the cost of building new Functions()
-  function buildFunction(root, functionText, isLast) {
+  function buildFunction(root, functionText) {
     var i = 0;
     var tagParams = [];
     var literalParts = [];
@@ -133,11 +128,8 @@ var t7 = (function() {
       //Universal output
       if(output === t7.Outputs.Universal) {
         //if we have a tag, add an element
-        if(root.tag != null) {
-          functionText.push("{");
-
-          //add the tag name
-          tagParams.push("tag: '" + root.tag + "'");
+        if(root.tag != null && tags[root.tag] == null) {
+          functionText.push("{tag: '" + root.tag + "'");
 
           if(root.key != null) {
             tagParams.push("key: '" + root.key + "'");
@@ -152,13 +144,12 @@ var t7 = (function() {
           //build the children for this node
           buildUniversalChildren(root, tagParams, true);
 
-          functionText.push(tagParams.join(','));
-          functionText.push("}");
+          functionText.push(tagParams.join(',') + "}");
 
-          //if we are at the end of building an array, do not add the comma after
-          if(isLast === false) {
-            functionText.push(",");
-          }
+        } else if (root.tag != null && tags[root.tag] != null) {
+          //we need to apply the tag components
+          buildAttrsParams(root, attrsParams);
+          functionText.push("t7.loadTag('" + root.tag + "')({" + attrsParams.join(',') + "})");
         } else {
           //add a text entry
           functionText.push("'" + root + "'");
@@ -436,7 +427,7 @@ var t7 = (function() {
     };
 
     //set our unique key
-    templateKey = createTemplateKey(tpl);
+    templateKey = createTemplateKey(tpl) + output;
 
     if(t7._cache[templateKey] == null) {
       fullHtml = '';
@@ -453,16 +444,10 @@ var t7 = (function() {
       buildFunction(
         //build a vDom from the HTML
         getVdom(fullHtml, functionPlaceholders, functionProps),
-        functionString,
-        true
+        functionString
       );
 
-      //manage the different ways of joining code outputs
-      if(output === t7.Outputs.Universal) {
-        scriptCode = functionString.join('');
-      } else if(output === t7.Outputs.React) {
-        scriptCode = functionString.join(',');
-      }
+      scriptCode = functionString.join(',');
 
       //build a new Function and store it depending if on node or browser
       if(isBrowser === true) {
@@ -515,13 +500,17 @@ var t7 = (function() {
     delete tags[tagName];
   };
 
+  t7.deregisterAllTags = function() {
+    tags = {};
+  };
+
   t7.loadTag = function(tagName) {
     return tags[tagName];
   };
 
   t7.Outputs = {
-    React: "React",
-    Universal: "Universal"
+    React: 1,
+    Universal: 2
   };
 
   //set the type to React as default if it exists in global scope
