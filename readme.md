@@ -58,7 +58,7 @@ t7`
 
 ```
 
-The above will return a React compliant virtual DOM object that can be used in React render() functions
+If React is detected in the scope, the above will return a React compliant virtual DOM object that can be used in React render() functions. You can manually select the output of t7 by using `t7.setOutput(...)`
 
 ## dbmonster
 
@@ -71,6 +71,48 @@ http://t7js.com/dbmonster/index.html
 ### Precompiled (Production)
 
 http://t7js.com/dbmonster/precompiled.html
+
+## Outputs
+
+By default t7 will attempt to check to see if React is available. If it is, t7 will
+automatically produce React elements as its output. This allows developers to easily
+swap in t7 for JSX code. t7 can also produce "universal" virtual DOM output. To switch
+the output, use `t7.setOutput(t7.Outputs.Universal)`. To force React output, you can use
+`t7.setOutput(t7.Outputs.React)`.
+
+## Components
+
+Components and sub-components are essential for breaking down large applications
+into manageable parts that can be re-used. t7 understands this and has a simple
+syntax for defining components in relation to custom elements. Much like JSX, you
+can pass a HTML tag with a reference to a JavaScript object.
+
+To do so, simply let t7 know the name of the HTML tag that will be the local object in
+its `registerTag()` function. t7 also handles React components in the same way.
+
+```javascript
+
+function Widget() {
+  return t7`
+    <div>
+      <span>I'm a widget</span>
+    </div>
+  `;
+}
+
+t7.registerTag({
+  "my-wiget": Widget
+});
+
+t7`
+  <div>
+    <header>
+      <my-widget pages=${ pages } />
+    </header>
+  </div>
+`;
+
+```
 
 ## Control Flow
 
@@ -109,7 +151,7 @@ template compile times.
 
 ## Support
 
-Currently, only Firefox 34+ and Chrome 41+ support ES2015 template strings. However,
+Currently, Safari 9+, Microsoft Edge, Firefox 34+ and Chrome 41+ support ES2015 template strings. However,
 there are transpilers (such as [Babel](https://babeljs.io/) or Traceur) that provide support for ES2015 templates.
-This should not affect usae of t7 in produciton mode, as the precompiler will provide support for
-IE6+.
+This should not affect usage of t7 in produciton mode, as the precompiler will provide support for
+IE7+.

@@ -11,19 +11,26 @@ var t7 = (function() {
   "use strict";
 
   //we store created functions in the cache (key is the template string)
-  var docHead = document.getElementsByTagName('head')[0];
-  window.t7cache = {};
-
+  var isBrowser = typeof window != "undefined" && document != null;
+  var docHead = null;
   //to save time later, we can pre-create a props object structure to re-use
   var functionProps = {};
   var functionPlaceholders = [];
+  var output = null;
+  var tags = {};
+  var ii = 1;
+  var selfClosingTags = [];
 
-  for(var ii = 1; ii < 15; ii++) {
+  if(isBrowser === true) {
+    docHead = document.getElementsByTagName('head')[0];
+  }
+
+  for(ii = 1; ii < 15; ii++) {
     functionProps["$" + ii] = null;
     functionPlaceholders.push("$" + ii);
   };
 
-  var selfClosingTags = [
+  selfClosingTags = [
     'area',
     'base',
     'br',
@@ -43,7 +50,35 @@ var t7 = (function() {
   ];
 
   //when creating a new function from a vdom, we'll need to build the vdom's children
-  function buildChildren(root, tagParams, childrenProp) {
+  function buildUniversalChildren(root, tagParams, childrenProp) {
+    var childrenText = [];
+    var i = 0;
+    var n = 0;
+
+    //if the node has children that is an array, handle it with a loop
+    if(root.children != null && Array.isArray(root.children)) {
+      for(i = 0, n = root.children.length; i < n; i++) {
+        if(root.children[i] != null) {
+          if(root.children[i][0] === "$") {
+            childrenText.push("{children:");
+            childrenText.push(root.children[i].substring(1));
+            childrenText.push("}");
+          } else {
+            buildFunction(root.children[i], childrenText)
+          }
+        }
+      }
+      //push the children code into our tag params code
+      tagParams.push((childrenProp ? "children: " : "") + "[" + childrenText.join(",") + "]");
+
+    } else if(root.children != null && typeof root.children === "string") {
+      root.children = root.children.replace(/(\r\n|\n|\r)/gm,"");
+      tagParams.push((childrenProp ? "children: " : "") + '"' + root.children + '"');
+    }
+  };
+
+  //when creating a new function from a vdom, we'll need to build the vdom's children
+  function buildReactChildren(root, tagParams, childrenProp) {
     var childrenText = [];
     var i = 0;
     var n = 0;
@@ -51,25 +86,23 @@ var t7 = (function() {
     //if the node has children that is an array, handle it with a loop
     if(root.children != null && Array.isArray(root.children)) {
       //we're building an array in code, so we need an open bracket
-      childrenText.push("[");
-
       for(i = 0, n = root.children.length; i < n; i++) {
-        if(root.children[i][0] === "$") {
-          childrenText.push("{children:");
-          childrenText.push(root.children[i].substring(1));
-          childrenText.push("}");
-        } else {
-          buildFunction(root.children[i], childrenText, i === root.children.length - 1)
+        if(root.children[i] != null) {
+          if(root.children[i][0] === "$") {
+            childrenText.push(root.children[i].substring(1));
+          } else {
+            buildFunction(root.children[i], childrenText, i === root.children.length - 1)
+          }
         }
       }
-      //we now need to close the array we've constructed
-      childrenText.push("]");
       //push the children code into our tag params code
-      tagParams.push((childrenProp ? "children: " : "") + childrenText.join(""));
+      if(childrenText.length > 0) {
+        tagParams.push(childrenText.join(","));
+      }
 
     } else if(root.children != null && typeof root.children === "string") {
       root.children = root.children.replace(/(\r\n|\n|\r)/gm,"");
-      tagParams.push((childrenProp ? "children: " : "") + '"' + root.children + '"');
+      tagParams.push('"' + root.children + '"');
     }
   };
 
@@ -83,7 +116,7 @@ var t7 = (function() {
 
   //This takes a vDom array and builds a new function from it, to improve
   //repeated performance at the cost of building new Functions()
-  function buildFunction(root, functionText, isLast) {
+  function buildFunction(root, functionText) {
     var i = 0;
     var tagParams = [];
     var literalParts = [];
@@ -92,30 +125,68 @@ var t7 = (function() {
     if(Array.isArray(root)) {
       //throw error about adjacent elements
     } else {
-      functionText.push("{");
+      //Universal output
+      if(output === t7.Outputs.Universal) {
+        //if we have a tag, add an element
+        if(root.tag != null && tags[root.tag] == null) {
+          functionText.push("{tag: '" + root.tag + "'");
 
-      //add the tag name
-      tagParams.push("tag: '" + root.tag + "'");
+          if(root.key != null) {
+            tagParams.push("key: '" + root.key + "'");
+          }
 
-      if(root.key != null) {
-        tagParams.push("key: '" + root.key + "'");
+          //build the attrs
+          if(root.attrs != null) {
+            buildAttrsParams(root, attrsParams);
+            tagParams.push("attrs: {" + attrsParams.join(',') + "}");
+          }
+
+          //build the children for this node
+          buildUniversalChildren(root, tagParams, true);
+
+          functionText.push(tagParams.join(',') + "}");
+
+        } else if (root.tag != null && tags[root.tag] != null) {
+          //we need to apply the tag components
+          buildAttrsParams(root, attrsParams);
+          functionText.push("t7.loadTag('" + root.tag + "')({" + attrsParams.join(',') + "})");
+        } else {
+          //add a text entry
+          functionText.push("'" + root + "'");
+        }
       }
+      //React output
+      else if(output === t7.Outputs.React) {
+        //if we have a tag, add an element
+        if(root.tag != null) {
+          //find out if the tag is a React componenet
+          if(tags[root.tag] != null) {
+            functionText.push("React.createElement(t7.loadTag('" + root.tag + "')");
+          } else {
+            functionText.push("React.createElement('" + root.tag + "'");
+          }
 
-      //build the attrs
-      if(root.attrs != null) {
-        buildAttrsParams(root, attrsParams);
-        tagParams.push("attrs: {" + attrsParams.join(',') + "}");
-      }
+          //the props/attrs
+          if(root.attrs != null) {
+            buildAttrsParams(root, attrsParams);
 
-      //build the children for this node
-      buildChildren(root, tagParams, true);
+            if(root.key != null) {
+              attrsParams.push("'key':'" + root.key + "'");
+            }
 
-      functionText.push(tagParams.join(','));
-      functionText.push("}");
+            tagParams.push("{" + attrsParams.join(',') + "}");
+          } else {
+            tagParams.push("null");
+          }
 
-      //if we are at the end of building an array, do not add the comma after
-      if(isLast === false) {
-        functionText.push(",");
+          //build the children for this node
+          buildReactChildren(root, tagParams, true);
+
+          functionText.push(tagParams.join(',') + ")");
+        } else {
+          //add a text entry
+          functionText.push("'" + root + "'");
+        }
       }
     }
   };
@@ -165,15 +236,23 @@ var t7 = (function() {
               }
             }
 
-            if(childText !== null) {
+            if(childText !== null && parent.children.length === 0) {
               parent.children = childText;
+            } else {
+              parent.children.push(childText);
             }
           }
           //move back up the vDom tree
           parent = parent.parent;
         } else {
+          //check if we have any content in the childText, if so, it was a text node that needs to be added
+          if(childText.trim().length > 0 && !Array.isArray(parent)) {
+            parent.children.push(childText);
+            childText = "";
+          }
           //check if there any spaces in the tagContent, if not, we have our tagName
           if(tagContent.indexOf(" ") === -1) {
+            tagData = {};
             tagName = tagContent;
           } else {
             //get the tag data via the getTagData function
@@ -319,6 +398,17 @@ var t7 = (function() {
     docHead.appendChild(scriptElement);
   }
 
+  function createTemplateKey(tpl) {
+    var hash = 0, i, chr, len;
+    if (tpl.length == 0) return tpl;
+    for (i = 0, len = tpl.length; i < len; i++) {
+      chr   = tpl.charCodeAt(i);
+      hash  = ((hash << 5) - hash) + chr;
+      hash |= 0;
+    }
+    return hash;
+  };
+
   //main t7 compiling function
   function t7(template) {
     var fullHtml = null;
@@ -327,18 +417,19 @@ var t7 = (function() {
     var functionString = null;
     var scriptString = null;
     //we need to generate a very quick key that will be used as the function name
+    var scriptCode = "";
     var templateKey = null;
-    var keyVal = n * 7;
+    var tpl = template[0];
 
     for(; i < n; i++) {
       functionProps["$" + i] = arguments[i];
-      keyVal *= template[i].length * i;
+      tpl += template[i];
     };
 
     //set our unique key
-    templateKey = "t7" + keyVal;
+    templateKey = createTemplateKey(tpl) + output;
 
-    if(window.t7cache[templateKey] == null) {
+    if(t7._cache[templateKey] == null) {
       fullHtml = '';
       //put our placeholders around the template parts
       for(i = 0, n = template.length; i < n; i++) {
@@ -353,23 +444,31 @@ var t7 = (function() {
       buildFunction(
         //build a vDom from the HTML
         getVdom(fullHtml, functionPlaceholders, functionProps),
-        functionString,
-        true
-      )
-      //build a new Function
-      scriptString = 'window.t7cache["' + templateKey + '"]=function(props)';
-      scriptString += '{"use strict";return ' + functionString.join('') + '}';
+        functionString
+      );
 
-      addNewScriptFunction(scriptString, templateKey);
+      scriptCode = functionString.join(',');
+
+      //build a new Function and store it depending if on node or browser
+      if(isBrowser === true) {
+        scriptString = 't7._cache["' + templateKey + '"]=function(props)';
+        scriptString += '{"use strict";return ' + scriptCode + '}';
+
+        addNewScriptFunction(scriptString, templateKey);
+      } else {
+        t7._cache[templateKey] = new Function('"use strict";var props = arguments[0];return ' + scriptCode + '');
+      }
     }
 
-    return window.t7cache[templateKey](functionProps);
+    return t7._cache[templateKey](functionProps);
   };
+
+  //storage for the cache
+  t7._cache = {};
 
   //a lightweight flow control function
   //expects truthy and falsey to be functions
   t7.if = function(expression, truthy) {
-
     if(expression) {
       return {
         else: function() {
@@ -385,9 +484,37 @@ var t7 = (function() {
     }
   };
 
-  //TODO register tags
-  t7.register = function() {
+  t7.setOutput = function(newOutput) {
+    output = newOutput;
   };
+
+  t7.getOutput = function() {
+    return output;
+  };
+
+  t7.registerTag = function(tagName, tag) {
+    tags[tagName] = tag;
+  };
+
+  t7.deregisterTag = function(tagName) {
+    delete tags[tagName];
+  };
+
+  t7.deregisterAllTags = function() {
+    tags = {};
+  };
+
+  t7.loadTag = function(tagName) {
+    return tags[tagName];
+  };
+
+  t7.Outputs = {
+    React: 1,
+    Universal: 2
+  };
+
+  //set the type to React as default if it exists in global scope
+  output = typeof React != "undefined" ? t7.Outputs.React : t7.Outputs.Universal;
 
   return t7;
 })();
