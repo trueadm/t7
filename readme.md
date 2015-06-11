@@ -88,34 +88,38 @@ syntax for defining components in relation to custom elements. Much like JSX, yo
 can pass a HTML tag with a reference to a JavaScript object.
 
 To do so, simply let t7 know the name of the HTML tag that will be the local object in
-its `registerTag()` function. t7 also handles React components in the same way.
+its `registerComponent()` function. t7 also handles React components in the same way.
 
 ```javascript
 
-function Widget() {
+function MyWidget(props) {
   return t7`
     <div>
-      <span>I'm a widget</span>
+      <span>I'm a widget ${ props.welcome }</span>
     </div>
   `;
 }
 
-t7.registerTag({
-  "my-wiget": Widget
+t7.registerComponent({
+  "Widget": MyWidget
 });
 
 t7`
   <div>
     <header>
-      <my-widget pages=${ pages } />
+      <Widget welcome="Hello world" />
     </header>
   </div>
 `;
 
 ```
 
-You must ensure that registered tags are unique and not already used in the HTML5
-specification, otherwise t7 will not register your tag.
+You must ensure that registered component name start with an uppercase character, such
+as `<Foo></Foo>` this ensures that the component gets picked up by t7 properly. This is
+the same to how JSX handles components, except t7 components are available throghout the application,
+not only in the localized scope.
+
+</aside>
 
 ## Control Flow
 

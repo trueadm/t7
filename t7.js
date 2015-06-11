@@ -10,35 +10,6 @@
 var t7 = (function() {
   "use strict";
 
-  //list of tags and if they are self closing
-  var tags = {
-    a: false,
-    b: false,
-    i: false,
-    br: true,
-    input: true,
-    abbr: false,
-    span: false,
-    ul: false,
-    li: false,
-    ol: false,
-    form: false,
-    footer: false,
-    tr: false,
-    td: false,
-    thead: false,
-    div: false,
-    table: false,
-    section: false,
-    header: false,
-    button: false,
-    h1: false,
-    h2: false,
-    h3: false,
-    h4: false,
-    h5: false
-  };
-
   //we store created functions in the cache (key is the template string)
   var isBrowser = typeof window != "undefined" && document != null;
   var docHead = null;
@@ -46,7 +17,7 @@ var t7 = (function() {
   var functionProps = {};
   var functionPlaceholders = [];
   var output = null;
-  var tags = {};
+  var components = {};
   var ii = 1;
   var selfClosingTags = [];
 
@@ -143,6 +114,13 @@ var t7 = (function() {
     }
   };
 
+  function isComponentName(tagName) {
+    if(tagName[0] === tagName[0].toUpperCase()) {
+      return true;
+    }
+    return false;
+  };
+
   //This takes a vDom array and builds a new function from it, to improve
   //repeated performance at the cost of building new Functions()
   function buildFunction(root, functionText) {
@@ -156,29 +134,31 @@ var t7 = (function() {
     } else {
       //Universal output
       if(output === t7.Outputs.Universal) {
-        //if we have a tag, add an element
-        if(root.tag != null && tags[root.tag] == null) {
-          functionText.push("{tag: '" + root.tag + "'");
+        //if we have a tag, add an element, check too for a component
+        if(root.tag != null) {
+          if(isComponentName(root.tag) === false) {
+            functionText.push("{tag: '" + root.tag + "'");
 
-          if(root.key != null) {
-            tagParams.push("key: '" + root.key + "'");
-          }
+            if(root.key != null) {
+              tagParams.push("key: '" + root.key + "'");
+            }
 
-          //build the attrs
-          if(root.attrs != null) {
+            //build the attrs
+            if(root.attrs != null) {
+              buildAttrsParams(root, attrsParams);
+              tagParams.push("attrs: {" + attrsParams.join(',') + "}");
+            }
+
+            //build the children for this node
+            buildUniversalChildren(root, tagParams, true);
+
+            functionText.push(tagParams.join(',') + "}");
+
+          } else {
+            //we need to apply the tag components
             buildAttrsParams(root, attrsParams);
-            tagParams.push("attrs: {" + attrsParams.join(',') + "}");
+            functionText.push("t7.loadComponent('" + root.tag + "')({" + attrsParams.join(',') + "})");
           }
-
-          //build the children for this node
-          buildUniversalChildren(root, tagParams, true);
-
-          functionText.push(tagParams.join(',') + "}");
-
-        } else if (root.tag != null && tags[root.tag] != null) {
-          //we need to apply the tag components
-          buildAttrsParams(root, attrsParams);
-          functionText.push("t7.loadTag('" + root.tag + "')({" + attrsParams.join(',') + "})");
         } else {
           //add a text entry
           functionText.push("'" + root + "'");
@@ -189,8 +169,8 @@ var t7 = (function() {
         //if we have a tag, add an element
         if(root.tag != null) {
           //find out if the tag is a React componenet
-          if(tags[root.tag] != null) {
-            functionText.push("React.createElement(t7.loadTag('" + root.tag + "')");
+          if(isComponentName(root.tag) === true) {
+            functionText.push("React.createElement(t7.loadComponent('" + root.tag + "')");
           } else {
             functionText.push("React.createElement('" + root.tag + "'");
           }
@@ -521,24 +501,20 @@ var t7 = (function() {
     return output;
   };
 
-  t7.registerTag = function(tagName, tag) {
-    tags[tagName] = tag;
+  t7.registerComponent = function(componentName, component) {
+    components[componentName] = component;
   };
 
-  t7.deregisterTag = function(tagName) {
-    delete tags[tagName];
+  t7.deregisterComponent = function(componentName) {
+    delete components[componentName];
   };
 
-  t7.deregisterAllTags = function() {
-    tags = {};
+  t7.deregisterAllComponents = function() {
+    components = {};
   };
 
-  //TODO
-  t7.blockListTags = function(tags) {
-  }
-
-  t7.loadTag = function(tagName) {
-    return tags[tagName];
+  t7.loadComponent = function(componentName) {
+    return components[componentName];
   };
 
   t7.Outputs = {
