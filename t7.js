@@ -168,8 +168,8 @@ var t7 = (function() {
       else if(output === t7.Outputs.React) {
         //if we have a tag, add an element
         if(root.tag != null) {
-          //find out if the tag is a componenet
-          if(root.tag[0] === root.tag[0].toUpperCase()) {
+          //find out if the tag is a React componenet
+          if(tags[root.tag] != null) {
             functionText.push("React.createElement(t7.loadTag('" + root.tag + "')");
           } else {
             functionText.push("React.createElement('" + root.tag + "'");
@@ -509,6 +509,10 @@ var t7 = (function() {
 
   t7.registerTag = function(tagName, tag) {
     tags[tagName] = tag;
+  };
+
+  t7.deregisterTag = function(tagName) {
+    delete tags[tagName];
   };
 
   t7.loadTag = function(tagName) {
