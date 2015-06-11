@@ -384,6 +384,17 @@ var t7 = (function() {
     docHead.appendChild(scriptElement);
   }
 
+  function createTemplateKey(tpl) {
+    var hash = 0, i, chr, len;
+    if (tpl.length == 0) return tpl;
+    for (i = 0, len = tpl.length; i < len; i++) {
+      chr   = tpl.charCodeAt(i);
+      hash  = ((hash << 5) - hash) + chr;
+      hash |= 0;
+    }
+    return hash;
+  };
+
   //main t7 compiling function
   function t7(template) {
     var fullHtml = null;
@@ -392,17 +403,17 @@ var t7 = (function() {
     var functionString = null;
     var scriptString = null;
     //we need to generate a very quick key that will be used as the function name
-    var templateKey = null;
     var scriptCode = "";
-    var keyVal = n * 7;
+    var templateKey = null;
+    var tpl = template[0];
 
     for(; i < n; i++) {
       functionProps["$" + i] = arguments[i];
-      keyVal *= template[i].length * i;
+      tpl += template[i];
     };
 
     //set our unique key
-    templateKey = "t7" + keyVal;
+    templateKey = createTemplateKey(tpl);
 
     if(t7._cache[templateKey] == null) {
       fullHtml = '';
@@ -486,8 +497,8 @@ var t7 = (function() {
     Universal: "Universal"
   };
 
-  //set the type to React as default
-  output = t7.Outputs.React;
+  //set the type to React as default if it exists in global scope
+  output = typeof React != "undefined" ? t7.Outputs.React : t7.Outputs.Universal;
 
   return t7;
 })();
