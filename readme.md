@@ -114,6 +114,9 @@ t7`
 
 ```
 
+You must ensure that registered tags are unique and not already used in the HTML5
+specification, otherwise t7 will not register your tag.
+
 ## Control Flow
 
 To help reduce boilerplate and speed up development, t7 comes with a few essential

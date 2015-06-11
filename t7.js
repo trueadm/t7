@@ -10,6 +10,35 @@
 var t7 = (function() {
   "use strict";
 
+  //list of tags and if they are self closing
+  var tags = {
+    a: false,
+    b: false,
+    i: false,
+    br: true,
+    input: true,
+    abbr: false,
+    span: false,
+    ul: false,
+    li: false,
+    ol: false,
+    form: false,
+    footer: false,
+    tr: false,
+    td: false,
+    thead: false,
+    div: false,
+    table: false,
+    section: false,
+    header: false,
+    button: false,
+    h1: false,
+    h2: false,
+    h3: false,
+    h4: false,
+    h5: false
+  };
+
   //we store created functions in the cache (key is the template string)
   var isBrowser = typeof window != "undefined" && document != null;
   var docHead = null;
@@ -503,6 +532,10 @@ var t7 = (function() {
   t7.deregisterAllTags = function() {
     tags = {};
   };
+
+  //TODO
+  t7.blockListTags = function(tags) {
+  }
 
   t7.loadTag = function(tagName) {
     return tags[tagName];
