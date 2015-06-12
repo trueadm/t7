@@ -117,7 +117,7 @@ t7`
 
 You must ensure that registered component name starts with an uppercase character, such
 as `<Foo></Foo>` this ensures that the component gets picked up by t7 properly. This is
-the same to how JSX handles components, except t7 components are available throghout the application,
+the same to how JSX handles components, except t7 components are available throughout the application,
 not only in the localized scope.
 
 </aside>
