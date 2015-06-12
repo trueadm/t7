@@ -6,7 +6,7 @@ t7.js is a small, lightweight JavaScript template library that compiles ES2015 t
 
 [Template strings](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/template_strings)
 allow for JavaScript expressions to be embedded within literal strings. With that in mind,
-it made logical sense to build a small framework around them to assist developers
+it made logical sense to build a small library around them to assist developers
 wanting to work with virtual DOM frameworks without the overhead of learning a new
 language. t7 does not introduce new syntax into the mix like
 other templating engines do, it simply uses pure JavaScript and HTML.
