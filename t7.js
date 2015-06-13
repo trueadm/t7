@@ -60,9 +60,7 @@ var t7 = (function() {
       for(i = 0, n = root.children.length; i < n; i++) {
         if(root.children[i] != null) {
           if(root.children[i][0] === "$") {
-            childrenText.push("{children:");
-            childrenText.push(root.children[i].substring(1));
-            childrenText.push("}");
+            childrenText.push("{children:" + root.children[i].substring(1) + "}");
           } else {
             buildFunction(root.children[i], childrenText)
           }
