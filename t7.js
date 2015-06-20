@@ -229,6 +229,15 @@ var t7 = (function() {
     return childText;
   }
 
+  function replaceQuotes(string) {
+    // string = string.replace(/'/g,"\\'")
+    if(string.indexOf("'") > -1) {
+      string = string.replace(/'/g,"\\'")
+    }
+
+    return string;
+  }
+
   function getVdom(html, placeholders, props) {
     var char = '';
     var lastChar = '';
@@ -256,9 +265,10 @@ var t7 = (function() {
         if(tagContent[0] === "/") {
           //when the childText is not empty
           if(childText.trim() !== "") {
+            //escape quotes etc
+            childText = replaceQuotes(childText);
             //check if childText contains one of our placeholders
             childText = handleChildTextPlaceholders(childText, parent, props, placeholders, true);
-
             if(childText !== null && parent.children.length === 0) {
               parent.children = childText;
             } else {
@@ -270,6 +280,8 @@ var t7 = (function() {
         } else {
           //check if we have any content in the childText, if so, it was a text node that needs to be added
           if(childText.trim().length > 0 && !(parent instanceof Array)) {
+            //escape quotes etc
+            childText = replaceQuotes(childText);
             //check the childtext for placeholders
             childText = handleChildTextPlaceholders(
               childText.replace(/(\r\n|\n|\r)/gm,""),

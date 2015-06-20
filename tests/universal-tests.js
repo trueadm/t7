@@ -19,6 +19,13 @@ describe("Universal tests", function() {
     assert(output === expected);
   });
 
+  it('should handle a very simple single element with some quotes and double quotes', function() {
+    var input = t7`<div class="foo">Hello 'world' or should I say, "world"</div>`;
+    var output = JSON.stringify(input);
+    var expected = '{"tag":"div","attrs":{"class":"foo"},"children":"Hello \'world\' or should I say, \\"world\\""}';
+    assert(output === expected);
+  });
+
   it('should handle a very simple component/tag', function() {
     var component = function(props) {
       return t7`<span>${ props.name }</span>`;
