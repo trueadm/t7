@@ -56,7 +56,7 @@ var t7 = (function() {
     var n = 0;
 
     //if the node has children that is an array, handle it with a loop
-    if(root.children != null && Array.isArray(root.children)) {
+    if(root.children != null && root.children instanceof Array) {
       for(i = 0, n = root.children.length; i < n; i++) {
         if(root.children[i] != null) {
           if(root.children[i][0] === "$") {
@@ -71,7 +71,7 @@ var t7 = (function() {
 
     } else if(root.children != null && typeof root.children === "string") {
       root.children = root.children.replace(/(\r\n|\n|\r)/gm,"");
-      tagParams.push((childrenProp ? "children: " : "") + '"' + root.children + '"');
+      tagParams.push((childrenProp ? "children: " : "") + "'" + root.children + "'");
     }
   };
 
@@ -82,7 +82,7 @@ var t7 = (function() {
     var n = 0;
 
     //if the node has children that is an array, handle it with a loop
-    if(root.children != null && Array.isArray(root.children)) {
+    if(root.children != null && root.children instanceof Array) {
       //we're building an array in code, so we need an open bracket
       for(i = 0, n = root.children.length; i < n; i++) {
         if(root.children[i] != null) {
@@ -100,7 +100,7 @@ var t7 = (function() {
 
     } else if(root.children != null && typeof root.children === "string") {
       root.children = root.children.replace(/(\r\n|\n|\r)/gm,"");
-      tagParams.push('"' + root.children + '"');
+      tagParams.push("'" + root.children + "'");
     }
   };
 
@@ -127,7 +127,7 @@ var t7 = (function() {
     var literalParts = [];
     var attrsParams = [];
 
-    if(Array.isArray(root)) {
+    if(root instanceof Array) {
       //throw error about adjacent elements
     } else {
       //Universal output
@@ -162,15 +162,23 @@ var t7 = (function() {
           functionText.push("'" + root + "'");
         }
       }
-      //React output
-      else if(output === t7.Outputs.React) {
+      //React/Inferno output
+      else if(output === t7.Outputs.React || output === t7.Outputs.Inferno) {
         //if we have a tag, add an element
         if(root.tag != null) {
           //find out if the tag is a React componenet
-          if(isComponentName(root.tag) === true) {
-            functionText.push("React.createElement(t7.loadComponent('" + root.tag + "')");
+          if(output === t7.Outputs.React) {
+            if(isComponentName(root.tag) === true) {
+              functionText.push("React.createElement(t7.loadComponent('" + root.tag + "')");
+            } else {
+              functionText.push("React.createElement('" + root.tag + "'");
+            }
           } else {
-            functionText.push("React.createElement('" + root.tag + "'");
+            if(isComponentName(root.tag) === true) {
+              functionText.push("Inferno.createElement(t7.loadComponent('" + root.tag + "')");
+            } else {
+              functionText.push("Inferno.createElement('" + root.tag + "'");
+            }
           }
 
           //the props/attrs
@@ -198,13 +206,34 @@ var t7 = (function() {
     }
   };
 
+  function handleChildTextPlaceholders(childText, parent, props, placeholders, onlyChild) {
+    var s = 0;
+    var n2 = 0;
+    for(s = 0, n2 = placeholders.length; s < n2; s++) {
+      if(childText.indexOf(placeholders[s]) > -1) {
+        if(props[placeholders[s]] instanceof Array) {
+          //set the children to this object
+          parent.children.push('$props.' + placeholders[s]);
+          //set the child to null so we don't then append it to the parent's child below
+          childText = null;
+          break;
+        } else {
+          if(output === t7.Outputs.Universal) {
+            childText = childText.replace(placeholders[s], "' + props." + placeholders[s] + " + '");
+          } else {
+            childText = childText.replace(placeholders[s], "',props." + placeholders[s] + ",'");
+          }
+        }
+      }
+    }
+    return childText;
+  }
+
   function getVdom(html, placeholders, props) {
     var char = '';
     var lastChar = '';
     var i = 0;
-    var s = 0;
     var n = 0;
-    var n2 = 0;
     var root = null;
     var insideTag = false;
     var tagContent = '';
@@ -228,20 +257,7 @@ var t7 = (function() {
           //when the childText is not empty
           if(childText.trim() !== "") {
             //check if childText contains one of our placeholders
-            for(s = 0, n2 = placeholders.length; s < n2; s++) {
-              if(childText.indexOf(placeholders[s]) > -1) {
-                if(Array.isArray(props[placeholders[s]])) {
-                  //set the children to this object
-                  parent.children.push('$props.' + placeholders[s]);
-                  //set the child to null so we don't then append it to the parent's child below
-                  childText = null;
-                  break;
-                } else if( typeof props[placeholders[s]] === "string"
-                  || typeof props[placeholders[s]] === "number" ) {
-                  childText = childText.replace(placeholders[s], '" + props.' + placeholders[s] + ' + "');
-                }
-              }
-            }
+            childText = handleChildTextPlaceholders(childText, parent, props, placeholders, true);
 
             if(childText !== null && parent.children.length === 0) {
               parent.children = childText;
@@ -253,7 +269,14 @@ var t7 = (function() {
           parent = parent.parent;
         } else {
           //check if we have any content in the childText, if so, it was a text node that needs to be added
-          if(childText.trim().length > 0 && !Array.isArray(parent)) {
+          if(childText.trim().length > 0 && !(parent instanceof Array)) {
+            //check the childtext for placeholders
+            childText = handleChildTextPlaceholders(
+              childText.replace(/(\r\n|\n|\r)/gm,""),
+              parent,
+              props,
+              placeholders
+            );
             parent.children.push(childText);
             childText = "";
           }
@@ -279,7 +302,7 @@ var t7 = (function() {
           if(parent === null) {
             parent = vElement;
             root = parent;
-          } else if (Array.isArray(parent)) {
+          } else if (parent instanceof Array) {
             parent.push(vElement);
           } else {
             parent.children.push(vElement);
@@ -517,11 +540,12 @@ var t7 = (function() {
 
   t7.Outputs = {
     React: 1,
-    Universal: 2
+    Universal: 2,
+    Inferno: 3
   };
 
   //set the type to React as default if it exists in global scope
-  output = typeof React != "undefined" ? t7.Outputs.React : t7.Outputs.Universal;
+  output = typeof React != "undefined" ? t7.Outputs.React : typeof Inferno != "undefined" ? t7.Outputs.Inferno : t7.Outputs.Universal;
 
   return t7;
 })();
