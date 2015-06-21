@@ -40,6 +40,7 @@ describe("React tests", function() {
     var output = React.renderToStaticMarkup(input);
     var expected = '<ul class="items"><li class="item" id="item-0">one - #0</li><li class="item" id="item-1">two - #1</li>'
                   + '<li class="item" id="item-2">three - #2</li><li class="item" id="item-3">four - #3</li></ul>';
+
     assert(output === expected);
   });
 

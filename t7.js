@@ -26,8 +26,8 @@ var t7 = (function() {
   }
 
   for(ii = 1; ii < 15; ii++) {
-    functionProps["$" + ii] = null;
-    functionPlaceholders.push("$" + ii);
+    functionProps["__$" + ii + "__"] = null;
+    functionPlaceholders.push("__$" + ii + "__");
   };
 
   selfClosingTags = [
@@ -108,7 +108,11 @@ var t7 = (function() {
     var val = '';
     for(var name in root.attrs) {
       val = root.attrs[name];
-      attrsParams.push("'" + name + "':'" + val + "'");
+      if(val.indexOf("props.") === -1) {
+        attrsParams.push("'" + name + "':'" + val + "'");
+      } else {
+        attrsParams.push("'" + name + "':" + val);
+      }
     }
   };
 
@@ -417,9 +421,9 @@ var t7 = (function() {
           attrs[attrParts[0]] = attrParts[1];
         } else {
           if(attrParts[0] === "key") {
-            key = "' + props." + attrParts[1] + " + '";
+            key = "'props." + attrParts[1];
           } else {
-            attrs[attrParts[0]] = "' + props." + attrParts[1] + " + '";
+            attrs[attrParts[0]] = "props." + attrParts[1];
           }
         }
       }
@@ -461,10 +465,12 @@ var t7 = (function() {
     //we need to generate a very quick key that will be used as the function name
     var scriptCode = "";
     var templateKey = null;
-    var tpl = template[0];
+    var tpl = "";
+
+    tpl = template[0];
 
     for(; i < n; i++) {
-      functionProps["$" + i] = arguments[i];
+      functionProps["__$" + i + "__"] = arguments[i];
       tpl += template[i];
     };
 
