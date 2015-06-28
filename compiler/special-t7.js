@@ -531,7 +531,7 @@ var t7 = (function() {
     //set our unique key
     templateKey = createTemplateKey(tpl) + output;
 
-    if(t7._cache[templateKey] == null) {
+
       fullHtml = '';
       //put our placeholders around the template parts
       for(i = 0, n = template.length; i < n; i++) {
@@ -551,30 +551,12 @@ var t7 = (function() {
 
       scriptCode = functionString.join(',');
 
-      //build a new Function and store it depending if on node or browser
-      if(isBrowser === true) {
-        scriptString = 't7._cache["' + templateKey + '"]=function(props)';
-        scriptString += '{"use strict";return ' + scriptCode + '}';
+      return '"use strict";var props = arguments[0];return ' + scriptCode;
 
-        addNewScriptFunction(scriptString, templateKey);
-      } else {
-        t7._cache[templateKey] = new Function('"use strict";var props = arguments[0];return ' + scriptCode + '');
-      }
-    }
-
-    return t7._cache[templateKey](functionProps);
   };
 
   //storage for the cache
   t7._cache = {};
-
-  t7.precompile = function(template, values) {
-    if(output === t7.Outputs.ValuesOnly) {
-      return values
-    } else {
-      return template();
-    }
-  };
 
   //a lightweight flow control function
   //expects truthy and falsey to be functions
