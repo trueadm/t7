@@ -675,7 +675,13 @@ var t7 = (function() {
   };
 
   t7.registerComponent = function(componentName, component) {
-    components[componentName] = component;
+    if(arguments.length === 2) {
+      components[componentName] = component;
+    } else {
+      for(var key in componentName) {
+        components[key] = componentName[key];
+      }
+    }
   };
 
   t7.deregisterComponent = function(componentName) {

@@ -49,4 +49,22 @@ describe("React tests", function() {
     var expected = '<div><span>Here is </span><br>another<span>span!</span><div>this is </div>a block!</div>';
     assert(output === expected);
   });
+
+  it('should handle a components', function() {
+    var Component = React.createClass({
+      render: function() {
+        return t7`
+          <div className=${"foo"}>${ this.props.children }</div>
+        `;
+      }
+    })
+    t7.registerComponent({
+      "Test": Component
+    });
+
+    var input = t7`<div><Test><span>Hello world</span></Test></div>`;
+    var output = React.renderToStaticMarkup(input);
+    var expected = '<div><div class="foo"><span>Hello world</span></div></div>';
+    assert(output === expected);
+  });
 });
