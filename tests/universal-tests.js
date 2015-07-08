@@ -8,14 +8,14 @@ describe("Universal tests", function() {
   it('should handle a very simple single element', function() {
     var input = t7`<div>Hello world</div>`;
     var output = JSON.stringify(input);
-    var expected = '{"tag":"div","attrs":{},"children":"Hello world"}';
+    var expected = '{"tag":"div","attrs":{},"children":["Hello world"]}';
     assert(output === expected);
   });
 
   it('should handle a very simple single element with a class', function() {
     var input = t7`<div class="foo">Hello world</div>`;
     var output = JSON.stringify(input);
-    var expected = '{"tag":"div","attrs":{"class":"foo"},"children":"Hello world"}';
+    var expected = '{"tag":"div","attrs":{"class":"foo"},"children":["Hello world"]}';
     assert(output === expected);
   });
 
@@ -27,7 +27,7 @@ describe("Universal tests", function() {
 
     var input = t7`<div>Hello <Component name="world"></Component></div>`;
     var output = JSON.stringify(input);
-    var expected = '{"tag":"div","attrs":{},"children":["Hello ",{"tag":"span","attrs":{},"children":"world"}]}';
+    var expected = '{"tag":"div","attrs":{},"children":["Hello ",{"tag":"span","attrs":{},"children":["world"]}]}';
     assert(output === expected);
   });
 });
