@@ -120,7 +120,9 @@ as `<Foo></Foo>` this ensures that the component gets picked up by t7 properly. 
 the same to how JSX handles components, except t7 components are available throughout the application,
 not only in the localized scope.
 
-</aside>
+### Component Examples
+
+- [Handling nested React components](blob/master/examples/react-complex-components.html)
 
 ## Control Flow
 
