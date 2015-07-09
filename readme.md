@@ -122,7 +122,7 @@ not only in the localized scope.
 
 ### Component Examples
 
-- [Handling nested React components](blob/master/examples/react-complex-components.html)
+- [Handling nested React components](examples/react-complex-components.html)
 
 ## Control Flow
 
