@@ -49,7 +49,6 @@ var t7 = (function() {
     var i = 0;
     var n = 0;
     var key = "";
-    var exp = /__\$props__\[(\d*)\]/g;
     var matches = null;
 
     //if the node has children that is an array, handle it with a loop
@@ -79,7 +78,11 @@ var t7 = (function() {
         }
       }
       //push the children code into our tag params code
-      tagParams.push((childrenProp ? "children: " : "") + "[" + childrenText.join(",") + "]");
+      if(childrenText.length === 1) {
+        tagParams.push((childrenProp ? "children: " : "") + childrenText);
+      } else {
+        tagParams.push((childrenProp ? "children: " : "") + "[" + childrenText.join(",") + "]");
+      }
 
     } else if(root.children != null && typeof root.children === "string") {
       root.children = root.children.replace(/(\r\n|\n|\r)/gm,"").trim();
@@ -88,8 +91,7 @@ var t7 = (function() {
       //find any template strings and replace them
       if(matches !== null) {
         if(output === t7.Outputs.Inferno) {
-          key = exp.exec(root.children)[1];
-          root.children = root.children.replace(/(__\$props__\[.*\])/g, "',Inferno.createValueNode($1," + key + "),'")
+          root.children = root.children.replace(/(__\$props__\[([0-9]*)\])/g, "Inferno.createValueNode($1,$2),")
         } else {
           root.children = root.children.replace(/(__\$props__\[.*\])/g, "',$1,'")
         }
