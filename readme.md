@@ -155,7 +155,7 @@ Due to the fact HTML is entered into template strings, your IDE/editor will like
 
 t7 will cache templates where possible for a solid performance when developing.
 
-It's highly recommended that you the i7 precompiler is used when deploying to a production
+It's highly recommended that the i7 precompiler is used when deploying to a production
 environment. The precompiler will greatly reduce memory usage, startup speeds and
 template compile times.
 
