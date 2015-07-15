@@ -18,6 +18,7 @@ var t7 = (function() {
   var components = {};
   var ii = 1;
   var selfClosingTags = [];
+  var precompile = false;
 
   if(isBrowser === true) {
     docHead = document.getElementsByTagName('head')[0];
@@ -193,7 +194,7 @@ var t7 = (function() {
       //throw error about adjacent elements
     } else {
       //Universal output or Inferno output
-      if(output === t7.Outputs.Universal || output === t7.Outputs.Inferno || output === t7.Outputs.Precompile) {
+      if(output === t7.Outputs.Universal || output === t7.Outputs.Inferno) {
         //if we have a tag, add an element, check too for a component
         if(root.tag != null) {
           if(isComponentName(root.tag) === false || output === t7.Outputs.Inferno) {
@@ -563,7 +564,7 @@ var t7 = (function() {
       scriptCode = functionString.join(',');
 
       //build a new Function and store it depending if on node or browser
-      if(output === t7.Outputs.Precompile) {
+      if(precompile === true) {
         return {
           templateKey: templateKey,
           template: '"use strict";var __$props__ = arguments[0];return ' + scriptCode
@@ -673,6 +674,10 @@ var t7 = (function() {
     return output;
   };
 
+  t7.setPrecompile = function(val) {
+    precompile = val;
+  };
+
   t7.registerComponent = function(componentName, component) {
     if(arguments.length === 2) {
       components[componentName] = component;
@@ -705,8 +710,7 @@ var t7 = (function() {
     React: 1,
     Universal: 2,
     InfernoVdom: 3,
-    InfernoValues: 4,
-    Precompile: 5
+    InfernoValues: 4
   };
 
   //set the type to React as default if it exists in global scope

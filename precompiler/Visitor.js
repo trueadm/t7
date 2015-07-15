@@ -60,7 +60,7 @@ Visitor.prototype.visitTaggedTemplateExpression = function(path) {
     //we need to store the t7Node.compiled code in its own place in the page
     templateCache.set(t7Node.templateKey, t7Node.template);
     //then create an output for recast to parse
-    output = "(function(){return {template: __" + t7Node.templateKey + ",templateKey: " + t7Node.templateKey + ", values: [" + expressions.join(", ") + "]}})()";
+    output = "t7.precompile({template: __" + t7Node.templateKey + ",templateKey: " + t7Node.templateKey + ", values: [" + expressions.join(", ") + "]})";
     ast = recast.parse(output);
   }
 
