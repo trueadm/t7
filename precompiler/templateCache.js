@@ -2,11 +2,11 @@
 var caches = {};
 
 var templateCache = {
-  get: function(templateKey) {
-    return caches[templateKey];
-  },
-  set: function(templateKey, template) {
-    caches[templateKey] = template;
+  store: function(templateKey, funcId, template) {
+    caches[templateKey] = {
+      funcId: funcId,
+      template: template
+    };
   },
   clear: function() {
     caches = {};
@@ -14,7 +14,7 @@ var templateCache = {
   generateSource: function() {
     var source = [];
     for(var key in caches) {
-      source.push(";function __" + key + "(){" + caches[key] + "};");
+      source.push(";function __" + caches[key].funcId + "(){" + caches[key].template + "};");
     }
     return source.join("\n");
   }

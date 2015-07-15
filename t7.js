@@ -638,12 +638,12 @@ var t7 = (function() {
   t7._cache = {};
 
   t7.precompile = function(precompiledObj) {
+    if(t7._cache[precompiledObj.templateKey] == null) {
+      t7._cache[precompiledObj.templateKey] = precompiledObj.template;
+    }
     if(output === t7.Outputs.Inferno) {
       return precompiledObj
     } else {
-      if(t7._cache[precompiledObj.templateKey] == null) {
-        t7._cache[precompiledObj.templateKey] = precompiledObj.template;
-      }
       return t7.getTemplateFromCache(precompiledObj.templateKey, precompiledObj.values);
     }
   };
@@ -709,8 +709,7 @@ var t7 = (function() {
   t7.Outputs = {
     React: 1,
     Universal: 2,
-    InfernoVdom: 3,
-    InfernoValues: 4
+    Inferno: 3,
   };
 
   //set the type to React as default if it exists in global scope

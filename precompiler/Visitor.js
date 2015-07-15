@@ -7,6 +7,17 @@ var n = types.namedTypes;
 var b = types.builders;
 var templateCache = require("./templateCache.js");
 
+var possible = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+function makeId() {
+  var text = "";
+  for( var i=0; i < 5; i++ ) {
+    text += possible.charAt(Math.floor(Math.random() * possible.length));
+  }
+
+  return text;
+}
+
 function Visitor() {
   PathVisitor.apply(this, arguments);
 }
@@ -43,6 +54,7 @@ Visitor.prototype.visitTaggedTemplateExpression = function(path) {
   var arguments = [];
   var ast = false;
   var output = "";
+  var funcId = makeId();
 
   //we check for t7
   if(node.tag.name === "t7") {
@@ -57,9 +69,9 @@ Visitor.prototype.visitTaggedTemplateExpression = function(path) {
     arguments = [templates].concat(placeholders);
     t7Node = t7.apply(null, arguments)
     //we need to store the t7Node.compiled code in its own place in the page
-    templateCache.set(t7Node.templateKey, t7Node.template);
+    templateCache.store(t7Node.templateKey, funcId, t7Node.template);
     //then create an output for recast to parse
-    output = "t7.precompile({template: __" + t7Node.templateKey + ",templateKey: " + t7Node.templateKey + ", values: [" + expressions.join(", ") + "]})";
+    output = "t7.precompile({template: __" + funcId + ",templateKey: " + t7Node.templateKey + ", values: [" + expressions.join(", ") + "]})";
     ast = recast.parse(output);
   }
 
