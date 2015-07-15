@@ -15,7 +15,6 @@ var t7 = (function() {
   var docHead = null;
   //to save time later, we can pre-create a props object structure to re-use
   var output = null;
-  var lastOutput = null;
   var components = {};
   var ii = 1;
   var selfClosingTags = [];
@@ -164,15 +163,13 @@ var t7 = (function() {
   function buildInfernoAttrsParams(root, attrsParams) {
     var val = '', key = "";
     var matches = null;
-    var exp = /__\$props__\[(\d*)\]/g;
     for(var name in root.attrs) {
       val = root.attrs[name];
       matches = val.match(/__\$props__\[\d*\]/g);
       if(matches === null) {
         attrsParams.push("{name:'" + name + "',value:'" + val + "'}");
       } else {
-        key = exp.exec(val)[1];
-        attrsParams.push("{name:'" + name + "',value:Inferno.createValueNode(" + val + "," + key + ")}");
+        attrsParams.push("{name:'" + name + "',value:" + val.replace(/(__\$props__\[([0-9]*)\])/g, "Inferno.createValueNode($1,$2)") + "}");
       }
     }
   };
@@ -196,11 +193,15 @@ var t7 = (function() {
       //throw error about adjacent elements
     } else {
       //Universal output or Inferno output
-      if(output === t7.Outputs.Universal || output === t7.Outputs.Inferno) {
+      if(output === t7.Outputs.Universal || output === t7.Outputs.Inferno || output === t7.Outputs.Precompile) {
         //if we have a tag, add an element, check too for a component
         if(root.tag != null) {
-          if(isComponentName(root.tag) === false) {
-            functionText.push("{tag: '" + root.tag + "'");
+          if(isComponentName(root.tag) === false || output === t7.Outputs.Inferno) {
+            if(isComponentName(root.tag) === true) {
+              functionText.push("{tag: t7.loadComponent('" + root.tag + "')");
+            } else {
+              functionText.push("{tag: '" + root.tag + "'");
+            }
 
             if(root.key != null) {
               tagParams.push("key: " + root.key);
@@ -311,7 +312,6 @@ var t7 = (function() {
     for(i = 0, n = html.length; i < n; i++) {
       //set the char to the current character in the string
       char = html[i];
-
       if (char === "<") {
         insideTag = true;
       } else if(char === ">" && insideTag === true) {
@@ -364,8 +364,11 @@ var t7 = (function() {
           }
           //push the node we've constructed to the relevant parent
           if(parent === null) {
-            parent = vElement;
-            root = parent;
+            if(root === null) {
+              root = parent = vElement;
+            } else {
+              throw Error("t7 templates must contain only a single root element");
+            }
           } else if (parent instanceof Array) {
             parent.push(vElement);
           } else {
@@ -374,7 +377,11 @@ var t7 = (function() {
           //check if we've just made a self closing tag
           if(selfClosingTags.indexOf(tagName) === -1) {
             //set our node's parent to our current parent
-            vElement.parent = parent;
+            if(parent === vElement) {
+              vElement.parent = null;
+            } else {
+              vElement.parent = parent;
+            }
             //now assign the parent to our new node
             parent = vElement;
           }
@@ -523,16 +530,14 @@ var t7 = (function() {
     };
 
     //set our unique key
-    templateKey = createTemplateKey(tpl) + output;
+    templateKey = createTemplateKey(tpl);
 
     //For values only, return an array of all the values
-    if(output === t7.Outputs.ValuesOnly) {
+    if(output === t7.Outputs.Inferno) {
       if(t7._cache[templateKey] != null) {
         return {values: values, templateKey: templateKey};
       } else {
         returnValuesButBuildTemplate = true;
-        //we then need to change the output to the "last" value
-        output = lastOutput;
       }
     }
 
@@ -546,6 +551,7 @@ var t7 = (function() {
           fullHtml += template[i] + "__$props__[" + i + "]";
         }
       }
+
       //once we have our vDom array, build an optimal function to improve performance
       functionString = [];
       buildFunction(
@@ -557,18 +563,24 @@ var t7 = (function() {
       scriptCode = functionString.join(',');
 
       //build a new Function and store it depending if on node or browser
-      if(isBrowser === true) {
-        scriptString = 't7._cache["' + templateKey + '"]=function(__$props__)';
-        scriptString += '{"use strict";return ' + scriptCode + '}';
-
-        addNewScriptFunction(scriptString, templateKey);
+      if(output === t7.Outputs.Precompile) {
+        return {
+          templateKey: templateKey,
+          template: '"use strict";var __$props__ = arguments[0];return ' + scriptCode
+        }
       } else {
-        t7._cache[templateKey] = new Function('"use strict";var __$props__ = arguments[0];return ' + scriptCode + '');
+        if(isBrowser === true) {
+          scriptString = 't7._cache["' + templateKey + '"]=function(__$props__)';
+          scriptString += '{"use strict";return ' + scriptCode + '}';
+
+          addNewScriptFunction(scriptString, templateKey);
+        } else {
+          t7._cache[templateKey] = new Function('"use strict";var __$props__ = arguments[0];return ' + scriptCode);
+        }
       }
     }
 
     if(returnValuesButBuildTemplate === true) {
-      output = t7.Outputs.ValuesOnly;
       return {values: values, templateKey: templateKey};
     }
 
@@ -577,14 +589,14 @@ var t7 = (function() {
 
   function deepCopy(obj) {
     if (typeof obj == 'object') {
-      if (isArray(obj)) {
+      if (obj instanceof Array) {
         var l = obj.length;
         var r = new Array(l);
         for (var i = 0; i < l; i++) {
           r[i] = deepCopy(obj[i]);
         }
         return r;
-      } else {
+      } else if(obj != null) {
         var r = {};
         r.prototype = obj.prototype;
         for (var k in obj) {
@@ -603,26 +615,11 @@ var t7 = (function() {
     splice: 'function'
   };
 
-  /**
-   * Determining if something is an array in JavaScript
-   * is error-prone at best.
-   */
-  function isArray(obj) {
-    if (obj instanceof Array)
-      return true;
-    // Otherwise, guess:
-    for (var k in ARRAY_PROPS) {
-      if (!(k in obj && typeof obj[k] == ARRAY_PROPS[k]))
-        return false;
-    }
-    return true;
-  }
-
   function deepTemplates(values) {
     var i = 0, ii = 0;
     if(values.length > 0) {
       for(i = 0; i < values.length; i = i + 1 | 0) {
-        if(values[i].templateKey != null) {
+        if(values[i] && values[i].templateKey != null) {
           values[i] = t7.getTemplateFromCache(values[i].templateKey, values[i].values);
         } else if(values[i] instanceof Array) {
           for(ii = 0; ii < values[i].length; ii = ii + 1 | 0) {
@@ -640,11 +637,12 @@ var t7 = (function() {
   t7._cache = {};
 
   t7.precompile = function(template, values) {
-    if(output === t7.Outputs.ValuesOnly) {
-      return values
-    } else {
-      return template();
-    }
+    //TODO change
+    // if(output === t7.Outputs.InfernoValues) {
+    //   return values
+    // } else {
+    //   return template();
+    // }
   };
 
   //a lightweight flow control function
@@ -667,7 +665,6 @@ var t7 = (function() {
 
   t7.setOutput = function(newOutput) {
     if(output !== newOutput) {
-      lastOutput = output;
       output = newOutput;
     }
   };
@@ -696,8 +693,8 @@ var t7 = (function() {
 
   t7.getTemplateFromCache = function(templateKey, values) {
     //we need to normalie the values so we don't have objects with templateKey and values
-    var newwValues = deepTemplates(deepCopy(values));
-    return t7._cache[templateKey](newwValues);
+    var newValues = deepTemplates(deepCopy(values));
+    return t7._cache[templateKey](newValues);
   };
 
   t7.loadComponent = function(componentName) {
@@ -707,8 +704,9 @@ var t7 = (function() {
   t7.Outputs = {
     React: 1,
     Universal: 2,
-    Inferno: 3,
-    ValuesOnly: 4
+    InfernoVdom: 3,
+    InfernoValues: 4,
+    Precompile: 5
   };
 
   //set the type to React as default if it exists in global scope
