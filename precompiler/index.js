@@ -24,14 +24,15 @@ if(args[0] === "-i" && args[2] === "-o") {
 
 function handleFile(fileName, fileText, outputType) {
   var ast = recast.parse(fileText);
-  var output = recast.print(transform(ast)).code;
-
+  
   for(outputName in t7.Outputs) {
     if(outputName.toLowerCase() === outputType.toLowerCase()) {
       t7.setOutput(t7.Outputs[outputName]);
       break;
     }
   }
+
+  var output = recast.print(transform(ast)).code;
 
   //add the template sources to bottom of file
   output += "\n//t7 precompiled templates\n" + templateCache.generateSource();

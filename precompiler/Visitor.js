@@ -55,7 +55,6 @@ Visitor.prototype.visitTaggedTemplateExpression = function(path) {
     }
 
     arguments = [templates].concat(placeholders);
-    t7.setOutput(t7.Outputs.Precompile);
     t7Node = t7.apply(null, arguments)
     //we need to store the t7Node.compiled code in its own place in the page
     templateCache.set(t7Node.templateKey, t7Node.template);
