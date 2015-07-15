@@ -7,3 +7,5 @@ var example = t7`
     <div>${ "The " + foo + " is your oyster!" }</div>
   </div>
 `;
+
+React.render(example, document.body);

@@ -637,13 +637,15 @@ var t7 = (function() {
   //storage for the cache
   t7._cache = {};
 
-  t7.precompile = function(template, values) {
-    //TODO change
-    // if(output === t7.Outputs.InfernoValues) {
-    //   return values
-    // } else {
-    //   return template();
-    // }
+  t7.precompile = function(precompiledObj) {
+    if(output === t7.Outputs.Inferno) {
+      return precompiledObj
+    } else {
+      if(t7._cache[precompiledObj.templateKey] == null) {
+        t7._cache[precompiledObj.templateKey] = precompiledObj.template;
+      }
+      return t7.getTemplateFromCache(precompiledObj.templateKey, precompiledObj.values);
+    }
   };
 
   //a lightweight flow control function

@@ -23,8 +23,9 @@ if(args[0] === "-i" && args[2] === "-o") {
 }
 
 function handleFile(fileName, fileText, outputType) {
+  console.time("Precompiled '" + fileName + "'");
   var ast = recast.parse(fileText);
-  
+
   for(outputName in t7.Outputs) {
     if(outputName.toLowerCase() === outputType.toLowerCase()) {
       t7.setOutput(t7.Outputs[outputName]);
@@ -38,6 +39,7 @@ function handleFile(fileName, fileText, outputType) {
   output += "\n//t7 precompiled templates\n" + templateCache.generateSource();
   //make new file
   createCompiledFile(fileName.replace(".js", ".compiled.js"), output)
+  console.timeEnd("Precompiled '" + fileName + "'");
 };
 
 function createCompiledFile(fileName, fileText) {
