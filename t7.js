@@ -193,6 +193,7 @@ var t7 = (function() {
     if(root instanceof Array) {
       //throw error about adjacent elements
     } else {
+      console.log(output)
       //Universal output or Inferno output
       if(output === t7.Outputs.Universal || output === t7.Outputs.Inferno) {
         //if we have a tag, add an element, check too for a component
