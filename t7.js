@@ -19,6 +19,7 @@ var t7 = (function() {
   var ii = 1;
   var selfClosingTags = [];
   var precompile = false;
+  var version = "0.1.0";
 
   if(isBrowser === true) {
     docHead = document.getElementsByTagName('head')[0];
@@ -669,6 +670,10 @@ var t7 = (function() {
 
   t7.deregisterAllComponents = function() {
     components = {};
+  };
+
+  t7.getVersion = function() {
+    return version;
   };
 
   function cleanValues(values, newValues) {
