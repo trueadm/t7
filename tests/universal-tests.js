@@ -2,6 +2,7 @@
 describe("Universal tests", function() {
   beforeEach(function() {
     t7.setOutput(t7.Outputs.Universal);
+    t7.clearCache();
     t7.deregisterAllComponents();
   });
 
