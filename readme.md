@@ -39,6 +39,8 @@ Simply run the following:
 npm install t7
 ```
 
+Then use the t7 module as you would any other module:
+
 ```javascript
 var t7 = require("t7");
 ```
