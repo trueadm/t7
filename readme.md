@@ -35,9 +35,9 @@ t7 in your browser, simply include the script:
 
 Simply run the following:
 
-`
+```sh
 npm install t7
-`
+```
 
 ```javascript
 var t7 = require("t7");
