@@ -20,16 +20,30 @@ Furthermore, IDEs should play nicely with the syntax and there isn't a need to s
 in-browser transformers or NodeJS transpilers to start developing.
 
 
-## Usage
+## Installing
 
 t7 fully supports in-browser, NodeJS and Browserify/Webpack usage. If you are using
 t7 in your browser, simply include the script:
 
+### Browser
+
 ```html
-
 <script src="t7.js"></script>
-
 ```
+
+### Node/Browserify/Webpack
+
+Simply run the following:
+
+`
+npm install t7
+`
+
+```javascript
+var t7 = require("t7");
+```
+
+## Usage
 
 The when you want to compile a template, use the ``` t7`<html>...</html>` ``` template
 string function to process your template code.
@@ -37,7 +51,6 @@ string function to process your template code.
 ## Example
 
 ```javascript
-
 var items = ['Ball', 'Boat'];
 var welcome = "World";
 
@@ -55,7 +68,6 @@ t7`
     </ul>
   </div>
 `;
-
 ```
 
 If React is detected in the scope, the above will return a React compliant virtual DOM object that can be used in React render() functions. You can manually select the output of t7 by using `t7.setOutput(...)`
