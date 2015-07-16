@@ -74,18 +74,6 @@ t7`
 
 If React is detected in the scope, the above will return a React compliant virtual DOM object that can be used in React render() functions. You can manually select the output of t7 by using `t7.setOutput(...)`
 
-## dbmonster
-
-How well can Cito+t7 render/update the dbmonster scenario? Take a look for yourself.
-
-### Runtime Compilation (Development)
-
-http://t7js.com/dbmonster/index.html
-
-### Precompiled (Production)
-
-http://t7js.com/dbmonster/precompiled.html
-
 ## Outputs
 
 By default t7 will attempt to check to see if React is available. If it is, t7 will
@@ -174,7 +162,7 @@ Due to the fact HTML is entered into template strings, your IDE/editor will like
 
 t7 will cache templates where possible for a solid performance when developing.
 
-It's highly recommended that the i7 precompiler is used when deploying to a production
+It's highly recommended that the [https://github.com/trueadm/t7-precompiler](https://github.com/trueadm/t7-precompiler) is used when deploying to a production
 environment. The precompiler will greatly reduce memory usage, startup speeds and
 template compile times.
 
