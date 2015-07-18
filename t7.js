@@ -17,7 +17,7 @@ var t7 = (function() {
   var output = null;
   var selfClosingTags = [];
   var precompile = false;
-  var version = "0.2.0";
+  var version = "0.2.1";
 
   if(isBrowser === true) {
     docHead = document.getElementsByTagName('head')[0];
@@ -557,7 +557,7 @@ var t7 = (function() {
     //For values only, return an array of all the values
     if(output === t7.Outputs.Inferno) {
       if(t7._cache[templateKey] != null) {
-        return {values: values, templateKey: templateKey};
+        return {values: values, templateKey: templateKey, components: this};
       } else {
         returnValuesButBuildTemplate = true;
       }
@@ -601,7 +601,7 @@ var t7 = (function() {
     }
 
     if(returnValuesButBuildTemplate === true) {
-      return {values: values, templateKey: templateKey};
+      return {values: values, templateKey: templateKey, components: this};
     }
     return t7._cache[templateKey](values, this);
   };
@@ -742,15 +742,15 @@ var t7 = (function() {
     if(output === t7.outputs.Inferno) {
       return precompiledObj
     } else {
-      return t7.getTemplateFromCache(precompiledObj.templateKey, precompiledObj.values);
+      return t7.getTemplateFromCache(precompiledObj.templateKey, precompiledObj.values, components);
     }
   };
 
-  t7.getTemplateFromCache = function(templateKey, values) {
+  t7.getTemplateFromCache = function(templateKey, values, components) {
     //we need to normalie the values so we don't have objects with templateKey and values
     var newValues = []
     cleanValues(values, newValues);
-    return t7._cache[templateKey](newValues);
+    return t7._cache[templateKey](newValues, components);
   };
 
 
