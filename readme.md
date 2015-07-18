@@ -133,8 +133,9 @@ t7.module(function(t7) {
       </header>
     </div>
   `;
-  ```
-})
+});
+```
+
 
 Furthermore, you must ensure the assigned component name starts with an uppercase character, such
 as `<Foo></Foo>` this ensures that the component gets picked up by t7 properly.
