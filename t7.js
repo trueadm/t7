@@ -603,7 +603,7 @@ var t7 = (function() {
       if(precompile === true) {
         return {
           templateKey: templateKey,
-          template: '"use strict";var __$props__ = arguments[0];return ' + scriptCode
+          template: '"use strict";var __$props__ = arguments[0];var __$components__ = arguments[1];return ' + scriptCode
         }
       } else {
         if(isBrowser === true) {
