@@ -1,5 +1,11 @@
+t7`<div><span><div /></span></div>`
 
 describe("React tests", function() {
+  beforeEach(function() {
+    t7.setOutput(t7.Outputs.React);
+    t7.clearCache();
+  });
+
   it('should handle a very simple single element', function() {
     var input = t7`<div>Hello world</div>`;
     var output = React.renderToStaticMarkup(input);
@@ -59,72 +65,80 @@ describe("React tests", function() {
         `;
       }
     })
-    t7.registerComponent({
-      "Test": Component
+
+    var input = "";
+
+    t7.module(function(t7) {
+      t7.assign("Test", Component);
+      input = t7`<div><Test><span>Hello world</span></Test></div>`;
     });
 
-    var input = t7`<div><Test><span>Hello world</span></Test></div>`;
     var output = React.renderToStaticMarkup(input);
     var expected = '<div><div class="foo"><span>Hello world</span></div></div>';
     assert(output === expected);
   });
 
   it('should handle multiple nested components', function() {
-    var Component1 = React.createClass({
-      render: function() {
-        return t7`
-          <Component2 name="123">
-            <h1>Component 1</h1>
-            <div>Hello world</div>
-          </Component2>
-        `;
-      }
+
+    var input = "";
+
+    t7.module(function(t7) {
+      var Component1 = React.createClass({
+        render: function() {
+          return t7`
+            <Component2 name="123">
+              <h1>Component 1</h1>
+              <div>Hello world</div>
+            </Component2>
+          `;
+        }
+      });
+
+      var Component2 = React.createClass({
+        render: function() {
+          return t7`
+            <div>
+              ${ this.props.children }
+              <h2>Component 2</h2>
+              <Component3>
+                <Component4 name=${ this.props.name } />
+              </Component3>
+            </div>
+          `;
+        }
+      });
+
+      var Component3 = React.createClass({
+        render: function() {
+          return t7`
+            <div>
+              <h3>Component 3</h3>
+              ${ this.props.children }
+            <div>
+          `;
+        }
+      });
+
+      var Component4 = React.createClass({
+        render: function() {
+          return t7`
+            <div>
+              <h4>Component 4</h4>
+              <span>${ this.props.name }</span>
+            </div>
+          `;
+        }
+      });
+
+      t7.assign({
+        "Component1": Component1,
+        "Component2": Component2,
+        "Component3": Component3,
+        "Component4": Component4,
+      });
+      input = t7`<Component1 />`;
     });
 
-    var Component2 = React.createClass({
-      render: function() {
-        return t7`
-          <div>
-            ${ this.props.children }
-            <h2>Component 2</h2>
-            <Component3>
-              <Component4 name=${ this.props.name } />
-            </Component3>
-          </div>
-        `;
-      }
-    });
-
-    var Component3 = React.createClass({
-      render: function() {
-        return t7`
-          <div>
-            <h3>Component 3</h3>
-            ${ this.props.children }
-          <div>
-        `;
-      }
-    });
-
-    var Component4 = React.createClass({
-      render: function() {
-        return t7`
-          <div>
-            <h4>Component 4</h4>
-            <span>${ this.props.name }</span>
-          </div>
-        `;
-      }
-    });
-
-    t7.registerComponent({
-      "Component1": Component1,
-      "Component2": Component2,
-      "Component3": Component3,
-      "Component4": Component4,
-    });
-
-    var input = t7`<Component1 />`;
     var output = React.renderToStaticMarkup(input);
     var expected = '<div><h1>Component 1</h1><div>Hello world</div><h2>Component 2</h2>'
       +'<div><h3>Component 3</h3><div><h4>Component 4</h4><span>123</span></div><div></div></div></div>';

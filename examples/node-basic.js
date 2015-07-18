@@ -1,6 +1,4 @@
-var t7 = require('../t7.js');
-
-t7.setOutput(t7.Outputs.Universal);
+t7.setOutput(outputs.Universal);
 
 console.log("NodeJS basic render example. You should get: { tag: 'div', attrs: {}, children: 'Hello world! Your name is Bob' }");
 

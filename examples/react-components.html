@@ -9,39 +9,40 @@
   <script src="../t7.js"></script>
   <script>
 
-    t7.setOutput(t7.Outputs.React);
+    t7.module(function(t7) {
+      t7.setOutput(t7.Outputs.React);
 
-    var Widget = React.createClass({
-      render: function() {
-        return t7`
-          <span>
-            This is a widget! ${ this.props.testVar }!
-          </span>
-        `;
-      }
+      t7.assign("Widget", React.createClass({
+        render: function() {
+          return t7`
+            <span>
+              This is a widget! ${ this.props.testVar }!
+            </span>
+          `;
+        }
+      }));
+
+      var testVar = "Hello world";
+      var test = "hello";
+
+      var example = t7`
+        <div className="foo" id=${test}>
+          <h1>Components</h1>
+          <span>${ testVar }</span>
+          <ul>
+            <li>1</li>
+            <li>2</li>
+          </ul>
+          <Widget testVar=${ testVar }></Widget>
+        </div>
+      `;
+
+      React.render(
+        example,
+        document.getElementById('app')
+      );
     });
 
-    t7.registerComponent("Widget", Widget);
-
-    var testVar = "Hello world";
-    var test = "hello";
-
-    var example = t7`
-      <div className="foo" id=${test}>
-        <h1>Components</h1>
-        <span>${ testVar }</span>
-        <ul>
-          <li>1</li>
-          <li>2</li>
-        </ul>
-        <Widget testVar=${ testVar }></Widget>
-      </div>
-    `;
-
-    React.render(
-      example,
-      document.getElementById('app')
-    );
   </script>
 </body>
 </html>
