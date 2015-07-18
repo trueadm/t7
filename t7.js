@@ -160,6 +160,18 @@ var t7 = (function() {
     }
   };
 
+  function buildAttrsValueKeysParams(root, attrsParams) {
+    var val = '';
+    var matches = null;
+    for(var name in root.attrs) {
+      val = root.attrs[name];
+      matches = val.match(/__\$props__\[\d*\]/g);
+      if(matches !== null) {
+        attrsParams.push("'" + name + "':" + val.replace(/(__\$props__\[([0-9]*)\])/g, "$2"));
+      }
+    }
+  };
+
   function buildInfernoAttrsParams(root, attrsParams) {
     var val = '', key = "";
     var matches = null;
@@ -188,6 +200,7 @@ var t7 = (function() {
     var tagParams = [];
     var literalParts = [];
     var attrsParams = [];
+    var attrsValueKeysParams = [];
 
     if(root instanceof Array) {
       //throw error about adjacent elements
@@ -232,7 +245,8 @@ var t7 = (function() {
             } else if(output === t7.Outputs.Inferno) {
               //we need to apply the tag components
               buildAttrsParams(root, attrsParams);
-              functionText.push("{component:__$components__." + root.tag + ", props: {" + attrsParams.join(',') + "}}");
+              buildAttrsValueKeysParams(root, attrsValueKeysParams);
+              functionText.push("{component:__$components__." + root.tag + ", props: {" + attrsParams.join(',') + "}, propsValueKeys: {" + attrsValueKeysParams.join(",") + "}}");
             }
           }
         } else {

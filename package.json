@@ -1,6 +1,6 @@
 {
   "name": "t7",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "t7 is a small, lightweight JavaScript template library that compiles ES2015 template strings into virtual DOM objects.",
   "main": "t7.js",
   "directories": {
