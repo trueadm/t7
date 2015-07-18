@@ -400,6 +400,7 @@ var t7 = (function() {
             children: [],
             closed: tagContent[tagContent.length - 1] === "/" || selfClosingTags.indexOf(tagName) > -1 ? true : false
           };
+
           if(tagData && tagData.key) {
             vElement.key = tagData.key;
           }
@@ -415,14 +416,16 @@ var t7 = (function() {
           } else {
             parent.children.push(vElement);
           }
-          //set our node's parent to our current parent
-          if(parent === vElement) {
-            vElement.parent = null;
-          } else {
-            vElement.parent = parent;
+          if(selfClosingTags.indexOf(tagName) === -1 ) {
+            //set our node's parent to our current parent
+            if(parent === vElement) {
+              vElement.parent = null;
+            } else {
+              vElement.parent = parent;
+            }
+            //now assign the parent to our new node
+            parent = vElement;
           }
-          //now assign the parent to our new node
-          parent = vElement;
         }
         //reset our flags and strings
         insideTag = false;
