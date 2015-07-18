@@ -756,7 +756,7 @@ var t7 = (function() {
     if(t7._cache[precompiledObj.templateKey] == null) {
       t7._cache[precompiledObj.templateKey] = precompiledObj.template;
     }
-    if(output === t7.outputs.Inferno) {
+    if(output === t7.Outputs.Inferno) {
       return precompiledObj
     } else {
       return t7.getTemplateFromCache(precompiledObj.templateKey, precompiledObj.values, components);
