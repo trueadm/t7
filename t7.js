@@ -17,7 +17,7 @@ var t7 = (function() {
   var output = null;
   var selfClosingTags = [];
   var precompile = false;
-  var version = "0.2.1";
+  var version = "0.2.4";
 
   if(isBrowser === true) {
     docHead = document.getElementsByTagName('head')[0];
@@ -230,7 +230,7 @@ var t7 = (function() {
             buildUniversalChildren(root, tagParams, true, component);
             functionText.push(tagParams.join(',') + "}");
           } else {
-            if(component === window || component == null) {
+            if((typeof window != "undefined" && component === window) || component == null) {
               throw new Error("Error referencing component '" + root.tag + "'. Components can only be used when within modules. See documentation for more information on t7.module().");
               return;
             }
