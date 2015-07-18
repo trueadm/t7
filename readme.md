@@ -20,16 +20,32 @@ Furthermore, IDEs should play nicely with the syntax and there isn't a need to s
 in-browser transformers or NodeJS transpilers to start developing.
 
 
-## Usage
+## Installing
 
 t7 fully supports in-browser, NodeJS and Browserify/Webpack usage. If you are using
 t7 in your browser, simply include the script:
 
+### Browser
+
 ```html
-
 <script src="t7.js"></script>
-
 ```
+
+### Node/Browserify/Webpack
+
+Simply run the following:
+
+```sh
+npm install t7
+```
+
+Then use the t7 module as you would any other module:
+
+```javascript
+var t7 = require("t7");
+```
+
+## Usage
 
 The when you want to compile a template, use the ``` t7`<html>...</html>` ``` template
 string function to process your template code.
@@ -37,7 +53,6 @@ string function to process your template code.
 ## Example
 
 ```javascript
-
 var items = ['Ball', 'Boat'];
 var welcome = "World";
 
@@ -55,22 +70,9 @@ t7`
     </ul>
   </div>
 `;
-
 ```
 
 If React is detected in the scope, the above will return a React compliant virtual DOM object that can be used in React render() functions. You can manually select the output of t7 by using `t7.setOutput(...)`
-
-## dbmonster
-
-How well can Cito+t7 render/update the dbmonster scenario? Take a look for yourself.
-
-### Runtime Compilation (Development)
-
-http://t7js.com/dbmonster/index.html
-
-### Precompiled (Production)
-
-http://t7js.com/dbmonster/precompiled.html
 
 ## Outputs
 
@@ -160,7 +162,7 @@ Due to the fact HTML is entered into template strings, your IDE/editor will like
 
 t7 will cache templates where possible for a solid performance when developing.
 
-It's highly recommended that the i7 precompiler is used when deploying to a production
+It's highly recommended that the [t7-precompiler](https://github.com/trueadm/t7-precompiler) is used when deploying to a production
 environment. The precompiler will greatly reduce memory usage, startup speeds and
 template compile times.
 
