@@ -17,7 +17,7 @@ var t7 = (function() {
   var output = null;
   var selfClosingTags = [];
   var precompile = false;
-  var version = "0.2.11";
+  var version = "0.2.12";
 
   if(isBrowser === true) {
     docHead = document.getElementsByTagName('head')[0];
@@ -209,7 +209,6 @@ var t7 = (function() {
       if(output === t7.Outputs.Universal || output === t7.Outputs.Inferno || output === t7.Outputs.Mithril) {
         //if we have a tag, add an element, check too for a component
         if(root.tag != null) {
-          component
           if(isComponentName(root.tag) === false) {
             functionText.push("{tag: '" + root.tag + "'");
             //add the key
@@ -232,7 +231,6 @@ var t7 = (function() {
           } else {
             if(((typeof window != "undefined" && component === window) || component == null) && precompile === false) {
               throw new Error("Error referencing component '" + root.tag + "'. Components can only be used when within modules. See documentation for more information on t7.module().");
-              return;
             }
             if(output === t7.Outputs.Universal) {
               //we need to apply the tag components
@@ -262,7 +260,6 @@ var t7 = (function() {
           if(isComponentName(root.tag) === true) {
             if(((typeof window != "undefined" && component === window) || component == null) && precompile === false) {
               throw new Error("Error referencing component '" + root.tag + "'. Components can only be used when within modules. See documentation for more information on t7.module().");
-              return;
             }
             functionText.push("React.createElement(__$components__." + root.tag);
           } else {
@@ -352,7 +349,6 @@ var t7 = (function() {
           if(tagContent !== "/" + parent.tag && selfClosingTags.indexOf(parent.tag) === -1 && !parent.closed) {
             console.error("Template error: " + applyValues(html, values));
             throw new Error("Expected corresponding t7 closing tag for '" + parent.tag + "'.");
-            return;
           }
           //when the childText is not empty
           if(childText.trim() !== "") {
