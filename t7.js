@@ -17,7 +17,7 @@ var t7 = (function() {
   var output = null;
   var selfClosingTags = [];
   var precompile = false;
-  var version = "0.2.12";
+  var version = "0.2.13";
 
   if(isBrowser === true) {
     docHead = document.getElementsByTagName('head')[0];
