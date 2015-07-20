@@ -17,7 +17,7 @@ var t7 = (function() {
   var output = null;
   var selfClosingTags = [];
   var precompile = false;
-  var version = "0.2.15";
+  var version = "0.2.16";
 
   if(isBrowser === true) {
     docHead = document.getElementsByTagName('head')[0];
@@ -766,11 +766,10 @@ var t7 = (function() {
     if(values.length > 2) {
       cleanValues(values, newValues);
     } else {
-      newValues = values.splice(0);
+      newValues = values;
     }
     return t7._cache[templateKey](newValues, components);
   };
-
 
   //set the type to React as default if it exists in global scope
   output = typeof React != "undefined" ? t7.Outputs.React
