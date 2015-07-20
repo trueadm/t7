@@ -17,7 +17,7 @@ var t7 = (function() {
   var output = null;
   var selfClosingTags = [];
   var precompile = false;
-  var version = "0.2.14";
+  var version = "0.2.15";
 
   if(isBrowser === true) {
     docHead = document.getElementsByTagName('head')[0];
@@ -763,7 +763,11 @@ var t7 = (function() {
   t7.getTemplateFromCache = function(templateKey, values, components) {
     //we need to normalie the values so we don't have objects with templateKey and values
     var newValues = []
-    cleanValues(values, newValues);
+    if(values.length > 2) {
+      cleanValues(values, newValues);
+    } else {
+      newValues = values.splice(0);
+    }
     return t7._cache[templateKey](newValues, components);
   };
 
