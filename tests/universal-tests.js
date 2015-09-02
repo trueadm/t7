@@ -7,7 +7,7 @@ describe("Universal tests", function() {
   it('should handle a very simple single element', function() {
     var input = t7`<div>Hello world</div>`;
     var output = JSON.stringify(input);
-    var expected = '{"tag":"div","attrs":{},"children":"Hello world"}';
+    var expected = '{"tag":"div","children":"Hello world"}';
     assert(output === expected);
   });
 
@@ -45,7 +45,7 @@ describe("Universal tests", function() {
     })
 
     var output = JSON.stringify(input);
-    var expected = '{"tag":"div","attrs":{},"children":["Hello ",{"tag":"span","attrs":{},"children":"world"}]}';
+    var expected = '{"tag":"div","children":["Hello ",{"tag":"span","children":"world"}]}';
     assert(output === expected);
   });
 
@@ -73,7 +73,7 @@ describe("Universal tests", function() {
     `;
 
     var output = JSON.stringify(input);
-    var expected = '{"tag":"div","attrs":{"class":"foo"},"children":[{"tag":"h1","attrs":{},"children":["Hello ","World"]},{"tag":"ul","attrs":{"id":"bar"},"children":[{"tag":"li","attrs":{"class":"item"},"children":[{"tag":"span","attrs":{},"children":["The item is: ","Ball"]}]},{"tag":"li","attrs":{"class":"item"},"children":[{"tag":"span","attrs":{},"children":["The item is: ","Boat"]}]}]}]}';
+    var expected = '{"tag":"div","attrs":{"class":"foo"},"children":[{"tag":"h1","children":["Hello ","World"]},{"tag":"ul","attrs":{"id":"bar"},"children":[{"tag":"li","attrs":{"class":"item"},"children":[{"tag":"span","children":["The item is: ","Ball"]}]},{"tag":"li","attrs":{"class":"item"},"children":[{"tag":"span","children":["The item is: ","Boat"]}]}]}]}';
     assert(output === expected);
   });
 
@@ -82,5 +82,26 @@ describe("Universal tests", function() {
     var test = "123"
     var input = function() {t7`<div><span>${ fooBar } - ${ test }</div>`};
     expect(input).to.throw(Error);
+  });
+
+  it('should throw an error upon when there is no single root element', function() {
+    var input = function() {t7`<div>123</div><div>456</div>`};
+    expect(input).to.throw(Error);
+  });
+
+  it('should throw an error upon when there is no single root element #2', function() {
+    var input = function() {t7`<img /><img />`};
+    expect(input).to.throw(Error);
+  });
+
+  it('basic svg example should be handled', function() {
+    var input = t7`
+      <svg height="100" width="100">
+        <circle cx="50" cy="50" r="40" stroke="black" stroke-width="3" fill="red" />
+      </svg>
+    `;
+    var output = JSON.stringify(input);
+    var expected = '{"tag":"svg","attrs":{"height":"100","width":"100"},"children":[{"tag":"circle","attrs":{"cx":"50","cy":"50","r":"40","stroke":"black","stroke-width":"3","fill":"red"}}]}';
+    assert(output === expected);
   });
 });
