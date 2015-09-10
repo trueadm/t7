@@ -7,7 +7,7 @@
 
 */
 
-var t7 = (function() {
+export default (function() {
   "use strict";
 
   //we store created functions in the cache (key is the template string)
@@ -920,6 +920,3 @@ var t7 = (function() {
   return t7;
 })();
 
-if (typeof module != "undefined" && module.exports != null) {
-  module.exports = t7;
-}

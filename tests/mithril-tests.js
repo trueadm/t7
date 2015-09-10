@@ -1,53 +1,56 @@
-describe("Mithril tests", function() {
-  var testContainer = document.getElementById("app");
+import m from 'mithril';
+import t7 from '../t7';
 
-  function render(vDom) {
+describe("Mithril tests", () => {
+  let testContainer = document.getElementById("app");
+
+  let render = vDom => {
     m.render(testContainer, vDom);
   }
 
-  beforeEach(function() {
+  beforeEach(() => {
     t7.setOutput(t7.Outputs.Mithril);
     t7.clearCache();
   });
 
-  afterEach(function() {
+  afterEach(() => {
     testContainer.innerHTML = "";
   });
 
-  it('should handle a very simple single element', function() {
-    var input = render(t7`<div>Hello world</div>`);
-    var output = testContainer.innerHTML;
-    var expected = '<div>Hello world</div>';
+  it('should handle a very simple single element', () => {
+    let input = render(t7`<div>Hello world</div>`);
+    let output = testContainer.innerHTML;
+    let expected = '<div>Hello world</div>';
     assert(output === expected);
   });
 
-  it('should handle a very simple single element with a class', function() {
-    var input = render(t7`<div class="foo">Hello world</div>`);
-    var output = testContainer.innerHTML;
-    var expected = '<div class="foo">Hello world</div>';
+  it('should handle a very simple single element with a class', () => {
+    let input = render(t7`<div class="foo">Hello world</div>`);
+    let output = testContainer.innerHTML;
+    let expected = '<div class="foo">Hello world</div>';
     assert(output === expected);
   });
 
-  it('should handle a very simple single element with dynamic properties', function() {
-    var props = [1,2,3];
-    var attr = "foobar";
-    var input = render(t7`<div className=${ attr } id="foo">Hello world. I like ${ props[0] }, ${ props[1] } and ${ props[2] }!</div>`);
-    var output = testContainer.innerHTML;
-    var expected = '<div class="foobar" id="foo">Hello world. I like 1, 2 and 3!</div>';
+  it('should handle a very simple single element with dynamic properties', () => {
+    let props = [1,2,3];
+    let attr = "foobar";
+    let input = render(t7`<div className=${ attr } id="foo">Hello world. I like ${ props[0] }, ${ props[1] } and ${ props[2] }!</div>`);
+    let output = testContainer.innerHTML;
+    let expected = '<div class="foobar" id="foo">Hello world. I like 1, 2 and 3!</div>';
     assert(output === expected);
   });
 
-  it('should handle components', function() {
+  it('should handle components', () => {
     t7.module(function(t7) {
-      var App = {
-        controller: function() {
+      let App = {
+        controller: () => {
           this.data = "random data";
         },
         view: function(ctrl) {
           return t7`<Component data=${ ctrl.data } />`;
         }
       };
-      var Component = {
+      let Component = {
         view: function(ctrl, args) {
           return t7`<div>Hello world - ${ args.data }</div>`;
         }
@@ -55,8 +58,8 @@ describe("Mithril tests", function() {
       t7.assign("Component", Component);
 
       m.mount(testContainer, App);
-        var output = testContainer.innerHTML;
-        var expected = '<div>Hello world - random data</div>';
+        let output = testContainer.innerHTML;
+        let expected = '<div>Hello world - random data</div>';
         assert(output === expected);
       });
     });
