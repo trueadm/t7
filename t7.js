@@ -920,6 +920,4 @@ let t7 = (function() {
   return t7;
 })();
 
-window.t7 = t7;
-
 export default t7;

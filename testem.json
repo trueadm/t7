@@ -1,6 +1,6 @@
 {
   "framework": "mocha",
-  "before_tests": "webpack --config ./test.config.babel.js",
+  "before_tests": "webpack --config ./test.babel.js",
   "on_exit": "rm ./dist/testem.js",
   "serve_files": ["./dist/testem.js"],
   "src_files": [
