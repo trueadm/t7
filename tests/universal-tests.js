@@ -1,4 +1,5 @@
 import t7 from '../t7';
+import { expect } from 'chai';
 
 describe("Universal tests", () => {
   beforeEach(() => {
@@ -10,21 +11,21 @@ describe("Universal tests", () => {
     let input = t7`<div>Hello world</div>`;
     let output = JSON.stringify(input);
     let expected = '{"tag":"div","children":"Hello world"}';
-    assert(output === expected);
+    expect(output).to.equal(expected);
   });
 
   it('should handle a very simple single element with a class', () => {
     let input = t7`<div class="foo">Hello world</div>`;
     let output = JSON.stringify(input);
     let expected = '{"tag":"div","attrs":{"class":"foo"},"children":"Hello world"}';
-    assert(output === expected);
+    expect(output).to.equal(expected);
   });
 
   it('should handle a very simple single element with some quotes and double quotes', () => {
     let input = t7`<div class="foo">Hello 'world' or should I say, "world"</div>`;
     let output = JSON.stringify(input);
     let expected = '{"tag":"div","attrs":{"class":"foo"},"children":"Hello \'world\' or should I say, \\"world\\""}';
-    assert(output === expected);
+    expect(output).to.equal(expected);
   });
 
   it('should handle a very simple single element with \\n characters', () => {
@@ -32,7 +33,7 @@ describe("Universal tests", () => {
     let output = JSON.stringify(input);
 
     let expected = '{"tag":"div","attrs":{"class":"foo"},"children":"Hello \'world\' or \\n should I say, \\"world\\""}';
-    assert(output === expected);
+    expect(output).to.equal(expected);
   });
 
   it('should handle a very simple component/tag', () => {
@@ -48,7 +49,7 @@ describe("Universal tests", () => {
 
     let output = JSON.stringify(input);
     let expected = '{"tag":"div","children":["Hello ",{"tag":"span","children":"world"}]}';
-    assert(output === expected);
+    expect(output).to.equal(expected);
   });
 
   it('should handle the readme example', () => {
@@ -76,7 +77,7 @@ describe("Universal tests", () => {
 
     let output = JSON.stringify(input);
     let expected = '{"tag":"div","attrs":{"class":"foo"},"children":[{"tag":"h1","children":["Hello ","World"]},{"tag":"ul","attrs":{"id":"bar"},"children":[{"tag":"li","attrs":{"class":"item"},"children":[{"tag":"span","children":["The item is: ","Ball"]}]},{"tag":"li","attrs":{"class":"item"},"children":[{"tag":"span","children":["The item is: ","Boat"]}]}]}]}';
-    assert(output === expected);
+    expect(output).to.equal(expected);
   });
 
   it('should throw an error upon when there is a missing closing tag', () => {
@@ -104,6 +105,6 @@ describe("Universal tests", () => {
     `;
     let output = JSON.stringify(input);
     let expected = '{"tag":"svg","attrs":{"height":"100","width":"100"},"children":[{"tag":"circle","attrs":{"cx":"50","cy":"50","r":"40","stroke":"black","stroke-width":"3","fill":"red"}}]}';
-    assert(output === expected);
+    expect(output).to.equal(expected);
   });
 });

@@ -7,7 +7,7 @@
 
 */
 
-export default (function() {
+let t7 = (function() {
   "use strict";
 
   //we store created functions in the cache (key is the template string)
@@ -920,3 +920,6 @@ export default (function() {
   return t7;
 })();
 
+window.t7 = t7;
+
+export default t7;
