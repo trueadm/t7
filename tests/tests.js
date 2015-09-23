@@ -26,4 +26,14 @@ describe('t7 acceptance tests', () => {
             {tag: "div", children: {tag: "span", children: "Hello world"}}
         );
     });
+
+    it("should handle a basic example #3", () => {
+        let input = t7`<menu:div><span>Hello world</span> this is a test!</menu>`;
+
+        expect(
+            input
+        ).to.deep.equal(
+            {tag: "div", children: [{tag: "span", children: "Hello world"}, " this is a test!"]}
+        );
+    });
 });

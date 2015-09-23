@@ -5,8 +5,16 @@ function transform(ast) {
         return ast.content;
     } else {
         if(isArray(ast)) {
-            if(ast.length === 1) {
+            let length = ast.length;
+
+            if(length === 1) {
                 return transform(ast[0]);
+            } else {
+                let children = new Array(length);
+                for(let i = 0; i < length; i++) {
+                    children[i] = transform(ast[i]);
+                }
+                return children;
             }
         } else {
             let hasAttrs = ast.attrs && Object.keys(ast.attrs).length > 0;
