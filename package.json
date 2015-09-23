@@ -1,34 +1,40 @@
 {
   "name": "t7",
-  "version": "0.3.0",
-  "description": "t7 is a small, lightweight JavaScript template library that compiles ES2015 template strings into virtual DOM objects.",
-  "main": "t7.js",
+  "version": "0.4.0",
+  "description": "t7 is a small, lightweight JavaScript template library that transforms ES2015 template strings into re-usable representations of the DOM.",
+  "main": "dist/t7.min.js",
   "directories": {
     "example": "examples",
     "test": "tests"
   },
   "scripts": {
-    "test": "testem",
-    "build": "npm run dev && npm run pro",
-    "pro": "webpack -p --config ./pro.babel.js",
-    "dev": "webpack --config ./dev.babel.js"
+    "test-win": "webpack-dev-server --config test.config.js --hot --inline 'mocha!.\\tests\\tests.js'",
+    "test": "webpack-dev-server --config test.config.js --hot --inline 'mocha!./tests/tests.js'",
+    "examples": "webpack-dev-server --config webpack.config.js --hot --inline",
+    "build-dev": "webpack --config webpack.config.js --inline",
+    "build-pro": "PROD_DEV=1 webpack --config webpack.config.js --inline"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/trueadm/t7.git"
   },
   "author": "Dominic Gannaway",
-  "license": "ISC",
+  "license": "MPL-2.0",
   "bugs": {
     "url": "https://github.com/trueadm/t7/issues"
   },
   "homepage": "https://github.com/trueadm/t7#readme",
   "devDependencies": {
+    "babel": "^5.8.23",
+    "babel-core": "^5.8.25",
     "babel-loader": "^5.3.2",
-    "chai": "^3.2.0",
-    "mithril": "^0.2.0",
-    "mocha": "^2.3.2",
-    "react": "^0.13.3",
-    "webpack": "^1.12.1"
+    "babel-runtime": "^5.8.25",
+    "chai": "^3.3.0",
+    "mocha": "^2.3.3",
+    "mocha-loader": "^0.7.1",
+    "uglify-loader": "^1.2.0",
+    "webpack": "^1.12.2",
+    "webpack-dev-server": "^1.11.0",
+    "webpack-windows": "0.0.3"
   }
 }
