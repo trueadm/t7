@@ -8,7 +8,7 @@ global.t7 = t7;
 
 describe('t7 acceptance tests', () => {
     it("should handle a basic example #1", () => {
-        var input = t7`<menu:div><div></div></menu>`;
+        let input = t7`<menu:div><div></div></menu>`;
 
         expect(
             input
@@ -18,7 +18,7 @@ describe('t7 acceptance tests', () => {
     });
 
     it("should handle a basic example #2", () => {
-        var input = t7`<menu:div><span>Hello world</span></menu>`;
+        let input = t7`<menu:div><span>Hello world</span></menu>`;
 
         expect(
             input
