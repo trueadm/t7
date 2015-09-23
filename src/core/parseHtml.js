@@ -1,7 +1,7 @@
 import parseTag from './parseTag';
 
 let tagRE = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
-let empty = Object.create ? Object.create(null) : {};
+let empty = Object.create(null);
 
 export default function parseHtml(html, options = {}) {
     options.components || (options.components = empty);
