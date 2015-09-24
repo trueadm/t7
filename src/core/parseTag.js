@@ -1,7 +1,7 @@
 import voidTags from '../spec/voidTags';
 import fillAttrs from '../spec/fillAttrs';
 
-let ATTRIBUTE_REGEX = /([\w-:]+)|('[^\']*')|("[^\"]*")/g;
+let ATTRIBUTE_REGEX = /([\w-]+)|('[^\']*')|("[^\"]*")/g;
 let attr = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
 let html5Data = /(data-)/g; // TODO
 let rmultiDash = /[A-Z]/g; // TODO
@@ -23,20 +23,12 @@ export default tag => {
 			if (voidTags[match] || tag.charAt(tag.length - 2) === '/') {
 				res.voidElement = true;
 			}
-			if (match.indexOf(':') > 0) {
-				let parts = match.split(':');
-				res.name = parts[1];
-				res.description = parts[0];
-			}
-			else {
-				res.name = match;
-			}
+			res.name = match;
 		}
 		else if (tokenIndex % 2) {
 			key = match;
 		}
 		else {
-
 			res.attrs[key] = match.replace(/['"]/g, '');
 		}
 		tokenIndex++;

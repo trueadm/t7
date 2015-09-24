@@ -6,8 +6,8 @@ import { expect } from 'chai';
 describe('t7 acceptance tests', () => {
 
 	describe('parseTag - Component', () => {
-		it('should handle a basic component example #1', () => {
-			let input = t7 `<menu:div><div></div></menu>`;
+		it('should handle a basic example #1', () => {
+			let input = t7 `<div><div></div></div>`;
 
 			expect(
 				input
@@ -19,8 +19,8 @@ describe('t7 acceptance tests', () => {
 			});
 		});
 
-		it('should handle a basic component example #2', () => {
-			let input = t7 `<menu:div><span>Hello world</span></menu>`;
+		it('should handle a basic example #2', () => {
+			let input = t7 `<div><span>Hello world</span></div>`;
 
 			expect(
 				input
@@ -33,8 +33,8 @@ describe('t7 acceptance tests', () => {
 			});
 		});
 
-		it('should handle a basic component example #3', () => {
-			let input = t7 `<menu:div><span>Hello world</span> this is a test!</menu>`;
+		it('should handle a basic example #3', () => {
+			let input = t7 `<div><span>Hello world</span> this is a test!</div>`;
 
 			expect(
 				input
