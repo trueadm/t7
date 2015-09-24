@@ -1,6 +1,5 @@
-import t7Err from '../util/t7Err';
-import voidTags from './voidTags';
-import fillAttrs from './fillAttrs';
+import voidTags from '../spec/voidTags';
+import fillAttrs from '../spec/fillAttrs';
 
 let ATTRIBUTE_REGEX = /([\w-:]+)|('[^\']*')|("[^\"]*")/g;
 let attr = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;

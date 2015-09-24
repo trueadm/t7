@@ -1,5 +1,4 @@
 import parseTag from './parseTag';
-import blockElements from './blockElements';
 
 let tagRE = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
 let empty = {};
