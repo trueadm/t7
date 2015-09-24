@@ -1,12 +1,11 @@
-import t7Err           from '../util/t7Err';
+import t7Err from '../util/t7Err';
 import voidTags from './voidTags';
 import fillAttrs from './fillAttrs';
 
-
 let ATTRIBUTE_REGEX = /([\w-:]+)|('[^\']*')|("[^\"]*")/g;
 let attr = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
-let html5Data = /(data-)/g; // SOON!!
-let rmultiDash = /[A-Z]/g; // SOON!!
+let html5Data = /(data-)/g; // TODO
+let rmultiDash = /[A-Z]/g; // TODO
 
 export default tag => {
 	let tokenIndex = 0;
@@ -20,7 +19,6 @@ export default tag => {
 		children: []
 	};
 
-	console.log(tag);
 	tag.replace(ATTRIBUTE_REGEX, match => {
 		if (tokenIndex === 0) {
 			if (voidTags[match] || tag.charAt(tag.length - 2) === '/') {

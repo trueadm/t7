@@ -68,7 +68,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	exports.setTransformer = _coreTransformer2['default'];
 	
-	var _coreParseTemplateString = __webpack_require__(6);
+	var _coreParseTemplateString = __webpack_require__(8);
 	
 	var _coreParseTemplateString2 = _interopRequireDefault(_coreParseTemplateString);
 
@@ -107,7 +107,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		value: true
 	});
 	
-	var _transformersDefault = __webpack_require__(8);
+	var _transformersDefault = __webpack_require__(10);
 	
 	var _transformersDefault2 = _interopRequireDefault(_transformersDefault);
 	
@@ -125,6 +125,131 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 4 */
+/***/ function(module, exports) {
+
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports["default"] = {
+		a: true,
+		address: true,
+		article: true,
+		applet: true,
+		aside: true,
+		audio: true,
+		blockquote: true,
+		button: true,
+		canvas: true,
+		center: true,
+		dd: true,
+		del: true,
+		dir: true,
+		div: true,
+		dl: true,
+		dt: true,
+		fieldset: true,
+		figcaption: true,
+		figure: true,
+		footer: true,
+		form: true,
+		frameset: true,
+		h1: true,
+		h2: true,
+		h3: true,
+		h4: true,
+		h5: true,
+		h6: true,
+		header: true,
+		hgroup: true,
+		hr: true,
+		html: true,
+		iframe: true,
+		ins: true,
+		isindex: true,
+		legend: true,
+		li: true,
+		main: true,
+		map: true,
+		mark: true,
+		menu: true,
+		menuitem: true,
+		meta: true,
+		meter: true,
+		nav: true,
+		noframes: true,
+		noscript: true,
+		object: true,
+		option: true,
+		ol: true,
+		output: true,
+		p: true,
+		pre: true,
+		ruby: true,
+		section: true,
+		script: true,
+		table: true,
+		tbody: true,
+		td: true,
+		tfoot: true,
+		th: true,
+		thead: true,
+		tr: true,
+		ul: true,
+		video: true,
+	
+		// SVG
+		circle: true,
+		clipPath: true,
+		defs: true,
+		ellipse: true,
+		g: true,
+		line: true,
+		linearGradient: true,
+		mask: true,
+		path: true,
+		pattern: true,
+		polygon: true,
+		polyline: true,
+		radialGradient: true,
+		rect: true,
+		stop: true,
+		svg: true,
+		text: true,
+		tspan: true
+	};
+	module.exports = exports["default"];
+
+/***/ },
+/* 5 */
+/***/ function(module, exports) {
+
+	// Attributes that have their values filled in disabled="disabled"
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+		value: true
+	});
+	exports["default"] = {
+		checked: true,
+		compact: true,
+		declare: true,
+		defer: true,
+		disabled: true,
+		ismap: true,
+		multiple: true,
+		nohref: true,
+		noresize: true,
+		noshade: true,
+		nowrap: true,
+		readonly: true,
+		selected: true
+	};
+	module.exports = exports["default"];
+
+/***/ },
+/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -136,9 +261,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports['default'] = parseHtml;
 	
-	var _parseTag = __webpack_require__(5);
+	var _parseTag = __webpack_require__(7);
 	
 	var _parseTag2 = _interopRequireDefault(_parseTag);
+	
+	var _blockElements = __webpack_require__(4);
+	
+	var _blockElements2 = _interopRequireDefault(_blockElements);
 	
 	var tagRE = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
 	var empty = {};
@@ -221,7 +350,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 5 */
+/* 7 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -232,16 +361,22 @@ return /******/ (function(modules) { // webpackBootstrap
 		value: true
 	});
 	
-	var _voidTags = __webpack_require__(7);
+	var _utilT7Err = __webpack_require__(12);
+	
+	var _utilT7Err2 = _interopRequireDefault(_utilT7Err);
+	
+	var _voidTags = __webpack_require__(9);
 	
 	var _voidTags2 = _interopRequireDefault(_voidTags);
 	
+	var _fillAttrs = __webpack_require__(5);
+	
+	var _fillAttrs2 = _interopRequireDefault(_fillAttrs);
+	
 	var ATTRIBUTE_REGEX = /([\w-:]+)|('[^\']*')|("[^\"]*")/g;
 	var attr = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
-	
-	var has = function has(value) {
-		return this.indexOf(value) !== -1;
-	};
+	var html5Data = /(data-)/g; // TODO
+	var rmultiDash = /[A-Z]/g; // TODO
 	
 	exports['default'] = function (tag) {
 		var tokenIndex = 0;
@@ -255,10 +390,9 @@ return /******/ (function(modules) { // webpackBootstrap
 			children: []
 		};
 	
-		console.log(tag);
 		tag.replace(ATTRIBUTE_REGEX, function (match) {
 			if (tokenIndex === 0) {
-				if (has.call(_voidTags2['default'], match) || tag.charAt(tag.length - 2) === '/') {
+				if (_voidTags2['default'][match] || tag.charAt(tag.length - 2) === '/') {
 					res.voidElement = true;
 				}
 				if (match.indexOf(':') > 0) {
@@ -282,7 +416,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 6 */
+/* 8 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -294,7 +428,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports['default'] = parseTemplateString;
 	
-	var _parseHtml = __webpack_require__(4);
+	var _parseHtml = __webpack_require__(6);
 	
 	var _parseHtml2 = _interopRequireDefault(_parseHtml);
 	
@@ -324,26 +458,55 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 7 */
+/* 9 */
 /***/ function(module, exports) {
 
-	// http://www.w3.org/TR/html5/syntax.html#void-elements
+	"use strict";
 	
-	'use strict';
-	
-	Object.defineProperty(exports, '__esModule', {
+	Object.defineProperty(exports, "__esModule", {
 		value: true
 	});
-	exports['default'] = ['area', 'base', 'br', 'col', 'embed', 'hr', 'img', 'input', 'keygen', 'link', 'meta', 'param', 'source', 'track', 'wbr'];
-	module.exports = exports['default'];
+	exports["default"] = {
+		area: true,
+		base: true,
+		basefont: true,
+		br: true,
+		col: true,
+		command: true,
+		embed: true,
+		frame: true,
+		hr: true,
+		img: true,
+		input: true,
+		isindex: true,
+		keygen: true,
+		link: true,
+		meta: true,
+		param: true,
+		source: true,
+		track: true,
+		wbr: true,
+	
+		//common self closing svg elements
+		path: true,
+		circle: true,
+		ellipse: true,
+		line: true,
+		rect: true,
+		use: true,
+		stop: true,
+		polyline: true,
+		polygon: true
+	};
+	module.exports = exports["default"];
 
 /***/ },
-/* 8 */
+/* 10 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var _Object$keys = __webpack_require__(10)['default'];
+	var _Object$keys = __webpack_require__(14)['default'];
 	
 	var _interopRequireDefault = __webpack_require__(1)['default'];
 	
@@ -351,7 +514,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		value: true
 	});
 	
-	var _utilIsArray = __webpack_require__(9);
+	var _utilIsArray = __webpack_require__(11);
 	
 	var _utilIsArray2 = _interopRequireDefault(_utilIsArray);
 	
@@ -420,7 +583,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 9 */
+/* 11 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -436,23 +599,64 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ },
-/* 10 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = { "default": __webpack_require__(11), __esModule: true };
-
-/***/ },
-/* 11 */
-/***/ function(module, exports, __webpack_require__) {
-
-	__webpack_require__(18);
-	module.exports = __webpack_require__(2).Object.keys;
-
-/***/ },
 /* 12 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var global    = __webpack_require__(15)
+	'use strict';
+	
+	var _Object$create = __webpack_require__(13)['default'];
+	
+	Object.defineProperty(exports, '__esModule', {
+		value: true
+	});
+	exports['default'] = minErr;
+	var Wrapper = function Wrapper(module, msg) {
+		this.message = module ? (msg || 'This operation is not supported') + (module.length > 4 ? ' -> Module: ' + module : ' -> Core') : 'The string did not match the expected pattern';
+		// use the name on the framework
+		this.name = 't7';
+	};
+	
+	Wrapper.prototype = _Object$create(Error.prototype);
+	
+	function minErr(module, msg) {
+		throw new Wrapper(module, msg);
+	}
+	
+	module.exports = exports['default'];
+
+/***/ },
+/* 13 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(15), __esModule: true };
+
+/***/ },
+/* 14 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(16), __esModule: true };
+
+/***/ },
+/* 15 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var $ = __webpack_require__(21);
+	module.exports = function create(P, D){
+	  return $.create(P, D);
+	};
+
+/***/ },
+/* 16 */
+/***/ function(module, exports, __webpack_require__) {
+
+	__webpack_require__(24);
+	module.exports = __webpack_require__(2).Object.keys;
+
+/***/ },
+/* 17 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var global    = __webpack_require__(20)
 	  , core      = __webpack_require__(2)
 	  , PROTOTYPE = 'prototype';
 	var ctx = function(fn, that){
@@ -501,7 +705,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = $def;
 
 /***/ },
-/* 13 */
+/* 18 */
 /***/ function(module, exports) {
 
 	// 7.2.1 RequireObjectCoercible(argument)
@@ -511,7 +715,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 14 */
+/* 19 */
 /***/ function(module, exports) {
 
 	module.exports = function(exec){
@@ -523,7 +727,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 15 */
+/* 20 */
 /***/ function(module, exports) {
 
 	// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
@@ -533,36 +737,54 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
 
 /***/ },
-/* 16 */
+/* 21 */
+/***/ function(module, exports) {
+
+	var $Object = Object;
+	module.exports = {
+	  create:     $Object.create,
+	  getProto:   $Object.getPrototypeOf,
+	  isEnum:     {}.propertyIsEnumerable,
+	  getDesc:    $Object.getOwnPropertyDescriptor,
+	  setDesc:    $Object.defineProperty,
+	  setDescs:   $Object.defineProperties,
+	  getKeys:    $Object.keys,
+	  getNames:   $Object.getOwnPropertyNames,
+	  getSymbols: $Object.getOwnPropertySymbols,
+	  each:       [].forEach
+	};
+
+/***/ },
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// most Object methods by ES6 should accept primitives
 	module.exports = function(KEY, exec){
-	  var $def = __webpack_require__(12)
+	  var $def = __webpack_require__(17)
 	    , fn   = (__webpack_require__(2).Object || {})[KEY] || Object[KEY]
 	    , exp  = {};
 	  exp[KEY] = exec(fn);
-	  $def($def.S + $def.F * __webpack_require__(14)(function(){ fn(1); }), 'Object', exp);
+	  $def($def.S + $def.F * __webpack_require__(19)(function(){ fn(1); }), 'Object', exp);
 	};
 
 /***/ },
-/* 17 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 7.1.13 ToObject(argument)
-	var defined = __webpack_require__(13);
+	var defined = __webpack_require__(18);
 	module.exports = function(it){
 	  return Object(defined(it));
 	};
 
 /***/ },
-/* 18 */
+/* 24 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 19.1.2.14 Object.keys(O)
-	var toObject = __webpack_require__(17);
+	var toObject = __webpack_require__(23);
 	
-	__webpack_require__(16)('keys', function($keys){
+	__webpack_require__(22)('keys', function($keys){
 	  return function keys(it){
 	    return $keys(toObject(it));
 	  };
