@@ -2,11 +2,10 @@ import defaultTransformer from '../transformers/default'
 
 let transformer = defaultTransformer;
 
-export default {
-	setTransformer(newTransformer) {
-		transformer = newTransformer;
-	},
-	getTransformer() {
-		return transformer;
-	}
+export setTransformer(newTransformer) {
+	transformer = newTransformer;
+};
+
+export getTransformer() {
+	return transformer;
 };
