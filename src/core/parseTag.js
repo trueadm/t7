@@ -1,11 +1,12 @@
+import t7Err           from '../util/t7Err';
 import voidTags from './voidTags';
+import fillAttrs from './fillAttrs';
+
 
 let ATTRIBUTE_REGEX = /([\w-:]+)|('[^\']*')|("[^\"]*")/g;
 let attr = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
-
-let has = function(value) {
-	return this.indexOf(value) !== -1;
-}
+let html5Data = /(data-)/g; // SOON!!
+let rmultiDash = /[A-Z]/g; // SOON!!
 
 export default tag => {
 	let tokenIndex = 0;
@@ -22,7 +23,7 @@ export default tag => {
 	console.log(tag);
 	tag.replace(ATTRIBUTE_REGEX, match => {
 		if (tokenIndex === 0) {
-			if (voidTags::has(match) || tag.charAt(tag.length - 2) === '/') {
+			if (voidTags[match] || tag.charAt(tag.length - 2) === '/') {
 				res.voidElement = true;
 			}
 			if (match.indexOf(':') > 0) {
