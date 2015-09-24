@@ -37,6 +37,7 @@ export default tag => {
 			key = match;
 		}
 		else {
+
 			res.attrs[key] = match.replace(/['"]/g, '');
 		}
 		tokenIndex++;

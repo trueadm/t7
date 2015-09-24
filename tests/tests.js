@@ -50,33 +50,44 @@ describe('t7 acceptance tests', () => {
 
 	describe('parseTag - HTML5', () => {
 
-		it('should handle custom attributes', () => {
-			let input = t7 `<div other=stuff something=54 quote='me '>`;
+		it('should handle custom attributes with quotes', () => {
+			let input = t7 `<div foo="bar">`;
 
 			expect(
 				input
 			).to.deep.equal({
 				tag: 'div',
 				attrs: {
-					other: 'stuff',
-					something: '54',
-					quote: 'me '
+					foo: 'bar'
 				}
 			});
 		});
 
+		it('should handle custom attributes without quotes', () => {
+			let input = t7 `<div foo=bar something=54 quote='t7 '>`;
 
+			expect(
+				input
+			).to.deep.equal({
+				tag: 'div',
+				attrs: {
+					foo: 'bar',
+					something: '54',
+					quote: 't7 '
+				}
+			});
+		});
 
 		it('should handle void elements', () => {
-			let input = t7 `<img src='something' alt='sweet picture'/>`;
+			let input = t7 `<img src='xxx.jpg' alt='t7Pic'/>`;
 
 			expect(
 				input
 			).to.deep.equal({
 				tag: 'img',
 				attrs: {
-					src: 'something',
-					alt: 'sweet picture'
+					src: 'xxx.jpg',
+					alt: 't7Pic'
 				}
 			});
 		});
