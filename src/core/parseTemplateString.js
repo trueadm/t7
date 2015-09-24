@@ -12,6 +12,6 @@ export default function parseTemplateString(template, ...placeholders) {
         templateString = template[0];
     }
     let ast = parseHtml(templateString);
-    
+
     return transformer.getTransformer().transform(ast);
 };

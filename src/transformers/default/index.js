@@ -1,6 +1,9 @@
 import isArray from '../../util/isArray';
 
 function transform(ast) {
+   
+   // 'ast' now contains a description for the tag
+   
     if(ast.type === "text") {
         return ast.content;
     } else {

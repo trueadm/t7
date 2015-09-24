@@ -29,6 +29,9 @@ export default function parseHtml(html, options = {}) {
             level++;
 
             current = parseTag(tag);
+
+			result.description = current.description
+
             if (current.type === 'tag' && options.components[current.name]) {
                 current.type = 'component';
                 inComponent = true;

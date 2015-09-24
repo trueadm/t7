@@ -1,5 +1,6 @@
 let attrRE = /([\w-:]+)|['"]{1}([^'"]*)['"]{1}/g;
-
+let attr = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
+ 
 let lookup = Object.create(null);
 lookup.area = true;
 lookup.base = true;
@@ -31,13 +32,16 @@ export default function parseTag(tag) {
     };
 
     tag.replace(attrRE, function (match) {
+
         if (i % 2) {
             key = match;
         } else {
             if (i === 0) {
+				
                 if (lookup[match] || tag.charAt(tag.length - 2) === '/') {
                     res.voidElement = true;
                 }
+
                 if(match.indexOf(":") > 0) {
                     let parts = match.split(":");
                     res.name = parts[1];

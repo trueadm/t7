@@ -36,4 +36,40 @@ describe('t7 acceptance tests', () => {
             {tag: "div", children: [{tag: "span", children: "Hello world"}, " this is a test!"]}
         );
     });
+	
+
+    describe('parse-tag', () => {
+		
+	it("should handle custom attributes", () => {
+	    let input = t7 `<foo:div other=stuff something=54 quote="me ">`;
+	    console.log(input)
+	    expect(
+	        input
+	    ).to.deep.equal({ 
+	         tag: 'div', 
+         attrs: { 
+             other: 'stuff', 
+             something: '54', 
+             quote: 'me ' 
+         }
+     } 
+);
+	});
+		
+	it("should handle void elements", () => {
+	    let input = t7 `<foo:img src="something" alt="sweet picture"/>`;
+
+	    expect(
+	        input
+	    ).to.deep.equal({
+	        tag: 'img',
+	        attrs: {
+	            src: 'something',
+	            alt: 'sweet picture'
+	        }
+	    });
+	});
+ });
+
+
 });
