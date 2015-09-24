@@ -1,60 +1,47 @@
-let attrRE = /([\w-:]+)|['"]{1}([^'"]*)['"]{1}/g;
+import voidTags from './voidTags';
+
+let ATTRIBUTE_REGEX = /([\w-:]+)|('[^\']*')|("[^\"]*")/g;
 let attr = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
- 
-let lookup = Object.create(null);
-lookup.area = true;
-lookup.base = true;
-lookup.br = true;
-lookup.col = true;
-lookup.embed = true;
-lookup.hr = true;
-lookup.img = true;
-lookup.input = true;
-lookup.keygen = true;
-lookup.link = true;
-lookup.menuitem = true;
-lookup.meta = true;
-lookup.param = true;
-lookup.source = true;
-lookup.track = true;
-lookup.wbr = true;
 
-export default function parseTag(tag) {
-    let i = 0;
-    let key;
-    let res = {
-        type: 'tag',
-        name: '',
-        description: '',
-        voidElement: false,
-        attrs: {},
-        children: []
-    };
+let has = function(value) {
+	return this.indexOf(value) !== -1;
+}
 
-    tag.replace(attrRE, function (match) {
+export default tag => {
+	let tokenIndex = 0;
+	let key;
+	let res = {
+		type: 'tag',
+		name: '',
+		description: '',
+		voidElement: false,
+		attrs: {},
+		children: []
+	};
 
-        if (i % 2) {
-            key = match;
-        } else {
-            if (i === 0) {
-				
-                if (lookup[match] || tag.charAt(tag.length - 2) === '/') {
-                    res.voidElement = true;
-                }
+	console.log(tag);
+	tag.replace(ATTRIBUTE_REGEX, match => {
+		if (tokenIndex === 0) {
+			if (voidTags::has(match) || tag.charAt(tag.length - 2) === '/') {
+				res.voidElement = true;
+			}
+			if (match.indexOf(':') > 0) {
+				let parts = match.split(':');
+				res.name = parts[1];
+				res.description = parts[0];
+			}
+			else {
+				res.name = match;
+			}
+		}
+		else if (tokenIndex % 2) {
+			key = match;
+		}
+		else {
+			res.attrs[key] = match.replace(/['"]/g, '');
+		}
+		tokenIndex++;
+	});
 
-                if(match.indexOf(":") > 0) {
-                    let parts = match.split(":");
-                    res.name = parts[1];
-                    res.description = parts[0];
-                } else {
-                    res.name = match;
-                }
-            } else {
-                res.attrs[key] = match.replace(/['"]/g, '');
-            }
-        }
-        i++;
-    });
-
-    return res;
+	return res;
 };

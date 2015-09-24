@@ -1,8 +1,8 @@
-#t7.js
+# t7
 
 ## Overview
 
-t7.js is a small, lightweight JavaScript template library that compiles ES2015 template strings into virtual DOM objects.
+t7 is a small, lightweight JavaScript template library that compiles ES2015 template strings into virtual DOM objects.
 
 [Template strings](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/template_strings)
 allow for JavaScript expressions to be embedded within literal strings. With that in mind,
@@ -20,9 +20,9 @@ Furthermore, IDEs should play nicely with the syntax and there isn't a need to s
 in-browser transformers or NodeJS transpilers to start developing.
 
 
-## Installing
+## Install
 
-t7 fully supports in-browser, NodeJS and Browserify/Webpack usage. If you are using
+t7 fully supports browser and node.js environments. If you are using
 t7 in your browser, simply include the script:
 
 ### Browser
@@ -31,18 +31,17 @@ t7 in your browser, simply include the script:
 <script src="t7.js"></script>
 ```
 
-### Node/Browserify/Webpack
-
-Simply run the following:
+### Node
 
 ```sh
-npm install t7
+npm install --save t7
 ```
 
-Then use the t7 module as you would any other module:
-
-```javascript
-var t7 = require("t7");
+```js
+// ES5
+var t7 = require('t7');
+// ES6+
+import t7 from 't7';
 ```
 
 ## Usage
@@ -84,11 +83,11 @@ If React is detected in the scope, the above will return a React compliant virtu
 By default t7 will attempt to check to see if React is available. If it is, t7 will
 automatically produce React elements as its output. This allows developers to easily
 swap in t7 for JSX code. t7 can also produce "universal" virtual DOM output. Universal DOM
-output should be compatible with most other virtual DOM frameworks out there (Mercury, Cito and Virtal-dom).
+output should be compatible with most other virtual DOM frameworks out there (Mercury, Cito and Virtual-Dom).
 
 An example of this is:
 
-```javascript
+```js
 t7.setOutput(t7.Outputs.React);
 ```
 
@@ -113,7 +112,7 @@ its `t7.assign()` function. You must also ensure your `t7.assign()` calls are wi
 a `t7.module(...)` wrapper. The module wrapper ensures your components are kept
 within scope without being made global objects.
 
-```javascript
+```js
 
 t7.module(function(t7) {
   function MyWidget(props) {
