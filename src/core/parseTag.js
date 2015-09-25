@@ -12,7 +12,6 @@ export default tag => {
 	let res = {
 		type: 'tag',
 		name: '',
-		description: '',
 		voidElement: false,
 		attrs: {},
 		children: []

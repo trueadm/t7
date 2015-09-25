@@ -48,8 +48,45 @@ function transform(ast) {
 	}
 }
 
+function compileTemplateAttributes(root) {
+	let attrsParams = '';
+
+	for (let name in root.attrs) {
+		let val = root.attrs[name];
+		let matches = val.match(/__\$props__\[\d*\]/g);
+
+		if (matches === null) {
+			attrsParams += "'" + name + "':'" + val + "'";
+		} else {
+			attrsParams += "'" + name + "':" + val;
+		}
+	}	
+	return attrsParams;
+}
+
+function compileTemplateRoot(root, templateStringBuilder) {
+	debugger;
+	if (root.tag != null) {
+		templateStringBuilder.push("{tag: '" + root.tag + "'");
+
+		if (root.key != null) {
+			templateStringBuilder.push("key: " + root.key);
+		}
+		if (root.attrs != null) {
+			let attrsParams = compileTemplateAttributes(root);
+			tagParams.push("attrs: {" + attrsParams + "}");
+		}
+	} else {
+		//no root? then it's a text node
+		templateStringBuilder.push("'" + root + "'");
+	}
+}
+
 export default {
-	transform(ast) {
-		return transform(ast);
+	compile(ast) {
+		let templateStringBuilder = [];
+
+		compileTemplateRoot(transform(ast), templateStringBuilder);
+		return templateStringBuilder.join("");
 	}
 };

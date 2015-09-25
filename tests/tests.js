@@ -1,9 +1,13 @@
-/** @jsx t */
-/* global describe it */
-import t7 from '../src';
+import t7Factory from '../src';
 import { expect } from 'chai';
 
 describe('t7 acceptance tests', () => {
+	let t7 = null;
+
+	beforeEach(function() {
+		t7 = t7Factory.createInstance();
+	})
+
 	describe('Universal (default) transformer', () => {
 		describe('parseTag - basic', () => {
 			it('should handle a basic example #1', () => {
@@ -43,20 +47,6 @@ describe('t7 acceptance tests', () => {
 						children: 'Hello world'
 					}, ' this is a test!']
 				});
-			});
-		});
-
-		describe('parseTag - component', () => {
-			let input = t7 `<div><span>Hello world</span> this is a test!</div>`;
-
-			expect(
-				input
-			).to.deep.equal({
-				tag: 'div',
-				children: [{
-					tag: 'span',
-					children: 'Hello world'
-				}, ' this is a test!']
 			});
 		});
 

@@ -1,5 +1,6 @@
-export { setTransformer } from     './core/transformer';
-export createInstance from  './core/createInstance';
+import { setTransformer }   from  './core/transformer';
+import createInstance       from  './core/createInstance';
+import { setTemplate }      from  './core/cacheControl';
 
 export default {
     setTransformer,

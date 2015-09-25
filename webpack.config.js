@@ -32,7 +32,7 @@ module.exports = {
 		path: path.join(__dirname, 'dist'),
 		filename: PROD ? 't7.min.js' : 't7.js',
 		libraryTarget: 'umd',
-		library: 't7',
+		library: 't7Factory',
 		publicPath: 'http://localhost:8080/'
 	},
 	devServer: {
