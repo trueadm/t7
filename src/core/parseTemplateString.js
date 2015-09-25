@@ -16,8 +16,8 @@ export default function parseTemplateString(templateStrings, ...values) {
 	let template = getTemplate(templateKey);
 
 	if(template == null) {
-		return createTemplate(templateKey, templateStrings, values, this);
+		return createTemplate(templateKey, templateStrings, values, this)(values, this);
 	}
 
-	return template;
+	return template(values, this);
 };

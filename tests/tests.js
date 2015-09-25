@@ -24,7 +24,6 @@ describe('t7 acceptance tests', () => {
 			});
 			it('should handle a basic example #2', () => {
 				let input = t7 `<div><span>Hello world</span></div>`;
-
 				expect(
 					input
 				).to.deep.equal({

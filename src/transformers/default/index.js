@@ -49,36 +49,92 @@ function transform(ast) {
 }
 
 function compileTemplateAttributes(root) {
-	let attrsParams = '';
+	let attrsParams = [];
 
 	for (let name in root.attrs) {
 		let val = root.attrs[name];
 		let matches = val.match(/__\$props__\[\d*\]/g);
 
 		if (matches === null) {
-			attrsParams += "'" + name + "':'" + val + "'";
+			attrsParams.push('"' + name + '":"' + val + '"');
 		} else {
-			attrsParams += "'" + name + "':" + val;
+			attrsParams.push('"' + name + '":' + val);
 		}
-	}	
-	return attrsParams;
+	}
+	return attrsParams.join(', ');
 }
 
-function compileTemplateRoot(root, templateStringBuilder) {
-	debugger;
+function compileTemplateChildren(root, rootChildrenStringBuilder, childrenProp) {
+	let childrenStringBuilder = [];
+
+	if (root.children != null && isArray(root.children)) {
+		for (let i = 0, n = root.children.length; i < n; i++) {
+			let child = root.children[i];
+			if (child != null) {
+				if (typeof child === 'string') {
+					child = child.replace(/(\r\n|\n|\r)/gm, '');
+					let matches = child.match(/__\$props__\[\d*\]/g);
+
+					if (matches !== null) {
+						childrenStringBuilder.push(root.children[i]);
+					} else {
+						childrenStringBuilder.push('"' + root.children[i] + '"');
+					}
+				} else {
+					compileTemplateRoot(root.children[i], childrenStringBuilder);
+				}
+			}
+		}
+	} else if (root.children != null && typeof root.children === 'string') {
+		let child = root.children.replace(/(\r\n|\n|\r)/gm, '');
+		//check if we have any placeholder values in here
+		let matches = child.match(/__\$props__\[\d*\]/g);
+		//if we do, let's replace them with the compiled literal
+		if (matches !== null) {
+			child = child.replace(/(__\$props__\[.*\])/g, '",$1,"')
+		}
+		//if the last two characters are ,', replace them with nothing
+		if (child.substring(child.length - 2) === ',"') {
+			child = child.substring(0, child.length - 2);
+			rootChildrenStringBuilder.push((childrenProp ? "children: " : "") + '"' + child);
+		} else {
+			rootChildrenStringBuilder.push((childrenProp ? "children: " : "") + '"' + child + '"');
+		}
+	} else {
+		compileTemplateRoot(root.children, childrenStringBuilder);
+	}
+	//if we have some children in our string builder, create it up and put it on our root children string builder
+	if (childrenStringBuilder.length === 1) {
+		rootChildrenStringBuilder.push((childrenProp ? 'children: ' : '') + childrenStringBuilder[0]);
+	} else if (childrenStringBuilder.length > 1) {
+		rootChildrenStringBuilder.push((childrenProp ? 'children: ' : '') + '[' + childrenStringBuilder.join(",") + ']');
+	}
+}
+
+function compileTemplateRoot(root, rootStringBuilder) {
 	if (root.tag != null) {
-		templateStringBuilder.push("{tag: '" + root.tag + "'");
+		let rootString = '{tag: "' + root.tag + '"';
 
 		if (root.key != null) {
-			templateStringBuilder.push("key: " + root.key);
+			rootString += ', key: ' + root.key;
 		}
 		if (root.attrs != null) {
 			let attrsParams = compileTemplateAttributes(root);
-			tagParams.push("attrs: {" + attrsParams + "}");
+			rootString += ', attrs: {' + attrsParams + '}';
 		}
+		if (root.children != null) {
+			let childrenStringBuilder = [];
+			compileTemplateChildren(root, childrenStringBuilder, true);
+			//add the children and close the object
+			rootString += ', ' + childrenStringBuilder.join(',') + '}';
+		} else {
+			//close the object if there are not children
+			rootString += '}';
+		}
+		rootStringBuilder.push(rootString);
 	} else {
 		//no root? then it's a text node
-		templateStringBuilder.push("'" + root + "'");
+		rootStringBuilder.push("'" + root + "'");
 	}
 }
 
@@ -87,6 +143,6 @@ export default {
 		let templateStringBuilder = [];
 
 		compileTemplateRoot(transform(ast), templateStringBuilder);
-		return templateStringBuilder.join("");
+		return templateStringBuilder.join(', ');
 	}
 };
