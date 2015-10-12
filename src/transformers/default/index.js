@@ -48,18 +48,13 @@ function transform(ast) {
 	}
 }
 
-function compileTemplateAttributes(root) {
+function compileTemplateAttributes(ast) {
 	let attrsParams = [];
 
-	for (let name in root.attrs) {
-		let val = root.attrs[name];
-		let matches = val.match(/__\$props__\[\d*\]/g);
-
-		if (matches === null) {
-			attrsParams.push('"' + name + '":"' + val + '"');
-		} else {
-			attrsParams.push('"' + name + '":' + val);
-		}
+	for (let name in ast.attrs) {
+		let val = ast.attrs[name];
+		val = val.replace(/(__\$props__\[.*\])/g, '" + $1 + "')
+		attrsParams.push('"' + name + '":"' + val + '"');
 	}
 	return attrsParams.join(', ');
 }
@@ -87,18 +82,21 @@ function compileTemplateChildren(root, rootChildrenStringBuilder, childrenProp) 
 		}
 	} else if (root.children != null && typeof root.children === 'string') {
 		let child = root.children.replace(/(\r\n|\n|\r)/gm, '');
-		//check if we have any placeholder values in here
-		let matches = child.match(/__\$props__\[\d*\]/g);
-		//if we do, let's replace them with the compiled literal
-		if (matches !== null) {
-			child = child.replace(/(__\$props__\[.*\])/g, '",$1,"')
-		}
+		let noManipulate = true;
+		child = child.replace(/(__\$props__\[.*\])/g, '",$1,"')
 		//if the last two characters are ,', replace them with nothing
 		if (child.substring(child.length - 2) === ',"') {
 			child = child.substring(0, child.length - 2);
-			rootChildrenStringBuilder.push((childrenProp ? "children: " : "") + '"' + child);
-		} else {
+			noManipulate = false;
+		}
+		if (child.substring(0, 2) === '",') {
+			child = child.substring(2);
+			noManipulate = false;
+		}
+		if(noManipulate) {
 			rootChildrenStringBuilder.push((childrenProp ? "children: " : "") + '"' + child + '"');
+		} else {
+			rootChildrenStringBuilder.push((childrenProp ? "children: " : "") + child);
 		}
 	} else {
 		compileTemplateRoot(root.children, childrenStringBuilder);

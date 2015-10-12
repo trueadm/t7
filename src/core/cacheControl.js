@@ -6,3 +6,6 @@ export function getTemplate(key) {
 export function setTemplate(key, template) {
     templateCache[key] = template;
 };
+export function clearTemplates() {
+    templateCache = {};
+};

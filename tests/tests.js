@@ -1,12 +1,20 @@
 import t7Factory from '../src';
+import reactTransformer from '../src/transformers/react';
 import { expect } from 'chai';
+import React from 'react';
+
+global.React = React;
 
 describe('t7 acceptance tests', () => {
 	let t7 = null;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		t7 = t7Factory.createInstance();
-	})
+	});
+
+	afterEach(() => {
+		t7Factory.clearTemplates();
+	});
 
 	describe('Universal (default) transformer', () => {
 		describe('parseTag - basic', () => {
@@ -19,6 +27,27 @@ describe('t7 acceptance tests', () => {
 					tag: 'div',
 					children: {
 						tag: 'div'
+					}
+				});
+			});
+			it('should handle a basic example #1b', () => {
+				let foo = "Hello world";
+				let className = "bar";
+				let input = t7 `<div className=${ className }><span className=${ className }>${ foo }</span></div>`;
+
+				expect(
+					input
+				).to.deep.equal({
+					tag: 'div',
+					attrs: {
+						className: className
+					},
+					children: {
+						tag: 'span',
+						attrs: {
+							className: className
+						},
+						children: foo
 					}
 				});
 			});
@@ -88,6 +117,37 @@ describe('t7 acceptance tests', () => {
 						alt: 't7Pic'
 					}
 				});
+			});
+		});
+	});
+
+	describe('React transformer', () => {
+		beforeEach(() => {
+			t7Factory.setTransformer(reactTransformer);
+		});
+
+		describe('parseTag - basic', () => {
+			it('should handle a basic example #1', () => {
+				let input = t7 `<div><div></div></div>`;
+				let output = React.renderToStaticMarkup(input);
+
+				expect(
+					output
+				).to.equal(
+					'<div><div></div></div>'
+				);
+			});
+			it('should handle a basic example #1b', () => {
+				let foo = "Hello world";
+				let className = "bar";
+				let input = t7 `<div className=${ className }><span className=${ className }>${ foo }</span></div>`;
+				let output = React.renderToStaticMarkup(input);
+
+				expect(
+					output
+				).to.equal(
+					'<div class="bar"><span class="bar">Hello world</span></div>'
+				);
 			});
 		});
 	});

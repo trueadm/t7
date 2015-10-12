@@ -17,6 +17,8 @@ export default tag => {
 		children: []
 	};
 
+	//handle dynamic tags
+	tag = tag.replace(/(__\$props__\[.*\])/g, "'$1'");
 	tag.replace(ATTRIBUTE_REGEX, match => {
 		if (tokenIndex === 0) {
 			if (voidTags[match] || tag.charAt(tag.length - 2) === '/') {
