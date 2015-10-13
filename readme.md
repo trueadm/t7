@@ -81,7 +81,7 @@ If React is detected in the scope, the above will return a React compliant virtu
 By default t7 will attempt to check to see if React is available. If it is, t7 will
 automatically produce React elements as its output. This allows developers to easily
 swap in t7 for JSX code. t7 can also produce "universal" virtual DOM output. Universal DOM
-output should be compatible with most other virtual DOM frameworks out there (Mercury, Cito and Virtal-dom).
+output should be compatible with most other virtual DOM frameworks out there (Mercury, Cito and Virtual-dom).
 
 An example of this is:
 
