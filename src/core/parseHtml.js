@@ -11,6 +11,7 @@ export default function parseHtml(html, options = {}) {
 	let arr = [];
 	let byTag = {};
 	let inComponent = false;
+	html = html.replace(/\n|\t/g, "");
 
 	html.replace(tagRE, function (tag, index) {
 		if (inComponent) {
@@ -27,36 +28,27 @@ export default function parseHtml(html, options = {}) {
 
 		if (isOpen) {
 			level++;
-
 			current = parseTag(tag);
-
 			result.description = current.description
-
 			if (current.type === 'tag' && options.components[current.name]) {
 				current.type = 'component';
 				inComponent = true;
 			}
-
 			if (!current.voidElement && !inComponent && nextChar && nextChar !== '<') {
 				current.children.push({
 					type: 'text',
 					content: html.slice(start, html.indexOf('<', start))
 				});
 			}
-
 			byTag[current.tagName] = current;
-
 			// if we're at root, push new base node
 			if (level === 0) {
 				result.push(current);
 			}
-
 			parent = arr[level - 1];
-
 			if (parent) {
 				parent.children.push(current);
 			}
-
 			arr[level] = current;
 		}
 

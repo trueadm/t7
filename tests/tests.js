@@ -1,5 +1,6 @@
 import t7Factory from '../src';
 import reactTransformer from '../src/transformers/react';
+import defaultTransformer from '../src/transformers/default';
 import { expect } from 'chai';
 import React from 'react';
 
@@ -17,6 +18,10 @@ describe('t7 acceptance tests', () => {
 	});
 
 	describe('Universal (default) transformer', () => {
+		beforeEach(() => {
+			t7Factory.setTransformer(defaultTransformer);
+		});
+
 		describe('parseTag - basic', () => {
 			it('should handle a basic example #1', () => {
 				let input = t7 `<div><div></div></div>`;
@@ -52,7 +57,9 @@ describe('t7 acceptance tests', () => {
 				});
 			});
 			it('should handle a basic example #2', () => {
-				let input = t7 `<div><span>Hello world</span></div>`;
+				let input = t7 `<div>
+									<span>Hello world</span>
+								</div>`;
 				expect(
 					input
 				).to.deep.equal({
@@ -147,6 +154,18 @@ describe('t7 acceptance tests', () => {
 					output
 				).to.equal(
 					'<div class="bar"><span class="bar">Hello world</span></div>'
+				);
+			});
+			it('should handle a basic example #2', () => {
+				let input = t7 `<div>
+									<span>Hello world</span>
+								</div>`;
+				let output = React.renderToStaticMarkup(input);
+
+				expect(
+					output
+				).to.equal(
+					'<div><span>Hello world</span></div>'
 				);
 			});
 		});
