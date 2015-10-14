@@ -1,9 +1,11 @@
 import t7Factory from '../src';
 import reactTransformer from '../src/transformers/react';
 import defaultTransformer from '../src/transformers/default';
+import isComponent from '../src/util/isComponent';
 import { expect } from 'chai';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
+
 
 global.React = React;
 
@@ -230,5 +232,19 @@ describe('t7 acceptance tests', () => {
 				);
 			});
 		});
+	});
+	describe('Utilities', () => {
+
+			it('should validate component names correctly #1', () => {
+				expect(isComponent('DOMINIC')).to.be.true;
+			});
+
+			it('should validate component names correctly  #2', () => {
+				expect(isComponent('SPAN')).to.be.false;
+			});
+
+			it('should validate component names correctly  #3', () => {
+				expect(isComponent('&/()=SPAN')).to.be.false;
+			});
 	});
 });
