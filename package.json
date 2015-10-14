@@ -34,6 +34,7 @@
     "mocha": "^2.3.3",
     "mocha-loader": "^0.7.1",
     "react": "^0.14.0",
+    "react-dom": "^0.14.0",
     "uglify-loader": "^1.2.0",
     "webpack": "^1.12.2",
     "webpack-dev-server": "^1.11.0",
