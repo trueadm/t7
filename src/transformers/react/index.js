@@ -2,11 +2,15 @@ import isArray from '../../util/isArray';
 import isComponent from '../../util/isComponent';
 
 function compileTemplateAttributes(ast) {
+	
 	let attrsParams = [];
-
+    let propsRegex = /(__\$props__\[.*\])/g;
+    let childRegex = /__\$props__\[\d*\]/g;
+	let whitespace = /[\t\r\n\f]+/gm;
+	
 	for (let name in ast.attrs) {
 		let val = ast.attrs[name];
-		val = val.replace(/(__\$props__\[.*\])/g, '" + $1 + "')
+		val = val.replace(propsRegex, '" + $1 + "') // Todo
 		attrsParams.push('"' + name + '":"' + val + '"');
 	}
 	return attrsParams.join(', ');
@@ -20,10 +24,10 @@ function compileTemplateChildren(ast, rootChildrenStringBuilder, childrenProp) {
 			let child = ast.children[i];
 			if (child != null) {
 				if (typeof child === 'string') {
-					child = child.replace(/(\r\n|\n|\r)/gm, '');
-					let matches = child.match(/__\$props__\[\d*\]/g);
+					child = child.replace(whitespace, '');
+					let matches = child.match(childRegex);
 
-					if (matches !== null) {
+					if (matches != null) {
 						childrenStringBuilder.push(ast.children[i]);
 					} else {
 						childrenStringBuilder.push('"' + ast.children[i] + '"');
@@ -34,8 +38,8 @@ function compileTemplateChildren(ast, rootChildrenStringBuilder, childrenProp) {
 			}
 		}
 	} else if (ast.children != null && typeof ast.children === 'string') {
-		let child = ast.children.replace(/(\r\n|\n|\r)/gm, '');
-		child = child.replace(/(__\$props__\[.*\])/g, '",$1,"')
+		let child = ast.children.replace(whitespace, '');
+		child = child.replace(propsRegex, '",$1,"')
 		//if the last two characters are ,', replace them with nothing
 		if (child.substring(child.length - 2) === ',"') {
 			child = child.substring(0, child.length - 2);
@@ -90,7 +94,7 @@ function compileTemplateRoot(ast, rootStringBuilder) {
 	} else {
 		//no root? then it's a text node
         let child = ast.content;
-        child = child.replace(/(__\$props__\[.*\])/g, '",$1,"')
+        child = child.replace(propsRegex, '",$1,"')
 		rootStringBuilder.push('"' + child + '"');
 	}
 }
