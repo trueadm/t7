@@ -1,3 +1,6 @@
+
+// FIX ME, MAYBE!?  Inherit code from creating template key from Inferno to avoid FF slow downs_
+
 export default function createTemplateKey(tpl) {
   let hash = 0;
   if (tpl.length == 0) {
