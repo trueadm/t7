@@ -150,6 +150,15 @@ describe('t7 acceptance tests', () => {
 					}
 				});
 			});
+			
+			it('should not render invalid attributes', () => {
+				let input = t7 `<div '14(/'={true}></div>`;
+				expect(
+					input
+				).to.deep.equal({
+					tag: 'div'
+				});
+			});
 
 			it('should only accept valid namespaces', () => {
 				let input = t7 `<div xmlns='http://www.w3.org/2000/svg'></div>`;

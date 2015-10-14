@@ -1,5 +1,6 @@
-import t7Err from '../util/t7Err';
-import validNamespaces from '../util/validNamespaces';
+import t7Err                 from '../util/t7Err';
+import validNamespaces       from '../util/validNamespaces';
+import validateAttributeName from '../util/validateAttributeName';
 
 /**
  * Process attributes
@@ -8,7 +9,6 @@ import validNamespaces from '../util/validNamespaces';
  * @param {String} value
  * @param {Object} res
  */
-
 function processAttributes(key, value, res) {
 
     // Throw if the value is empty
@@ -40,7 +40,10 @@ function processAttributes(key, value, res) {
             }
             return; // faster to do a 'return' then a 'break'
         default:
-            res.attrs[key] = value;
+            // validate the 'key'
+            if (validateAttributeName(key)) {
+                res.attrs[key] = value;
+            }
     }
 }
 
