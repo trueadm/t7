@@ -1,11 +1,8 @@
-import voidTags        from '../spec/voidTags';
-import validNamespaces from '../util/validNamespaces';
-import t7Err           from '../util/t7Err';
+import voidTags          from '../spec/voidTags';
+import processAttributes from './processAttributes';
 
 let ATTRIBUTE_REGEX = /([\w-]+)|('[^\']*')|("[^\"]*")/g;
-let attr = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
-let html5Data = /(data-)/g; // TODO
-let rmultiDash = /[A-Z]/g; // TODO
+let attributeWhitespace = /['"]/g;
 
 export default tag => {
 	let tokenIndex = 0;
@@ -31,30 +28,9 @@ export default tag => {
 		}
 		else if (tokenIndex % 2) {
 			key = match;
-		}
-		// Attributes - This need a heavy re-write
-		else {
-			
-			let value =  match.replace(/['"]/g, '');
-			
-			// FIX ME! This doesn't handle HTML5 -* data, and dataset attribute correctly.
-			
-			// FIX ME! This doesn't handle boolean attributes / properties correctly. Overloaded booleans are not counted etc.
-
-		  if (key !== 'xmlns') {
-		      res.attrs[key] = value;
-		  } else {
-
-			  // validate namespaces
-		      if (validNamespaces(value)) {
-		          res.attrs[key] = value;
-		      } else {
-  		 
-		  // TODO: Should this throw an error ??
-				  
-		//		t7Err('t7', value + ' is not a valid namespace');  
-			  }
-		  }		  
+		} else {
+			// Process attributes
+			processAttributes(key, match.replace(attributeWhitespace, ''), res);
 		}
 		tokenIndex++;
 	});

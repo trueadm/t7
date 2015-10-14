@@ -234,7 +234,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	exports.setTransformer = setTransformer;
 	exports.getTransformer = getTransformer;
 	
-	var _transformersDefault = __webpack_require__(13);
+	var _transformersDefault = __webpack_require__(14);
 	
 	var _transformersDefault2 = _interopRequireDefault(_transformersDefault);
 	
@@ -410,9 +410,17 @@ return /******/ (function(modules) { // webpackBootstrap
 		value: true
 	});
 	
-	var _specVoidTags = __webpack_require__(12);
+	var _specVoidTags = __webpack_require__(13);
 	
 	var _specVoidTags2 = _interopRequireDefault(_specVoidTags);
+	
+	var _utilT7Err = __webpack_require__(16);
+	
+	var _utilT7Err2 = _interopRequireDefault(_utilT7Err);
+	
+	var _processAttributes2 = __webpack_require__(12);
+	
+	var _processAttributes3 = _interopRequireDefault(_processAttributes2);
 	
 	var ATTRIBUTE_REGEX = /([\w-]+)|('[^\']*')|("[^\"]*")/g;
 	var attr = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
@@ -432,6 +440,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 		// handle dynamic tags
 		tag = tag.replace(/(__\$props__\[.*\])/g, "'$1'");
+	
 		// FIX ME! tag names should be validated to avoid chinese and arabic tags, and also avoid numberic and special chars.
 		tag.replace(ATTRIBUTE_REGEX, function (match) {
 			if (tokenIndex === 0) {
@@ -445,12 +454,7 @@ return /******/ (function(modules) { // webpackBootstrap
 			}
 			// Attributes - This need a heavy re-write
 			else {
-					// FIX ME! This doesn't handle HTML5 -* data, and dataset attribute correctly.
-	
-					// FIX ME! This doesn't handle boolean attributes / properties correctly. Overloaded booleans are not counted etc.
-	
-					// TODO! Handle xmlns attribute, and validate against valid namespaces
-					res.attrs[key] = match.replace(/['"]/g, '');
+					var _processAttributes = function _processAttributes(key, name, res) {};
 				}
 			tokenIndex++;
 		});
@@ -515,6 +519,49 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 12 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _interopRequireDefault = __webpack_require__(1)['default'];
+	
+	Object.defineProperty(exports, '__esModule', {
+			value: true
+	});
+	
+	var _utilValidNamespaces = __webpack_require__(17);
+	
+	var _utilValidNamespaces2 = _interopRequireDefault(_utilValidNamespaces);
+	
+	function processAttributes(key, name, res) {
+	
+			var value = match.replace(/['"]/g, '');
+	
+			// FIX ME! This doesn't handle HTML5 -* data, and dataset attribute correctly.
+	
+			// FIX ME! This doesn't handle boolean attributes / properties correctly. Overloaded booleans are not counted etc.
+	
+			if (key !== 'xmlns') {
+					res.attrs[key] = value;
+			} else {
+	
+					// validate namespaces
+					if ((0, _utilValidNamespaces2['default'])(value)) {
+							res.attrs[key] = value;
+					} else {
+	
+							// TODO: Should this throw an error ??
+	
+							//		t7Err('t7', value + ' is not a valid namespace'); 
+					}
+			}
+	}
+	
+	exports['default'] = processAttributes;
+	module.exports = exports['default'];
+
+/***/ },
+/* 13 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -557,12 +604,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ },
-/* 13 */
+/* 14 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var _Object$keys = __webpack_require__(15)['default'];
+	var _Object$keys = __webpack_require__(19)['default'];
 	
 	var _interopRequireDefault = __webpack_require__(1)['default'];
 	
@@ -570,7 +617,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		value: true
 	});
 	
-	var _utilIsArray = __webpack_require__(14);
+	var _utilIsArray = __webpack_require__(15);
 	
 	var _utilIsArray2 = _interopRequireDefault(_utilIsArray);
 	
@@ -730,7 +777,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -746,23 +793,103 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ },
-/* 15 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = { "default": __webpack_require__(16), __esModule: true };
-
-/***/ },
 /* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(23);
-	module.exports = __webpack_require__(3).Object.keys;
+	'use strict';
+	
+	var _Object$create = __webpack_require__(18)['default'];
+	
+	Object.defineProperty(exports, '__esModule', {
+		value: true
+	});
+	exports['default'] = minErr;
+	var Wrapper = function Wrapper(module, msg) {
+		this.message = module ? (msg || 'This operation is not supported') + (module.length > 4 ? ' -> Module: ' + module : ' -> Core') : 'The string did not match the expected pattern';
+		// use the name on the framework
+		this.name = 't7';
+	};
+	
+	Wrapper.prototype = _Object$create(Error.prototype);
+	
+	function minErr(module, msg) {
+		throw new Wrapper(module, msg);
+	}
+	
+	module.exports = exports['default'];
 
 /***/ },
 /* 17 */
+/***/ function(module, exports) {
+
+	/**
+	 * Validate namespace through the 'xmlns' attribute
+	 * @param {String}  ns  The namespace to validate
+	 * @return {Boolean} true / false
+	 *
+	 * Usage:
+	 *
+	 * let xmlns='http://www.w3.org/1999/xhtml';
+	 *
+	 *  validNamespaces(xmlns);
+	 */
+	'use strict';
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	function validNamespaces(ns) {
+	
+	    switch (ns) {
+	        case 'http://www.w3.org/1999/xhtml': // html
+	        case 'http://www.w3.org/1998/Math/MathML': // MathML
+	        case 'http://www.w3.org/2000/svg': // SVG
+	        case 'http://www.w3.org/1999/xlink': // Xlink
+	        case 'http://www.w3.org/XML/1998/namespace': // XML
+	        case 'http://www.w3.org/2000/xmlns/':
+	            // XMLNS
+	            return true;
+	        default:
+	            return false;
+	    }
+	};
+	
+	exports['default'] = validNamespaces;
+	module.exports = exports['default'];
+
+/***/ },
+/* 18 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var global    = __webpack_require__(20)
+	module.exports = { "default": __webpack_require__(20), __esModule: true };
+
+/***/ },
+/* 19 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = { "default": __webpack_require__(21), __esModule: true };
+
+/***/ },
+/* 20 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var $ = __webpack_require__(26);
+	module.exports = function create(P, D){
+	  return $.create(P, D);
+	};
+
+/***/ },
+/* 21 */
+/***/ function(module, exports, __webpack_require__) {
+
+	__webpack_require__(29);
+	module.exports = __webpack_require__(3).Object.keys;
+
+/***/ },
+/* 22 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var global    = __webpack_require__(25)
 	  , core      = __webpack_require__(3)
 	  , PROTOTYPE = 'prototype';
 	var ctx = function(fn, that){
@@ -811,7 +938,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = $def;
 
 /***/ },
-/* 18 */
+/* 23 */
 /***/ function(module, exports) {
 
 	// 7.2.1 RequireObjectCoercible(argument)
@@ -821,7 +948,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 19 */
+/* 24 */
 /***/ function(module, exports) {
 
 	module.exports = function(exec){
@@ -833,7 +960,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 20 */
+/* 25 */
 /***/ function(module, exports) {
 
 	// https://github.com/zloirock/core-js/issues/86#issuecomment-115759028
@@ -843,36 +970,54 @@ return /******/ (function(modules) { // webpackBootstrap
 	if(typeof __g == 'number')__g = global; // eslint-disable-line no-undef
 
 /***/ },
-/* 21 */
+/* 26 */
+/***/ function(module, exports) {
+
+	var $Object = Object;
+	module.exports = {
+	  create:     $Object.create,
+	  getProto:   $Object.getPrototypeOf,
+	  isEnum:     {}.propertyIsEnumerable,
+	  getDesc:    $Object.getOwnPropertyDescriptor,
+	  setDesc:    $Object.defineProperty,
+	  setDescs:   $Object.defineProperties,
+	  getKeys:    $Object.keys,
+	  getNames:   $Object.getOwnPropertyNames,
+	  getSymbols: $Object.getOwnPropertySymbols,
+	  each:       [].forEach
+	};
+
+/***/ },
+/* 27 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// most Object methods by ES6 should accept primitives
 	module.exports = function(KEY, exec){
-	  var $def = __webpack_require__(17)
+	  var $def = __webpack_require__(22)
 	    , fn   = (__webpack_require__(3).Object || {})[KEY] || Object[KEY]
 	    , exp  = {};
 	  exp[KEY] = exec(fn);
-	  $def($def.S + $def.F * __webpack_require__(19)(function(){ fn(1); }), 'Object', exp);
+	  $def($def.S + $def.F * __webpack_require__(24)(function(){ fn(1); }), 'Object', exp);
 	};
 
 /***/ },
-/* 22 */
+/* 28 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 7.1.13 ToObject(argument)
-	var defined = __webpack_require__(18);
+	var defined = __webpack_require__(23);
 	module.exports = function(it){
 	  return Object(defined(it));
 	};
 
 /***/ },
-/* 23 */
+/* 29 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 19.1.2.14 Object.keys(O)
-	var toObject = __webpack_require__(22);
+	var toObject = __webpack_require__(28);
 	
-	__webpack_require__(21)('keys', function($keys){
+	__webpack_require__(27)('keys', function($keys){
 	  return function keys(it){
 	    return $keys(toObject(it));
 	  };
