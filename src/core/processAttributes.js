@@ -1,11 +1,5 @@
-import t7Err             from '../util/t7Err';
-
-
-let attr = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
-let html5Data = /(data-)/g; // TODO
-let rmultiDash = /[A-Z]/g; // TODO
-
-import validNamespaces   from '../util/validNamespaces';
+import t7Err from '../util/t7Err';
+import validNamespaces from '../util/validNamespaces';
 
 /**
  * Process attributes
@@ -17,26 +11,37 @@ import validNamespaces   from '../util/validNamespaces';
 
 function processAttributes(key, value, res) {
 
-			// FIX ME! This doesn't handle HTML5 -* data, and dataset attribute correctly.
-			
-			// FIX ME! This doesn't handle boolean attributes / properties correctly. Overloaded booleans are not counted etc.
+    // Throw if the value is empty
+    if (!value) {
+        t7Err('processAttributes()', 't7 attributes can\'t contain a non-empty value.');
+    }
 
-		  if (key !== 'xmlns') {
-		      res.attrs[key] = value;
-		  } else {
+    // Do a 'quick' return if a  falsy overloaded attribute, null or undefined value
+    if (value == false ||
+        value == null ||
+        value === undefined) {
+        return;
+    }
 
-			  // validate namespaces
-		      if (validNamespaces(value)) {
-		          res.attrs[key] = value;
-		      } else {
-  		 
-		  // TODO: Should this throw an error ??
-				  
-		//		t7Err('t7', value + ' is not a valid namespace');  
-			  }
-		  }		 			
+    // Deal with overloaded truthy attributes
+    if (value === true) {
+        value = 'true';
+    }
 
-			
+    switch (key) {
+
+        // xmlns is a special case
+        case 'xmlns':
+            // validate namespaces
+            if (validNamespaces(value)) {
+                res.attrs[key] = value;
+            } else {
+                t7Err('t7', 'Assigned xml attribute does not not contain a valid namespace');
+            }
+            return; // faster to do a 'return' then a 'break'
+        default:
+            res.attrs[key] = value;
+    }
 }
 
 export default processAttributes;

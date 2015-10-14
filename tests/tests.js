@@ -127,13 +127,27 @@ describe('t7 acceptance tests', () => {
 				});
 			});
 			
-			it('should not accept invalid namespaces', () => {
-				let input = t7 `<div xmlns="t7Namespace"></div>`;
-
+			it('should not accept empty attribute values', () => {
+				let input = t7 `<div disabled="true"></div>`;
 				expect(
 					input
 				).to.deep.equal({
-					tag: 'div'
+					tag: 'div',
+					attrs: {
+					disabled:'true'
+					}
+				});
+			});
+			
+			it('should handle overloaded attribute values', () => {
+				let input = t7 `<div disabled={true}></div>`;
+				expect(
+					input
+				).to.deep.equal({
+					tag: 'div',
+					attrs: {
+					disabled:'true'
+					}
 				});
 			});
 
