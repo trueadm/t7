@@ -251,6 +251,14 @@ describe('t7 acceptance tests', () => {
 				expect(isComponent('&/()=SPAN')).to.be.false;
 			});
 
+			it('should validate component names correctly  #4', () => {
+				expect(isComponent('PACKAGE')).to.be.false;
+			});
+
+			it('should validate component names correctly  #5', () => {
+				expect(isComponent('PROTECTED')).to.be.false;
+			});
+			
 			it('should validate element tagNames correctly #1', () => {
 				expect(validateElementTags('span')).to.be.true;
 			});
