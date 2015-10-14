@@ -128,7 +128,7 @@ describe('t7 acceptance tests', () => {
 			});
 			
 			it('should not accept invalid namespaces', () => {
-				let input = t7 `<div xmlns="t7"></div>`;
+				let input = t7 `<div xmlns="t7Namespace"></div>`;
 
 				expect(
 					input

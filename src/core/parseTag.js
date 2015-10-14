@@ -1,5 +1,6 @@
-import voidTags from '../spec/voidTags';
+import voidTags        from '../spec/voidTags';
 import validNamespaces from '../util/validNamespaces';
+import t7Err           from '../util/t7Err';
 
 let ATTRIBUTE_REGEX = /([\w-]+)|('[^\']*')|("[^\"]*")/g;
 let attr = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
@@ -19,6 +20,7 @@ export default tag => {
 
 	// handle dynamic tags
 	tag = tag.replace(/(__\$props__\[.*\])/g, "'$1'");
+
     // FIX ME! tag names should be validated to avoid chinese and arabic tags, and also avoid numberic and special chars.
 	tag.replace(ATTRIBUTE_REGEX, match => {
 		if (tokenIndex === 0) {
@@ -39,8 +41,6 @@ export default tag => {
 			
 			// FIX ME! This doesn't handle boolean attributes / properties correctly. Overloaded booleans are not counted etc.
 
-            // TODO! Handle xmlns attribute, and validate against valid namespaces
-          
 		  if (key !== 'xmlns') {
 		      res.attrs[key] = value;
 		  } else {
@@ -48,7 +48,12 @@ export default tag => {
 			  // validate namespaces
 		      if (validNamespaces(value)) {
 		          res.attrs[key] = value;
-		      }
+		      } else {
+  		 
+		  // TODO: Should this throw an error ??
+				  
+		//		t7Err('t7', value + ' is not a valid namespace');  
+			  }
 		  }		  
 		}
 		tokenIndex++;
