@@ -96,7 +96,6 @@ Or when using an instance of t7:
 Below is the full list of currently supported outputs:
 
 - React
-- Inferno
 - Mithril
 - Universal
 
