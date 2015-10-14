@@ -312,7 +312,7 @@ function validElementTags(tag) {
             return true;
         default:
 
-            return (knownTags[tag] || VALID_TAGNAME_REGEX.test( tag ) ) ? true : false;
+            return (knownTags[tag] && !(VALID_TAGNAME_REGEX.test( tag )) ) ? true : false;
     }
 };
 
