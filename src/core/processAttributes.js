@@ -13,7 +13,7 @@ function processAttributes(key, value, res) {
 
     // Throw if the value is empty
     if (!value) {
-        t7Err('processAttributes()', 't7 attributes can\'t contain a non-empty value.');
+        t7Err('processAttributes()', 't7 attributes can\'t contain a empty value.');
     }
 
     // Do a 'quick' return if a  falsy overloaded attribute, null or undefined value
@@ -36,7 +36,7 @@ function processAttributes(key, value, res) {
             if (validateNamespaces(value)) {
                 res.attrs[key] = value;
             } else {
-                t7Err('t7', 'Assigned xml attribute does not not contain a valid namespace');
+                t7Err('t7', 'Assigned xml attribute does not contain a valid namespace');
             }
             return; // faster to do a 'return' then a 'break'
         default:

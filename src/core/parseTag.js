@@ -10,7 +10,7 @@ export default tag => {
 	let res = {
 		type: 'tag',
 		name: '',
-		voidElement: false,
+		selfClosing: false,
 		attrs: {},
 		children: []
 	};
@@ -22,7 +22,7 @@ export default tag => {
 	tag.replace(ATTRIBUTE_REGEX, match => {
 		if (tokenIndex === 0) {
 			if (voidTags[match] || tag.charAt(tag.length - 2) === '/') { // 'charAt' slow - consider slice etc?
-				res.voidElement = true;
+				res.selfClosing = true;
 			}
 			res.name = match;
 		}
