@@ -10,6 +10,7 @@
  *  validNamespaces(xmlns);
  */
 function validNamespaces(ns) {
+	
     switch (ns) {
         case 'http://www.w3.org/1999/xhtml': // html
         case 'http://www.w3.org/1998/Math/MathML': // MathML

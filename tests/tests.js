@@ -128,7 +128,7 @@ describe('t7 acceptance tests', () => {
 			});
 			
 			it('should not accept invalid namespaces', () => {
-				let input = t7 `<div xmlns="domic"></div>`;
+				let input = t7 `<div xmlns="t7"></div>`;
 
 				expect(
 					input
@@ -136,13 +136,16 @@ describe('t7 acceptance tests', () => {
 					tag: 'div'
 				});
 			});
-			it('should accept valid namespaces', () => {
-				let input = t7 `<div xmlns='http://www.w3.org/2000/svg'></div>`;
 
+			it('should only accept valid namespaces', () => {
+				let input = t7 `<div xmlns='http://www.w3.org/2000/svg'></div>`;
 				expect(
 					input
 				).to.deep.equal({
-					tag: 'div'
+					tag: 'div',
+					attrs: {
+						xmlns: 'http://www.w3.org/2000/svg'
+					}
 				});
 			});
 

@@ -32,6 +32,9 @@ export default tag => {
 		}
 		// Attributes - This need a heavy re-write
 		else {
+			
+			let value =  match.replace(/['"]/g, '');
+			
 			// FIX ME! This doesn't handle HTML5 -* data, and dataset attribute correctly.
 			
 			// FIX ME! This doesn't handle boolean attributes / properties correctly. Overloaded booleans are not counted etc.
@@ -39,11 +42,12 @@ export default tag => {
             // TODO! Handle xmlns attribute, and validate against valid namespaces
           
 		  if (key !== 'xmlns') {
-		      res.attrs[key] = match.replace(/['"]/g, '');
+		      res.attrs[key] = value;
 		  } else {
+
 			  // validate namespaces
-		      if (validNamespaces[key]) {
-		          res.attrs[key] = match.replace(/['"]/g, '');
+		      if (validNamespaces(value)) {
+		          res.attrs[key] = value;
 		      }
 		  }		  
 		}
