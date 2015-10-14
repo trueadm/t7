@@ -1,4 +1,5 @@
 import voidTags from '../spec/voidTags';
+import validNamespaces from '../util/validNamespaces';
 
 let ATTRIBUTE_REGEX = /([\w-]+)|('[^\']*')|("[^\"]*")/g;
 let attr = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
@@ -36,7 +37,15 @@ export default tag => {
 			// FIX ME! This doesn't handle boolean attributes / properties correctly. Overloaded booleans are not counted etc.
 
             // TODO! Handle xmlns attribute, and validate against valid namespaces
-			res.attrs[key] = match.replace(/['"]/g, '');
+          
+		  if (key !== 'xmlns') {
+		      res.attrs[key] = match.replace(/['"]/g, '');
+		  } else {
+			  // validate namespaces
+		      if (validNamespaces[key]) {
+		          res.attrs[key] = match.replace(/['"]/g, '');
+		      }
+		  }		  
 		}
 		tokenIndex++;
 	});
