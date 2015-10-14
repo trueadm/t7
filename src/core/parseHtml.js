@@ -2,6 +2,7 @@ import parseTag from './parseTag';
 
 let tagRE = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
 let empty = {};
+let whitespace = /[\x20\t\r\n\f]+/g
 
 export default function parseHtml(html, options = {}) {
 	options.components || (options.components = empty);
@@ -11,7 +12,7 @@ export default function parseHtml(html, options = {}) {
 	let arr = [];
 	let byTag = {};
 	let inComponent = false;
-	html = html.replace(/\n|\t/g, "");
+	html = html.replace( whitespace,''); // calculate for special and hidden chars etc etc
 
 	html.replace(tagRE, function (tag, index) {
 		if (inComponent) {

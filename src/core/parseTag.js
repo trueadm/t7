@@ -1,5 +1,4 @@
 import voidTags from '../spec/voidTags';
-import fillAttrs from '../spec/fillAttrs';
 
 let ATTRIBUTE_REGEX = /([\w-]+)|('[^\']*')|("[^\"]*")/g;
 let attr = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
@@ -17,8 +16,9 @@ export default tag => {
 		children: []
 	};
 
-	//handle dynamic tags
+	// handle dynamic tags
 	tag = tag.replace(/(__\$props__\[.*\])/g, "'$1'");
+    // FIX ME! tag names should be validated to avoid chinese and arabic tags, and also avoid numberic and special chars.
 	tag.replace(ATTRIBUTE_REGEX, match => {
 		if (tokenIndex === 0) {
 			if (voidTags[match] || tag.charAt(tag.length - 2) === '/') {
@@ -30,6 +30,11 @@ export default tag => {
 			key = match;
 		}
 		else {
+			// FIX ME! This doesn't handle HTML5 -* data, and dataset attribute correctly.
+			
+			// FIX ME! This doesn't handle boolean attributes / properties correctly. Overloaded booleans are not counted etc.
+
+            // TODO! Handle xmlns attribute, and validate against valid namespaces
 			res.attrs[key] = match.replace(/['"]/g, '');
 		}
 		tokenIndex++;
