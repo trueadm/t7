@@ -3,6 +3,7 @@ import reactTransformer from '../src/transformers/react';
 import defaultTransformer from '../src/transformers/default';
 import { expect } from 'chai';
 import React from 'react';
+import ReactDOMServer from 'react-dom/server';
 
 global.React = React;
 
@@ -136,7 +137,7 @@ describe('t7 acceptance tests', () => {
 		describe('parseTag - basic', () => {
 			it('should handle a basic example #1', () => {
 				let input = t7 `<div><div></div></div>`;
-				let output = React.renderToStaticMarkup(input);
+				let output = ReactDOMServer.renderToStaticMarkup(input);
 
 				expect(
 					output
@@ -148,7 +149,7 @@ describe('t7 acceptance tests', () => {
 				let foo = "Hello world";
 				let className = "bar";
 				let input = t7 `<div className=${ className }><span className=${ className }>${ foo }</span></div>`;
-				let output = React.renderToStaticMarkup(input);
+				let output = ReactDOMServer.renderToStaticMarkup(input);
 
 				expect(
 					output
@@ -160,12 +161,26 @@ describe('t7 acceptance tests', () => {
 				let input = t7 `<div>
 									<span>Hello world</span>
 								</div>`;
-				let output = React.renderToStaticMarkup(input);
+				let output = ReactDOMServer.renderToStaticMarkup(input);
 
 				expect(
 					output
 				).to.equal(
 					'<div><span>Hello world</span></div>'
+				);
+			});
+
+			it('should handle a basic component #1', () => {
+				class Component extends React.Component {
+					render() {
+						return t7`<span>Hello ${ this.props.foo }</span>`;
+					}
+				}
+				
+				t7.register("Component", Component);
+
+				let output = ReactDOMServer.renderToStaticMarkup(
+					t7`<div><Component foo=${ "World" } /></div>`
 				);
 			});
 		});

@@ -23,7 +23,7 @@ export default function createTemplate(templateKey, templateStrings, values, t7i
         }
     } else {
         let functionString = '"use strict";var __$props__ = arguments[0];'
-            + 'var __$components__ = arguments[1];var t7 = arguments[2];return ' + compiledTemplate;
+            + 'var t7 = arguments[1];return ' + compiledTemplate;
         let template = new Function(functionString);
         setTemplate(templateKey, template);
         return template;

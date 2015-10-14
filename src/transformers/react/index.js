@@ -1,4 +1,5 @@
 import isArray from '../../util/isArray';
+import isComponent from '../../util/isComponent';
 
 function compileTemplateAttributes(ast) {
 	let attrsParams = [];
@@ -55,10 +56,16 @@ function compileTemplateChildren(ast, rootChildrenStringBuilder, childrenProp) {
     }
 }
 
-
 function compileTemplateRoot(ast, rootStringBuilder) {
 	if (ast.name != null) {
-		let rootString = 'React.createElement("' + ast.name + '"';
+		let rootString = '';
+
+		if(isComponent(ast.name)) {
+			rootString = 'React.createElement(t7.load("' + ast.name + '")';
+		} else {
+			rootString = 'React.createElement("' + ast.name + '"';
+		}
+
         let attrsParams = '';
 
 		if (ast.attrs != null) {
