@@ -31,11 +31,11 @@ export default function parseHtml(html, options = {}) {
 			level++;
 			current = parseTag(tag);
 			result.description = current.description
-			if (current.type === 'tag' && (options.components[current.name])) {
+			if (current.type === 'tag' && options.components[current.name]) {
 				current.type = 'component';
 				inComponent = true;
 			}
-			if (!current.voidElement && (!inComponent (&& nextChar (&& nextChar !== '<')))) {
+			if (!current.voidElement && !inComponent && nextChar && nextChar !== '<') {
 				current.children.push({
 					type: 'text',
 					content: html.slice(start, html.indexOf('<', start))

@@ -4,9 +4,9 @@
 	else if(typeof define === 'function' && define.amd)
 		define([], factory);
 	else if(typeof exports === 'object')
-		exports["t7"] = factory();
+		exports["t7Factory"] = factory();
 	else
-		root["t7"] = factory();
+		root["t7Factory"] = factory();
 })(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
@@ -59,20 +59,23 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _interopRequireDefault = __webpack_require__(1)['default'];
 	
 	Object.defineProperty(exports, '__esModule', {
-	  value: true
+	    value: true
 	});
 	
-	var _coreTransformer = __webpack_require__(3);
+	var _coreTransformer = __webpack_require__(5);
 	
-	var _coreTransformer2 = _interopRequireDefault(_coreTransformer);
+	var _coreCreateInstance = __webpack_require__(7);
 	
-	exports.setTransformer = _coreTransformer2['default'];
+	var _coreCreateInstance2 = _interopRequireDefault(_coreCreateInstance);
 	
-	var _coreParseTemplateString = __webpack_require__(8);
+	var _coreCacheControl = __webpack_require__(2);
 	
-	var _coreParseTemplateString2 = _interopRequireDefault(_coreParseTemplateString);
-
-	exports['default'] = _coreParseTemplateString2['default'];
+	exports['default'] = {
+	    setTransformer: _coreTransformer.setTransformer,
+	    createInstance: _coreCreateInstance2['default'],
+	    clearTemplates: _coreCacheControl.clearTemplates
+	};
+	module.exports = exports['default'];
 
 /***/ },
 /* 1 */
@@ -92,164 +95,43 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 2 */
 /***/ function(module, exports) {
 
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	    value: true
+	});
+	exports.getTemplate = getTemplate;
+	exports.setTemplate = setTemplate;
+	exports.clearTemplates = clearTemplates;
+	var templateCache = {};
+	
+	function getTemplate(key) {
+	    return templateCache[key];
+	}
+	
+	;
+	
+	function setTemplate(key, template) {
+	    templateCache[key] = template;
+	}
+	
+	;
+	
+	function clearTemplates() {
+	    templateCache = {};
+	}
+	
+	;
+
+/***/ },
+/* 3 */
+/***/ function(module, exports) {
+
 	var core = module.exports = {};
 	if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
 
 /***/ },
-/* 3 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _interopRequireDefault = __webpack_require__(1)['default'];
-	
-	Object.defineProperty(exports, '__esModule', {
-		value: true
-	});
-	
-	var _transformersDefault = __webpack_require__(10);
-	
-	var _transformersDefault2 = _interopRequireDefault(_transformersDefault);
-	
-	var transformer = _transformersDefault2['default'];
-	
-	exports['default'] = {
-		setTransformer: function setTransformer(newTransformer) {
-			transformer = newTransformer;
-		},
-		getTransformer: function getTransformer() {
-			return transformer;
-		}
-	};
-	module.exports = exports['default'];
-
-/***/ },
 /* 4 */
-/***/ function(module, exports) {
-
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports["default"] = {
-		a: true,
-		address: true,
-		article: true,
-		applet: true,
-		aside: true,
-		audio: true,
-		blockquote: true,
-		button: true,
-		canvas: true,
-		center: true,
-		dd: true,
-		del: true,
-		dir: true,
-		div: true,
-		dl: true,
-		dt: true,
-		fieldset: true,
-		figcaption: true,
-		figure: true,
-		footer: true,
-		form: true,
-		frameset: true,
-		h1: true,
-		h2: true,
-		h3: true,
-		h4: true,
-		h5: true,
-		h6: true,
-		header: true,
-		hgroup: true,
-		hr: true,
-		html: true,
-		iframe: true,
-		ins: true,
-		isindex: true,
-		legend: true,
-		li: true,
-		main: true,
-		map: true,
-		mark: true,
-		menu: true,
-		menuitem: true,
-		meta: true,
-		meter: true,
-		nav: true,
-		noframes: true,
-		noscript: true,
-		object: true,
-		option: true,
-		ol: true,
-		output: true,
-		p: true,
-		pre: true,
-		ruby: true,
-		section: true,
-		script: true,
-		table: true,
-		tbody: true,
-		td: true,
-		tfoot: true,
-		th: true,
-		thead: true,
-		tr: true,
-		ul: true,
-		video: true,
-	
-		// SVG
-		circle: true,
-		clipPath: true,
-		defs: true,
-		ellipse: true,
-		g: true,
-		line: true,
-		linearGradient: true,
-		mask: true,
-		path: true,
-		pattern: true,
-		polygon: true,
-		polyline: true,
-		radialGradient: true,
-		rect: true,
-		stop: true,
-		svg: true,
-		text: true,
-		tspan: true
-	};
-	module.exports = exports["default"];
-
-/***/ },
-/* 5 */
-/***/ function(module, exports) {
-
-	// Attributes that have their values filled in disabled="disabled"
-	"use strict";
-	
-	Object.defineProperty(exports, "__esModule", {
-		value: true
-	});
-	exports["default"] = {
-		checked: true,
-		compact: true,
-		declare: true,
-		defer: true,
-		disabled: true,
-		ismap: true,
-		multiple: true,
-		nohref: true,
-		noresize: true,
-		noshade: true,
-		nowrap: true,
-		readonly: true,
-		selected: true
-	};
-	module.exports = exports["default"];
-
-/***/ },
-/* 6 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -261,16 +143,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	});
 	exports['default'] = parseHtml;
 	
-	var _parseTag = __webpack_require__(7);
+	var _parseTag = __webpack_require__(10);
 	
 	var _parseTag2 = _interopRequireDefault(_parseTag);
 	
-	var _blockElements = __webpack_require__(4);
-	
-	var _blockElements2 = _interopRequireDefault(_blockElements);
-	
 	var tagRE = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
 	var empty = {};
+	var whitespace = /[\t\r\n\f]+/g;
 	
 	function parseHtml(html) {
 		var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
@@ -282,6 +161,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		var arr = [];
 		var byTag = {};
 		var inComponent = false;
+		html = html.replace(whitespace, ''); // calculate for special and hidden chars etc etc
 	
 		html.replace(tagRE, function (tag, index) {
 			if (inComponent) {
@@ -298,36 +178,27 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 			if (isOpen) {
 				level++;
-	
 				current = (0, _parseTag2['default'])(tag);
-	
 				result.description = current.description;
-	
 				if (current.type === 'tag' && options.components[current.name]) {
 					current.type = 'component';
 					inComponent = true;
 				}
-	
 				if (!current.voidElement && !inComponent && nextChar && nextChar !== '<') {
 					current.children.push({
 						type: 'text',
 						content: html.slice(start, html.indexOf('<', start))
 					});
 				}
-	
 				byTag[current.tagName] = current;
-	
 				// if we're at root, push new base node
 				if (level === 0) {
 					result.push(current);
 				}
-	
 				parent = arr[level - 1];
-	
 				if (parent) {
 					parent.children.push(current);
 				}
-	
 				arr[level] = current;
 			}
 	
@@ -350,7 +221,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports['default'];
 
 /***/ },
-/* 7 */
+/* 5 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -360,58 +231,88 @@ return /******/ (function(modules) { // webpackBootstrap
 	Object.defineProperty(exports, '__esModule', {
 		value: true
 	});
+	exports.setTransformer = setTransformer;
+	exports.getTransformer = getTransformer;
 	
-	var _utilT7Err = __webpack_require__(12);
+	var _transformersDefault = __webpack_require__(13);
 	
-	var _utilT7Err2 = _interopRequireDefault(_utilT7Err);
+	var _transformersDefault2 = _interopRequireDefault(_transformersDefault);
 	
-	var _voidTags = __webpack_require__(9);
+	var transformer = _transformersDefault2['default'];
 	
-	var _voidTags2 = _interopRequireDefault(_voidTags);
+	function setTransformer(newTransformer) {
+		transformer = newTransformer;
+	}
 	
-	var _fillAttrs = __webpack_require__(5);
+	;
 	
-	var _fillAttrs2 = _interopRequireDefault(_fillAttrs);
+	function getTransformer() {
+		return transformer;
+	}
 	
-	var ATTRIBUTE_REGEX = /([\w-:]+)|('[^\']*')|("[^\"]*")/g;
-	var attr = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
-	var html5Data = /(data-)/g; // TODO
-	var rmultiDash = /[A-Z]/g; // TODO
+	;
+
+/***/ },
+/* 6 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
 	
-	exports['default'] = function (tag) {
-		var tokenIndex = 0;
-		var key = undefined;
-		var res = {
-			type: 'tag',
-			name: '',
-			description: '',
-			voidElement: false,
-			attrs: {},
-			children: []
-		};
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
 	
-		tag.replace(ATTRIBUTE_REGEX, function (match) {
-			if (tokenIndex === 0) {
-				if (_voidTags2['default'][match] || tag.charAt(tag.length - 2) === '/') {
-					res.voidElement = true;
-				}
-				if (match.indexOf(':') > 0) {
-					var parts = match.split(':');
-					res.name = parts[1];
-					res.description = parts[0];
-				} else {
-					res.name = match;
-				}
-			} else if (tokenIndex % 2) {
-				key = match;
-			} else {
-				res.attrs[key] = match.replace(/['"]/g, '');
-			}
-			tokenIndex++;
-		});
+	var _transformer = __webpack_require__(5);
 	
-		return res;
+	function buildCompiledTemplate(ast, templateKey, t7instance) {
+	    return (0, _transformer.getTransformer)().compile(ast);
 	};
+	
+	exports['default'] = buildCompiledTemplate;
+	module.exports = exports['default'];
+
+/***/ },
+/* 7 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _interopRequireDefault = __webpack_require__(1)['default'];
+	
+	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	exports['default'] = createInstance;
+	
+	var _parseTemplateString = __webpack_require__(11);
+	
+	var _parseTemplateString2 = _interopRequireDefault(_parseTemplateString);
+	
+	function createInstance() {
+	    var _components = {};
+	    var _precompile = false;
+	
+	    function instance() {
+	        for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	            args[_key] = arguments[_key];
+	        }
+	
+	        return _parseTemplateString2['default'].apply(instance, args);
+	    }
+	    instance.setPrecompile = function setPrecompile(precompile) {
+	        _precompile = precompile;
+	    };
+	    instance.getPrecompile = function getPrecompile() {
+	        return _precompile;
+	    };
+	    instance.register = function register(name, component) {
+	        _components[name] = component;
+	    };
+	    instance.load = function load(name) {
+	        return _components[name];
+	    };
+	    return instance;
+	}
 	
 	module.exports = exports['default'];
 
@@ -424,41 +325,196 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _interopRequireDefault = __webpack_require__(1)['default'];
 	
 	Object.defineProperty(exports, '__esModule', {
+	    value: true
+	});
+	exports['default'] = createTemplate;
+	
+	var _cacheControl = __webpack_require__(2);
+	
+	var _parseHtml = __webpack_require__(4);
+	
+	var _parseHtml2 = _interopRequireDefault(_parseHtml);
+	
+	var _buildCompiledTemplate = __webpack_require__(6);
+	
+	var _buildCompiledTemplate2 = _interopRequireDefault(_buildCompiledTemplate);
+	
+	function createTemplate(templateKey, templateStrings, values, t7instance) {
+	    var fullHtml = '';
+	    //put our placeholders around the template parts
+	    for (var i = 0, n = templateStrings.length; i < n; i++) {
+	        if (i === templateStrings.length - 1) {
+	            fullHtml += templateStrings[i];
+	        } else {
+	            fullHtml += templateStrings[i] + "__$props__[" + i + "]";
+	        }
+	    }
+	    //parse the HTML and generate HTML
+	    var ast = (0, _parseHtml2['default'])(fullHtml);
+	    var compiledTemplate = (0, _buildCompiledTemplate2['default'])(ast, templateKey, t7instance);
+	
+	    if (t7instance.getPrecompile() === true) {
+	        return {
+	            templateKey: templateKey,
+	            template: 'return ' + compiledTemplate
+	        };
+	    } else {
+	        var functionString = '"use strict";var __$props__ = arguments[0];' + 'var t7 = arguments[1];return ' + compiledTemplate;
+	        var template = new Function(functionString);
+	        (0, _cacheControl.setTemplate)(templateKey, template);
+	        return template;
+	    }
+	}
+	
+	module.exports = exports['default'];
+
+/***/ },
+/* 9 */
+/***/ function(module, exports) {
+
+	
+	// FIX ME, MAYBE!?  Inherit code from creating template key from Inferno to avoid FF slow downs_
+	
+	"use strict";
+	
+	Object.defineProperty(exports, "__esModule", {
+	  value: true
+	});
+	exports["default"] = createTemplateKey;
+	
+	function createTemplateKey(tpl) {
+	  var hash = 0;
+	  if (tpl.length == 0) {
+	    return tpl;
+	  }
+	  for (var i = 0, len = tpl.length; i < len; i++) {
+	    var chr = tpl.charCodeAt(i);
+	    hash = (hash << 5) - hash + chr;
+	    hash |= 0;
+	  }
+	  return hash;
+	}
+	
+	;
+	module.exports = exports["default"];
+
+/***/ },
+/* 10 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _interopRequireDefault = __webpack_require__(1)['default'];
+	
+	Object.defineProperty(exports, '__esModule', {
+		value: true
+	});
+	
+	var _specVoidTags = __webpack_require__(12);
+	
+	var _specVoidTags2 = _interopRequireDefault(_specVoidTags);
+	
+	var ATTRIBUTE_REGEX = /([\w-]+)|('[^\']*')|("[^\"]*")/g;
+	var attr = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
+	var html5Data = /(data-)/g; // TODO
+	var rmultiDash = /[A-Z]/g; // TODO
+	
+	exports['default'] = function (tag) {
+		var tokenIndex = 0;
+		var key = undefined;
+		var res = {
+			type: 'tag',
+			name: '',
+			voidElement: false,
+			attrs: {},
+			children: []
+		};
+	
+		// handle dynamic tags
+		tag = tag.replace(/(__\$props__\[.*\])/g, "'$1'");
+		// FIX ME! tag names should be validated to avoid chinese and arabic tags, and also avoid numberic and special chars.
+		tag.replace(ATTRIBUTE_REGEX, function (match) {
+			if (tokenIndex === 0) {
+				if (_specVoidTags2['default'][match] || tag.charAt(tag.length - 2) === '/') {
+					// 'charAt' slow - consider slice etc?
+					res.voidElement = true;
+				}
+				res.name = match;
+			} else if (tokenIndex % 2) {
+				key = match;
+			}
+			// Attributes - This need a heavy re-write
+			else {
+					// FIX ME! This doesn't handle HTML5 -* data, and dataset attribute correctly.
+	
+					// FIX ME! This doesn't handle boolean attributes / properties correctly. Overloaded booleans are not counted etc.
+	
+					// TODO! Handle xmlns attribute, and validate against valid namespaces
+					res.attrs[key] = match.replace(/['"]/g, '');
+				}
+			tokenIndex++;
+		});
+	
+		return res;
+	};
+	
+	module.exports = exports['default'];
+
+/***/ },
+/* 11 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+	
+	var _interopRequireDefault = __webpack_require__(1)['default'];
+	
+	Object.defineProperty(exports, '__esModule', {
 		value: true
 	});
 	exports['default'] = parseTemplateString;
 	
-	var _parseHtml = __webpack_require__(6);
+	var _parseHtml = __webpack_require__(4);
 	
 	var _parseHtml2 = _interopRequireDefault(_parseHtml);
 	
-	var _transformer = __webpack_require__(3);
+	var _createTemplateKey = __webpack_require__(9);
 	
-	var _transformer2 = _interopRequireDefault(_transformer);
+	var _createTemplateKey2 = _interopRequireDefault(_createTemplateKey);
 	
-	function parseTemplateString(template) {
-		var templateString = '';
+	var _cacheControl = __webpack_require__(2);
 	
-		if (template.length > 1) {
-			for (var _len = arguments.length, placeholders = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
-				placeholders[_key - 1] = arguments[_key];
-			}
+	var _createTemplate = __webpack_require__(8);
 	
-			for (var i = 0; i < template.length; i++) {
-				templateString += template[i] + placeholders[i];
-			}
-		} else {
-			templateString = template[0];
+	var _createTemplate2 = _interopRequireDefault(_createTemplate);
+	
+	function parseTemplateString(templateStrings) {
+		var templateToHash = templateStrings[0];
+	
+		//build the template string
+		for (var i = 0; i < templateStrings.length; i++) {
+			templateToHash += templateStrings[i];
+		};
+	
+		//set our unique key
+		var templateKey = (0, _createTemplateKey2['default'])(templateToHash);
+		var template = (0, _cacheControl.getTemplate)(templateKey);
+	
+		for (var _len = arguments.length, values = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) {
+			values[_key - 1] = arguments[_key];
 		}
 	
-		return _transformer2['default'].getTransformer().transform((0, _parseHtml2['default'])(templateString));
+		if (template == null) {
+			return (0, _createTemplate2['default'])(templateKey, templateStrings, values, this)(values, this);
+		}
+	
+		return template(values, this);
 	}
 	
 	;
 	module.exports = exports['default'];
 
 /***/ },
-/* 9 */
+/* 12 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -501,12 +557,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ },
-/* 10 */
+/* 13 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 	
-	var _Object$keys = __webpack_require__(14)['default'];
+	var _Object$keys = __webpack_require__(15)['default'];
 	
 	var _interopRequireDefault = __webpack_require__(1)['default'];
 	
@@ -514,11 +570,11 @@ return /******/ (function(modules) { // webpackBootstrap
 		value: true
 	});
 	
-	var _utilIsArray = __webpack_require__(11);
+	var _utilIsArray = __webpack_require__(14);
 	
 	var _utilIsArray2 = _interopRequireDefault(_utilIsArray);
 	
-	function _transform(_x) {
+	function transform(_x) {
 		var _again = true;
 	
 		_function: while (_again) {
@@ -540,7 +596,7 @@ return /******/ (function(modules) { // webpackBootstrap
 					} else {
 						var children = new Array(_length);
 						for (var i = 0; i < _length; i++) {
-							children[i] = _transform(ast[i]);
+							children[i] = transform(ast[i]);
 						}
 						return children;
 					}
@@ -553,12 +609,12 @@ return /******/ (function(modules) { // webpackBootstrap
 						return {
 							tag: ast.name,
 							attrs: ast.attrs,
-							children: _transform(ast.children)
+							children: transform(ast.children)
 						};
 					} else if (hasChildren && !hasAttrs) {
 						return {
 							tag: ast.name,
-							children: _transform(ast.children)
+							children: transform(ast.children)
 						};
 					} else if (!hasChildren && hasAttrs) {
 						return {
@@ -575,15 +631,106 @@ return /******/ (function(modules) { // webpackBootstrap
 		}
 	}
 	
+	function compileTemplateAttributes(ast) {
+		var attrsParams = [];
+	
+		for (var _name in ast.attrs) {
+			var val = ast.attrs[_name];
+			val = val.replace(/(__\$props__\[.*\])/g, '" + $1 + "');
+			attrsParams.push('"' + _name + '":"' + val + '"');
+		}
+		return attrsParams.join(', ');
+	}
+	
+	function compileTemplateChildren(root, rootChildrenStringBuilder, childrenProp) {
+		var childrenStringBuilder = [];
+	
+		if (root.children != null && (0, _utilIsArray2['default'])(root.children)) {
+			for (var i = 0, n = root.children.length; i < n; i++) {
+				var child = root.children[i];
+				if (child != null) {
+					if (typeof child === 'string') {
+						child = child.replace(/(\r\n|\n|\r)/gm, '');
+						var matches = child.match(/__\$props__\[\d*\]/g);
+	
+						if (matches !== null) {
+							childrenStringBuilder.push(root.children[i]);
+						} else {
+							childrenStringBuilder.push('"' + root.children[i] + '"');
+						}
+					} else {
+						compileTemplateRoot(root.children[i], childrenStringBuilder);
+					}
+				}
+			}
+		} else if (root.children != null && typeof root.children === 'string') {
+			var child = root.children.replace(/(\r\n|\n|\r)/gm, '');
+			var noManipulate = true;
+			child = child.replace(/(__\$props__\[.*\])/g, '",$1,"');
+			//if the last two characters are ,', replace them with nothing
+			if (child.substring(child.length - 2) === ',"') {
+				child = child.substring(0, child.length - 2);
+				noManipulate = false;
+			}
+			if (child.substring(0, 2) === '",') {
+				child = child.substring(2);
+				noManipulate = false;
+			}
+			if (noManipulate) {
+				rootChildrenStringBuilder.push((childrenProp ? "children: " : "") + '"' + child + '"');
+			} else {
+				rootChildrenStringBuilder.push((childrenProp ? "children: " : "") + child);
+			}
+		} else {
+			compileTemplateRoot(root.children, childrenStringBuilder);
+		}
+		//if we have some children in our string builder, create it up and put it on our root children string builder
+		if (childrenStringBuilder.length === 1) {
+			rootChildrenStringBuilder.push((childrenProp ? 'children: ' : '') + childrenStringBuilder[0]);
+		} else if (childrenStringBuilder.length > 1) {
+			rootChildrenStringBuilder.push((childrenProp ? 'children: ' : '') + '[' + childrenStringBuilder.join(",") + ']');
+		}
+	}
+	
+	function compileTemplateRoot(root, rootStringBuilder) {
+		if (root.tag != null) {
+			var rootString = '{tag: "' + root.tag + '"';
+	
+			if (root.key != null) {
+				rootString += ', key: ' + root.key;
+			}
+			if (root.attrs != null) {
+				var attrsParams = compileTemplateAttributes(root);
+				rootString += ', attrs: {' + attrsParams + '}';
+			}
+			if (root.children != null) {
+				var childrenStringBuilder = [];
+				compileTemplateChildren(root, childrenStringBuilder, true);
+				//add the children and close the object
+				rootString += ', ' + childrenStringBuilder.join(',') + '}';
+			} else {
+				//close the object if there are not children
+				rootString += '}';
+			}
+			rootStringBuilder.push(rootString);
+		} else {
+			//no root? then it's a text node
+			rootStringBuilder.push("'" + root + "'");
+		}
+	}
+	
 	exports['default'] = {
-		transform: function transform(ast) {
-			return _transform(ast);
+		compile: function compile(ast) {
+			var templateStringBuilder = [];
+	
+			compileTemplateRoot(transform(ast), templateStringBuilder);
+			return templateStringBuilder.join(', ');
 		}
 	};
 	module.exports = exports['default'];
 
 /***/ },
-/* 11 */
+/* 14 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -599,65 +746,24 @@ return /******/ (function(modules) { // webpackBootstrap
 	module.exports = exports["default"];
 
 /***/ },
-/* 12 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-	
-	var _Object$create = __webpack_require__(13)['default'];
-	
-	Object.defineProperty(exports, '__esModule', {
-		value: true
-	});
-	exports['default'] = minErr;
-	var Wrapper = function Wrapper(module, msg) {
-		this.message = module ? (msg || 'This operation is not supported') + (module.length > 4 ? ' -> Module: ' + module : ' -> Core') : 'The string did not match the expected pattern';
-		// use the name on the framework
-		this.name = 't7';
-	};
-	
-	Wrapper.prototype = _Object$create(Error.prototype);
-	
-	function minErr(module, msg) {
-		throw new Wrapper(module, msg);
-	}
-	
-	module.exports = exports['default'];
-
-/***/ },
-/* 13 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = { "default": __webpack_require__(15), __esModule: true };
-
-/***/ },
-/* 14 */
+/* 15 */
 /***/ function(module, exports, __webpack_require__) {
 
 	module.exports = { "default": __webpack_require__(16), __esModule: true };
 
 /***/ },
-/* 15 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var $ = __webpack_require__(21);
-	module.exports = function create(P, D){
-	  return $.create(P, D);
-	};
-
-/***/ },
 /* 16 */
 /***/ function(module, exports, __webpack_require__) {
 
-	__webpack_require__(24);
-	module.exports = __webpack_require__(2).Object.keys;
+	__webpack_require__(23);
+	module.exports = __webpack_require__(3).Object.keys;
 
 /***/ },
 /* 17 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var global    = __webpack_require__(20)
-	  , core      = __webpack_require__(2)
+	  , core      = __webpack_require__(3)
 	  , PROTOTYPE = 'prototype';
 	var ctx = function(fn, that){
 	  return function(){
@@ -738,37 +844,19 @@ return /******/ (function(modules) { // webpackBootstrap
 
 /***/ },
 /* 21 */
-/***/ function(module, exports) {
-
-	var $Object = Object;
-	module.exports = {
-	  create:     $Object.create,
-	  getProto:   $Object.getPrototypeOf,
-	  isEnum:     {}.propertyIsEnumerable,
-	  getDesc:    $Object.getOwnPropertyDescriptor,
-	  setDesc:    $Object.defineProperty,
-	  setDescs:   $Object.defineProperties,
-	  getKeys:    $Object.keys,
-	  getNames:   $Object.getOwnPropertyNames,
-	  getSymbols: $Object.getOwnPropertySymbols,
-	  each:       [].forEach
-	};
-
-/***/ },
-/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// most Object methods by ES6 should accept primitives
 	module.exports = function(KEY, exec){
 	  var $def = __webpack_require__(17)
-	    , fn   = (__webpack_require__(2).Object || {})[KEY] || Object[KEY]
+	    , fn   = (__webpack_require__(3).Object || {})[KEY] || Object[KEY]
 	    , exp  = {};
 	  exp[KEY] = exec(fn);
 	  $def($def.S + $def.F * __webpack_require__(19)(function(){ fn(1); }), 'Object', exp);
 	};
 
 /***/ },
-/* 23 */
+/* 22 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 7.1.13 ToObject(argument)
@@ -778,13 +866,13 @@ return /******/ (function(modules) { // webpackBootstrap
 	};
 
 /***/ },
-/* 24 */
+/* 23 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// 19.1.2.14 Object.keys(O)
-	var toObject = __webpack_require__(23);
+	var toObject = __webpack_require__(22);
 	
-	__webpack_require__(22)('keys', function($keys){
+	__webpack_require__(21)('keys', function($keys){
 	  return function keys(it){
 	    return $keys(toObject(it));
 	  };
