@@ -123,8 +123,8 @@ let knownTags = {
   ul: true,
   'var': true,
   video: true,
-  wbr: true.
-    'web-component': true,
+  wbr: true,
+ 'web-component': true,
 
     // SVG
 

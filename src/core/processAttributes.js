@@ -1,5 +1,5 @@
 import t7Err                 from '../util/t7Err';
-import validNamespaces       from '../util/validNamespaces';
+import validateNamespaces    from '../util/validateNamespaces';
 import validateAttributeName from '../util/validateAttributeName';
 
 /**
@@ -33,7 +33,7 @@ function processAttributes(key, value, res) {
         // xmlns is a special case
         case 'xmlns':
             // validate namespaces
-            if (validNamespaces(value)) {
+            if (validateNamespaces(value)) {
                 res.attrs[key] = value;
             } else {
                 t7Err('t7', 'Assigned xml attribute does not not contain a valid namespace');
