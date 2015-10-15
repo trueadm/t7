@@ -117,6 +117,71 @@ describe('t7 acceptance tests', () => {
 					}
 				});
 			});
+		
+			it('should handle text value as a child node', () => {
+				let input = t7 `<div class="foo"><p>Hello, t7!</p></div>`;
+
+				expect(
+					input
+				).to.deep.equal({
+					tag: 'div',
+					attrs: {
+						class: 'foo'
+					},
+                   children: {
+						tag: 'p',
+						children: 'Hello, t7!'
+					}
+				});
+			});
+
+			it('should handle children with attributes', () => {
+				let input = t7 `<div class="hello"><span id="foo"></span></div>`;
+
+				expect(
+					input
+				).to.deep.equal({
+					tag: 'div',
+					attrs: {
+						class: 'hello'
+					},
+                   children: {
+						tag: 'span',
+						attrs: {
+					      id: "foo"
+					  }
+					}
+				});
+			});
+
+			it('should handle custom element tags', () => {
+				let input = t7 `<div-custom class="hello"></div-custom>`;
+
+				expect(
+					input
+				).to.deep.equal({
+					tag: 'div-custom',
+					attrs: {
+						class: 'hello'
+					}
+				});
+			});
+
+
+			
+			it('should handle multiple classes and attributes', () => {
+				let input = t7 `<div class="handles multiple classes" and="attributes"></div>`;
+				expect(
+					input
+				).to.deep.equal({
+					tag: 'div',
+					attrs: {
+						class: 'handles multiple classes',
+						and: 'attributes'
+					}
+				});
+			});
+			
 			it('should handle void elements', () => {
 				let input = t7 `<img src='xxx.jpg' alt='t7Pic'/>`;
 
