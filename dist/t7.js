@@ -147,7 +147,7 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _parseTag2 = _interopRequireDefault(_parseTag);
 	
-	var tagRE = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
+	var tagRegex = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
 	var empty = {};
 	var whitespace = /[\t\r\n\f]+/g;
 	
@@ -155,6 +155,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		var options = arguments.length <= 1 || arguments[1] === undefined ? {} : arguments[1];
 	
 		options.components || (options.components = empty);
+	
 		var result = [];
 		var current = undefined;
 		var level = -1;
@@ -163,28 +164,31 @@ return /******/ (function(modules) { // webpackBootstrap
 		var inComponent = false;
 		html = html.replace(whitespace, ''); // calculate for special and hidden chars etc etc
 	
-		html.replace(tagRE, function (tag, index) {
+		html.replace(tagRegex, function (tagElement, index) {
+	
 			if (inComponent) {
-				if (tag !== '</' + current.name + '>') {
+				if (tagElement !== '</' + current.name + '>') {
 					return;
 				} else {
 					inComponent = false;
 				}
 			}
-			var isOpen = tag.charAt(1) !== '/';
-			var start = index + tag.length;
+	
+			var isOpen = tagElement[1] !== '/';
+			var start = index + tagElement.length;
 			var nextChar = html.charAt(start);
 			var parent = undefined;
 	
 			if (isOpen) {
 				level++;
-				current = (0, _parseTag2['default'])(tag);
+				current = (0, _parseTag2['default'])(tagElement);
 				result.description = current.description;
 				if (current.type === 'tag' && options.components[current.name]) {
 					current.type = 'component';
 					inComponent = true;
 				}
-				if (!current.voidElement && !inComponent && nextChar && nextChar !== '<') {
+				if (!current.selfClosing && (!inComponent && nextChar && nextChar !== '<')) {
+	
 					current.children.push({
 						type: 'text',
 						content: html.slice(start, html.indexOf('<', start))
@@ -202,7 +206,7 @@ return /******/ (function(modules) { // webpackBootstrap
 				arr[level] = current;
 			}
 	
-			if (!isOpen || current.voidElement) {
+			if (!isOpen || current.selfClosing) {
 				level--;
 				if (!inComponent && nextChar !== '<' && nextChar) {
 					// trailing text node
@@ -414,18 +418,12 @@ return /******/ (function(modules) { // webpackBootstrap
 	
 	var _specVoidTags2 = _interopRequireDefault(_specVoidTags);
 	
-	var _utilT7Err = __webpack_require__(16);
+	var _processAttributes = __webpack_require__(12);
 	
-	var _utilT7Err2 = _interopRequireDefault(_utilT7Err);
-	
-	var _processAttributes2 = __webpack_require__(12);
-	
-	var _processAttributes3 = _interopRequireDefault(_processAttributes2);
+	var _processAttributes2 = _interopRequireDefault(_processAttributes);
 	
 	var ATTRIBUTE_REGEX = /([\w-]+)|('[^\']*')|("[^\"]*")/g;
-	var attr = /([a-zA-Z_:][-a-zA-Z0-9_:.]*)(?:\s*=\s*(?:(?:"((?:\\.|[^"])*)")|(?:'((?:\\.|[^'])*)')|([^>\s]+)))?/g;
-	var html5Data = /(data-)/g; // TODO
-	var rmultiDash = /[A-Z]/g; // TODO
+	var attributeWhitespace = /['"]/g;
 	
 	exports['default'] = function (tag) {
 		var tokenIndex = 0;
@@ -433,7 +431,7 @@ return /******/ (function(modules) { // webpackBootstrap
 		var res = {
 			type: 'tag',
 			name: '',
-			voidElement: false,
+			selfClosing: false,
 			attrs: {},
 			children: []
 		};
@@ -446,16 +444,15 @@ return /******/ (function(modules) { // webpackBootstrap
 			if (tokenIndex === 0) {
 				if (_specVoidTags2['default'][match] || tag.charAt(tag.length - 2) === '/') {
 					// 'charAt' slow - consider slice etc?
-					res.voidElement = true;
+					res.selfClosing = true;
 				}
 				res.name = match;
 			} else if (tokenIndex % 2) {
 				key = match;
+			} else {
+				// Process attributes
+				(0, _processAttributes2['default'])(key, match.replace(attributeWhitespace, ''), res);
 			}
-			// Attributes - This need a heavy re-write
-			else {
-					var _processAttributes = function _processAttributes(key, name, res) {};
-				}
 			tokenIndex++;
 		});
 	
@@ -526,35 +523,45 @@ return /******/ (function(modules) { // webpackBootstrap
 	var _interopRequireDefault = __webpack_require__(1)['default'];
 	
 	Object.defineProperty(exports, '__esModule', {
-			value: true
+	    value: true
 	});
 	
-	var _utilValidNamespaces = __webpack_require__(17);
+	var _utilT7Err = __webpack_require__(16);
 	
-	var _utilValidNamespaces2 = _interopRequireDefault(_utilValidNamespaces);
+	var _utilT7Err2 = _interopRequireDefault(_utilT7Err);
 	
-	function processAttributes(key, name, res) {
+	var _utilValidateAttributeName = __webpack_require__(17);
 	
-			var value = match.replace(/['"]/g, '');
+	var _utilValidateAttributeName2 = _interopRequireDefault(_utilValidateAttributeName);
 	
-			// FIX ME! This doesn't handle HTML5 -* data, and dataset attribute correctly.
+	/**
+	 * Process attributes
+	 *
+	 * @param {String} key
+	 * @param {String} value
+	 * @param {Object} res
+	 */
+	function processAttributes(key, value, res) {
 	
-			// FIX ME! This doesn't handle boolean attributes / properties correctly. Overloaded booleans are not counted etc.
+	    // Throw if the value is empty
+	    if (!value) {
+	        (0, _utilT7Err2['default'])('processAttributes()', 't7 attributes can\'t contain a empty value.');
+	    }
 	
-			if (key !== 'xmlns') {
-					res.attrs[key] = value;
-			} else {
+	    // Do a 'quick' return if a  falsy overloaded attribute, null or undefined value
+	    if (value == false || value == null || value === undefined) {
+	        return;
+	    }
 	
-					// validate namespaces
-					if ((0, _utilValidNamespaces2['default'])(value)) {
-							res.attrs[key] = value;
-					} else {
+	    // Deal with overloaded truthy attributes
+	    if (value === true) {
+	        value = 'true';
+	    }
 	
-							// TODO: Should this throw an error ??
-	
-							//		t7Err('t7', value + ' is not a valid namespace'); 
-					}
-			}
+	    // validate the 'key'
+	    if ((0, _utilValidateAttributeName2['default'])(key)) {
+	        res.attrs[key] = value;
+	    }
 	}
 	
 	exports['default'] = processAttributes;
@@ -822,39 +829,62 @@ return /******/ (function(modules) { // webpackBootstrap
 /* 17 */
 /***/ function(module, exports) {
 
-	/**
-	 * Validate namespace through the 'xmlns' attribute
-	 * @param {String}  ns  The namespace to validate
-	 * @return {Boolean} true / false
-	 *
-	 * Usage:
-	 *
-	 * let xmlns='http://www.w3.org/1999/xhtml';
-	 *
-	 *  validNamespaces(xmlns);
-	 */
 	'use strict';
 	
 	Object.defineProperty(exports, '__esModule', {
 	    value: true
 	});
-	function validNamespaces(ns) {
-	
-	    switch (ns) {
-	        case 'http://www.w3.org/1999/xhtml': // html
-	        case 'http://www.w3.org/1998/Math/MathML': // MathML
-	        case 'http://www.w3.org/2000/svg': // SVG
-	        case 'http://www.w3.org/1999/xlink': // Xlink
-	        case 'http://www.w3.org/XML/1998/namespace': // XML
-	        case 'http://www.w3.org/2000/xmlns/':
-	            // XMLNS
-	            return true;
-	        default:
-	            return false;
-	    }
+	var xlink = {
+	    'xlink:actuate': 'actuate',
+	    'xlink:arcrole': 'arcrole',
+	    'xlink:href': 'href',
+	    'xlink:role': 'role',
+	    'xlink:show': 'show',
+	    'xlink:title': 'title',
+	    'xlink:type': 'type'
 	};
 	
-	exports['default'] = validNamespaces;
+	var xml = {
+	    'xml:base': 'base',
+	    'xml:id': 'id',
+	    'xml:lang': 'lang',
+	    'xml:space': 'spac'
+	};
+	
+	// Simplified subset
+	var VALID_ATTRIBUTE_NAME_REGEX = /^[a-zA-Z_][a-zA-Z_\.\-\d]*$/,
+	    illegalAttributeNameCache = {},
+	    validatedAttributeNameCache = {};
+	
+	/**
+	 * Validate custom attributes
+	 *
+	 * @param  {String} name  The boolean attribute name to set.
+	 */
+	function validateAttribute(name) {
+	
+	    if (validatedAttributeNameCache[name]) {
+	        return true;
+	    }
+	
+	    if (illegalAttributeNameCache[name]) {
+	        return false;
+	    }
+	    if (VALID_ATTRIBUTE_NAME_REGEX.test(name) ||
+	
+	    // namespace attributes are seen as non-valid, avoid that!
+	    xml[name] || xlink[name]) {
+	
+	        validatedAttributeNameCache[name] = true;
+	        return true;
+	    }
+	
+	    illegalAttributeNameCache[name] = true;
+	
+	    return false;
+	}
+	
+	exports['default'] = validateAttribute;
 	module.exports = exports['default'];
 
 /***/ },

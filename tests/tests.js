@@ -3,7 +3,6 @@ import reactTransformer from '../src/transformers/react';
 import defaultTransformer from '../src/transformers/default';
 import isComponent from '../src/util/isComponent';
 import validateElementTags from '../src/util/validateElementTags';
-import validateNamespaces from '../src/util/validateNamespaces';
 
 import { expect } from 'chai';
 import React from 'react';
@@ -251,14 +250,6 @@ describe('t7 acceptance tests', () => {
 				expect(isComponent('&/()=SPAN')).to.be.false;
 			});
 
-			it('should validate component names correctly  #4', () => {
-				expect(isComponent('PACKAGE')).to.be.false;
-			});
-
-			it('should validate component names correctly  #5', () => {
-				expect(isComponent('PROTECTED')).to.be.false;
-			});
-			
 			it('should validate element tagNames correctly #1', () => {
 				expect(validateElementTags('span')).to.be.true;
 			});
@@ -269,18 +260,6 @@ describe('t7 acceptance tests', () => {
             
 			it('should validate element tagNames correctly #3', () => {
 				expect(validateElementTags('&/()=SPAN')).to.be.false;
-			});
-
-		   it('should validate namespaces correctly #1', () => {
-				expect(validateNamespaces('http://www.w3.org/1999/xhtml')).to.be.true;
-			});
-
-			it('should validate namespaces correctly #2', () => {
-				expect(validateNamespaces('SPAN')).to.be.false;
-			});
-            
-			it('should validate namespaces correctly #3', () => {
-				expect(validateNamespaces('&/()=SPAN')).to.be.false;
 			});
 	});
 });

@@ -1,5 +1,4 @@
 import validateElementTags from './validateElementTags';
-import isReservedNames from './isReservedNames';
  
 /**
  * Validate if the 'tagName' is a valid Component name
@@ -11,4 +10,4 @@ import isReservedNames from './isReservedNames';
  
 
  
-export default (tagName) => !validateElementTags(tagName[0].toLowerCase()) && !isReservedNames(tagName[0]) && !(VALID_COMPONENT_REGEX.test( tagName[0] )) && (tagName[0] === tagName[0].toUpperCase());
+export default (tagName) => !validateElementTags(tagName[0].toLowerCase()) && !(VALID_COMPONENT_REGEX.test( tagName[0] )) && (tagName[0] === tagName[0].toUpperCase());
