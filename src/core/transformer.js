@@ -1,6 +1,6 @@
-import defaultTransformer from '../transformers/default'
+import universalTransformer from '../transformers/universal'
 
-let transformer = defaultTransformer;
+let transformer = universalTransformer;
 
 export function setTransformer(newTransformer) {
 	transformer = newTransformer;

@@ -2,11 +2,10 @@ import isArray from '../../util/isArray';
 import isComponent from '../../util/isComponent';
 
 function compileTemplateAttributes(ast) {
-	
 	let attrsParams = [];
     let childRegex = /__\$props__\[\d*\]/g;
 	let whitespace = /[\t\r\n\f]+/gm;
-	
+
 	for (let name in ast.attrs) {
 		let val = ast.attrs[name];
 		val = val.replace(/(__\$props__\[.*\])/g, '" + $1 + "') // Todo

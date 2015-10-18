@@ -17,7 +17,7 @@ export default function parseHtml(html, options = {}) {
 	html = html.replace( whitespace,''); // calculate for special and hidden chars etc etc
 
 	html.replace(tagRegex, (tagElement, index) => {
-		
+
 		if (inComponent) {
 			if (tagElement !== ('</' + current.name + '>')) {
 				return;
@@ -40,11 +40,13 @@ export default function parseHtml(html, options = {}) {
 				inComponent = true;
 			}
 			if (!current.selfClosing && (!inComponent && nextChar && nextChar !== '<')) {
-
-				current.children.push({
-					type: 'text',
-					content: html.slice(start, html.indexOf('<', start))
-				});
+				var content = html.slice(start, html.indexOf('<', start));
+				if(content.trim() !== "") {
+					current.children.push({
+						type: 'text',
+						content: content
+					});
+				}
 			}
 			byTag[current.tagName] = current;
 			// if we're at root, push new base node
@@ -61,11 +63,14 @@ export default function parseHtml(html, options = {}) {
 		if (!isOpen || current.selfClosing) {
 			level--;
 			if (!inComponent && nextChar !== '<' && nextChar) {
+				var content = html.slice(start, html.indexOf('<', start));
 				// trailing text node
-				arr[level].children.push({
-					type: 'text',
-					content: html.slice(start, html.indexOf('<', start))
-				});
+				if(content.trim() !== "") {
+					arr[level].children.push({
+						type: 'text',
+						content: content
+					});
+				}
 			}
 		}
 	});

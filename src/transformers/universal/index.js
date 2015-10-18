@@ -1,4 +1,5 @@
 import isArray from '../../util/isArray';
+import isComponent from '../../util/isComponent';
 
 function transform(ast) {
 	// 'ast' now contains a description for the tag
@@ -111,24 +112,37 @@ function compileTemplateChildren(root, rootChildrenStringBuilder, childrenProp) 
 
 function compileTemplateRoot(root, rootStringBuilder) {
 	if (root.tag != null) {
-		let rootString = '{tag: "' + root.tag + '"';
+		let rootString;
 
-		if (root.key != null) {
-			rootString += ', key: ' + root.key;
-		}
-		if (root.attrs != null) {
-			let attrsParams = compileTemplateAttributes(root);
-			rootString += ', attrs: {' + attrsParams + '}';
-		}
-		if (root.children != null) {
-			let childrenStringBuilder = [];
-			compileTemplateChildren(root, childrenStringBuilder, true);
-			//add the children and close the object
-			rootString += ', ' + childrenStringBuilder.join(',') + '}';
+		if(isComponent(root.tag)) {
+			let attrsParams = null;
+
+			if (root.attrs != null) {
+				attrsParams = compileTemplateAttributes(root);
+			}
+
+			rootString = 't7.load("' + root.tag + '")({' + attrsParams + '})';
 		} else {
-			//close the object if there are not children
-			rootString += '}';
+			rootString = '{tag: "' + root.tag + '"';
+
+			if (root.key != null) {
+				rootString += ', key: ' + root.key;
+			}
+			if (root.attrs != null) {
+				let attrsParams = compileTemplateAttributes(root);
+				rootString += ', attrs: {' + attrsParams + '}';
+			}
+			if (root.children != null) {
+				let childrenStringBuilder = [];
+				compileTemplateChildren(root, childrenStringBuilder, true);
+				//add the children and close the object
+				rootString += ', ' + childrenStringBuilder.join(',') + '}';
+			} else {
+				//close the object if there are not children
+				rootString += '}';
+			}
 		}
+
 		rootStringBuilder.push(rootString);
 	} else {
 		//no root? then it's a text node
