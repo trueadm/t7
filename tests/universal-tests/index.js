@@ -67,6 +67,28 @@ export default function reactTests(t7Factory, t7) {
                 }, ' this is a test!']
             });
         });
+        it('should handle a basic component #1', () => {
+            var Component = function(props) {
+              return t7`<span>${ props.foo }</span>`;
+            }
+
+            t7.register("Component", Component);
+
+            let input =t7`<div>Hello <Component foo=${ "World" } /></div>`;
+
+            expect(
+                input
+            ).to.deep.equal({
+                tag: 'div',
+                children: [
+                    "Hello ",
+                    {
+                        tag: "span",
+                        children: "World"
+                    }
+                ]
+            });
+        });
     });
 
     describe('parseTag - HTML5', () => {
@@ -209,28 +231,6 @@ export default function reactTests(t7Factory, t7) {
                 attrs: {
                     xmlns: 'http://www.w3.org/2000/svg'
                 }
-            });
-        });
-        it('should handle a basic component #1', () => {
-            var Component = function(props) {
-              return t7`<span>${ props.foo }</span>`;
-            }
-
-            t7.register("Component", Component);
-
-            let input =t7`<div>Hello <Component foo=${ "World" } /></div>`;
-
-            expect(
-                input
-            ).to.deep.equal({
-                tag: 'div',
-                children: [
-                    "Hello ",
-                    {
-                        tag: "span",
-                        children: "World"
-                    }
-                ]
             });
         });
     });
