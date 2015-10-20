@@ -1,9 +1,10 @@
 import { expect } from 'chai';
 import universalTransformer from '../../src/transformers/universal';
+import t7 from '../../src';
 
-export default function reactTests(t7Factory, t7) {
+export default function reactTests() {
     beforeEach(() => {
-        t7Factory.setTransformer(universalTransformer);
+        t7.setTransformer(universalTransformer);
     });
 
     describe('parseTag - basic', () => {
@@ -72,9 +73,7 @@ export default function reactTests(t7Factory, t7) {
               return t7`<span>${ props.foo }</span>`;
             }
 
-            t7.register("Component", Component);
-
-            let input =t7`<div>Hello <Component foo=${ "World" } /></div>`;
+            let input =t7`#include ${{Component}};<div>Hello <Component foo=${ "World" } /></div>`;
 
             expect(
                 input

@@ -1,4 +1,4 @@
-import t7Factory from '../src';
+import t7 from '../src';
 import isComponent from '../src/util/isComponent';
 import validateElementTags from '../src/util/validateElementTags';
 import reactTests from './react-tests';
@@ -6,20 +6,16 @@ import universalTests from './universal-tests';
 import { expect } from 'chai';
 
 describe('t7 acceptance tests', () => {
-	let t7 = null;
-
 	afterEach(() => {
-		t7Factory.clearTemplates();
+		t7.clearTemplates();
 	});
 
 	describe('Universal (default) transformer', () => {
-		t7 = t7Factory.createInstance();
-		universalTests(t7Factory, t7);
+		universalTests();
 	});
 
 	describe('React transformer', () => {
-		t7 = t7Factory.createInstance();
-		reactTests(t7Factory, t7);
+		reactTests();
 	});
 
 	describe('Utilities', () => {

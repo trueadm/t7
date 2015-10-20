@@ -63,7 +63,7 @@ function compileTemplateRoot(ast, rootStringBuilder) {
 		let rootString = '';
 
 		if(isComponent(ast.name)) {
-			rootString = 'React.createElement(t7.load("' + ast.name + '")';
+			rootString = 'React.createElement(components.' + ast.name;
 		} else {
 			rootString = 'React.createElement("' + ast.name + '"';
 		}

@@ -5,7 +5,6 @@ let empty = {};
 let whitespace = /[\t\r\n\f]+/g
 
 export default function parseHtml(html, options = {}) {
-
 	options.components || (options.components = empty);
 
 	let result = [];
@@ -17,7 +16,6 @@ export default function parseHtml(html, options = {}) {
 	html = html.replace( whitespace,''); // calculate for special and hidden chars etc etc
 
 	html.replace(tagRegex, (tagElement, index) => {
-
 		if (inComponent) {
 			if (tagElement !== ('</' + current.name + '>')) {
 				return;

@@ -1,6 +1,6 @@
 import { getTransformer } from './transformer';
 
-function buildCompiledTemplate(ast, templateKey, t7instance) {
+function buildCompiledTemplate(ast, templateKey) {
     return getTransformer().compile(ast);
 };
 

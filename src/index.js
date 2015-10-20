@@ -1,10 +1,17 @@
 import { setTransformer }   from  './core/transformer';
-import createInstance       from  './core/createInstance';
-import { setTemplate }      from  './core/cacheControl';
-import { clearTemplates }   from  './core/cacheControl';
+import parseTemplateString  from './core/parseTemplateString';
+import { clearTemplates, getCachingEnabled, setCachingEnabled }   from  './core/cacheControl';
+import React from './transformers/react';
+import Universal from './transformers/universal';
+import Mithril from './transformers/mithril';
 
-export default {
-    setTransformer,
-    createInstance,
-    clearTemplates
-};
+const t7 = parseTemplateString;
+let templateCaching = false;
+
+t7.setTransformer = setTransformer;
+t7.clearTemplates = clearTemplates;
+t7.getCachingEnabled = getCachingEnabled;
+t7.setCachingEnabled = setCachingEnabled;
+t7.Transformers = { React, Universal, Mithril };
+
+export default t7;

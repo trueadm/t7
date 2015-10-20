@@ -2,12 +2,13 @@ import reactTransformer from '../../src/transformers/react';
 import React from 'react';
 import ReactDOMServer from 'react-dom/server';
 import { expect } from 'chai';
+import t7 from '../../src';
 
 global.React = React;
 
-export default function reactTests(t7Factory, t7) {
+export default function reactTests() {
     beforeEach(() => {
-        t7Factory.setTransformer(reactTransformer);
+        t7.setTransformer(reactTransformer);
     });
 
     describe('parseTag - basic', () => {
@@ -62,10 +63,8 @@ export default function reactTests(t7Factory, t7) {
                 }
             }
 
-            t7.register("Component", Component);
-
             let output = ReactDOMServer.renderToStaticMarkup(
-                t7`<div><Component foo=${ "World" } /></div>`
+                t7`#include ${{Component}};<div><Component foo=${ "World" } /></div>`
             );
 
             expect(
@@ -84,15 +83,12 @@ export default function reactTests(t7Factory, t7) {
 
             class Component extends React.Component {
                 render() {
-                    return t7`<span>Hello ${ this.props.foo }<Component2>Foo bar!</Component2></span>`;
+                    return t7`#include ${{Component2}};<span>Hello ${ this.props.foo }<Component2>Foo bar!</Component2></span>`;
                 }
             }
 
-            t7.register("Component", Component);
-            t7.register("Component2", Component2);
-
             let output = ReactDOMServer.renderToStaticMarkup(
-                t7`<div><Component foo=${ "World" } /></div>`
+                t7`#include ${{Component}};<div><Component foo=${ "World" } /></div>`
             );
 
             expect(

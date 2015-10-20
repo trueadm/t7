@@ -121,7 +121,7 @@ function compileTemplateRoot(root, rootStringBuilder) {
 				attrsParams = compileTemplateAttributes(root);
 			}
 
-			rootString = 't7.load("' + root.tag + '")({' + attrsParams + '})';
+			rootString = 'components.' + root.tag + '({' + attrsParams + '})';
 		} else {
 			rootString = '{tag: "' + root.tag + '"';
 
