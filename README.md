@@ -34,7 +34,7 @@ t7 in your browser, simply include the script:
 ### Node
 
 ```sh
-npm install --save t7
+npm install --save-dev t7
 ```
 
 ```js
