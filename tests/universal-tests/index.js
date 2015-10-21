@@ -231,5 +231,19 @@ export default function reactTests() {
                 }
             });
         });
+        it('should only accept html comments', () => {
+            let input = t7 `<div>
+                                <!-- hey I am a comment -->
+                            </div>`;
+            expect(
+                input
+            ).to.deep.equal({
+                tag: 'div',
+                children: {
+                    tag: "#comment",
+                    children: 'hey I am a comment'
+                }
+            });
+        });
     });
 };

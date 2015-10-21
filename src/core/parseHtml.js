@@ -45,6 +45,9 @@ export default function parseHtml(html) {
 			outerTag = true;
 			if(content !== '' && !inTag) {
 				if(content.trim() !== '') {
+					if(current.name === '#comment') {
+						content = content.substring(0, content.trim().length - 3);
+					}
 					arr[level].children.push({
 						type: 'text',
 						content: content
@@ -69,7 +72,12 @@ export default function parseHtml(html) {
 			outerTag = false;
 		} else if (inTag && (char === '>' || (char === ' ' && !inQuotes))) {
 			if(current.name === '') {
-				current.name = content;
+				if(content === '!--') {
+					current.name = '#comment';
+					inTag = false;
+				} else {
+					current.name = content;
+				}
 			} else if (content && attrName) {
 				current.attrs[attrName] = content;
 			}
