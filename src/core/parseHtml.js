@@ -1,53 +1,38 @@
-import parseTag from './parseTag';
+import validateAttribute from '../util/validateAttributeName';
 
-let tagRegex = /<(?:"[^"]*"['"]*|'[^']*'['"]*|[^'">])+>/g;
-let empty = {};
-let whitespace = /[\t\r\n\f]+/g
+const excludedChars = {
+	"\n": true,
+	"\t": true,
+	"\r": true,
+	"\n": true,
+	"\f": true
+};
 
-export default function parseHtml(html, options = {}) {
-	options.components || (options.components = empty);
+export default function parseHtml(html) {
+	let i = 0, size = html.length, char = "", result = [], current, inTag = false,
+		outerTag = false, inQuotes = false, content = '', level = -1, arr = [], lastChar = '', parent,
+		attrName = '';
 
-	let result = [];
-	let current;
-	let level = -1;
-	let arr = [];
-	let byTag = {};
-	let inComponent = false;
-	html = html.replace( whitespace,''); // calculate for special and hidden chars etc etc
-
-	html.replace(tagRegex, (tagElement, index) => {
-		if (inComponent) {
-			if (tagElement !== ('</' + current.name + '>')) {
-				return;
-			} else {
-				inComponent = false;
-			}
+	while((char = html[i++]) || i < size) {
+		if(excludedChars[char]) {
+			continue;
 		}
-
-		let isOpen = tagElement[1] !== '/';
-		let start = index + tagElement.length;
-		let nextChar = html.charAt(start);
-		let parent;
-
-		if (isOpen) {
+		if (lastChar === '<' && char !== '/') {
+			if(level > -1 && content.trim() !== '') {
+				arr[level].children.push({
+					type: 'text',
+					content: content
+				});
+			}
 			level++;
-			current = parseTag(tagElement);
-			result.description = current.description
-			if (current.type === 'tag' && (options.components[current.name])) {
-				current.type = 'component';
-				inComponent = true;
-			}
-			if (!current.selfClosing && (!inComponent && nextChar && nextChar !== '<')) {
-				var content = html.slice(start, html.indexOf('<', start));
-				if(content.trim() !== "") {
-					current.children.push({
-						type: 'text',
-						content: content
-					});
-				}
-			}
-			byTag[current.tagName] = current;
-			// if we're at root, push new base node
+			content = char;
+			inTag = true;
+			current = {
+				type: 'tag',
+				name: '',
+				attrs: {},
+				children: []
+			};
 			if (level === 0) {
 				result.push(current);
 			}
@@ -56,22 +41,56 @@ export default function parseHtml(html, options = {}) {
 				parent.children.push(current);
 			}
 			arr[level] = current;
-		}
-
-		if (!isOpen || current.selfClosing) {
-			level--;
-			if (!inComponent && nextChar !== '<' && nextChar) {
-				var content = html.slice(start, html.indexOf('<', start));
-				// trailing text node
-				if(content.trim() !== "") {
+		} else if ((lastChar === '<' && char === '/') || (lastChar === '/' && char === '>' && inTag)) {
+			outerTag = true;
+			if(content !== '' && !inTag) {
+				if(content.trim() !== '') {
 					arr[level].children.push({
 						type: 'text',
 						content: content
 					});
 				}
+			} else if (inTag) {
+				inTag = false;
+				if(content[content.length - 1] === "/") {
+					content = content.substring(0, content.length - 1);
+				}
+				if(current.name === '') {
+					current.name = content;
+				} else if (content) {
+					current.attrs[attrName] = content;
+				}
 			}
+			content = '';
+			level--;
+		} else if (outerTag && char === '>') {
+			//TODO validate tag
+			content = '';
+			outerTag = false;
+		} else if (inTag && (char === '>' || (char === ' ' && !inQuotes))) {
+			if(current.name === '') {
+				current.name = content;
+			} else if (content && attrName) {
+				current.attrs[attrName] = content;
+			}
+			content = '';
+			if(char === '>') {
+				inTag = false;
+			}
+		} else if (inTag && (char === '"' || char === '\'')) {
+			inQuotes = !inQuotes;
+		} else if (inTag && !inQuotes && char === '=') {
+			if(validateAttribute(content)) {
+				attrName = content;
+			} else {
+				//TODO throw error
+				attrName = null;
+			}
+			content = '';
+		} else if (char !== '<' && char !== '>') {
+			content += char;
 		}
-	});
-
+		lastChar = char;
+	}
 	return result;
-};
+}

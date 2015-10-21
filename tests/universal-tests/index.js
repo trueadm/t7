@@ -72,7 +72,6 @@ export default function reactTests() {
             var Component = function(props) {
               return t7`<span>${ props.foo }</span>`;
             }
-
             let input =t7`#include ${{Component}};<div>Hello <Component foo=${ "World" } /></div>`;
 
             expect(
@@ -203,7 +202,7 @@ export default function reactTests() {
         });
 
         it('should handle overloaded attribute values', () => {
-            let input = t7 `<div disabled={true}></div>`;
+            let input = t7 `<div disabled=${true}></div>`;
             expect(
                 input
             ).to.deep.equal({
@@ -214,7 +213,7 @@ export default function reactTests() {
             });
         });
         it('should not render invalid attributes', () => {
-            let input = t7 `<div '14(/'={true}></div>`;
+            let input = t7 `<div '14(/'=${true}></div>`;
             expect(
                 input
             ).to.deep.equal({
