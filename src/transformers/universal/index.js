@@ -54,6 +54,11 @@ function compileTemplateAttributes(ast) {
 
 	for (let name in ast.attrs) {
 		let val = ast.attrs[name];
+		if (val === true) {
+			val = "";
+		} else if (val === false) {
+			continue;
+		}
 		val = val.replace(/(__\$props__\[.*\])/g, '" + $1 + "')
 		attrsParams.push('"' + name + '":"' + val + '"');
 	}

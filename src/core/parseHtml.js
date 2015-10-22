@@ -14,11 +14,11 @@ export default function parseHtml(html) {
 		attrName = '';
 
 	while((char = html[i++]) || i < size) {
-		if(excludedChars[char]) {
+		if (excludedChars[char]) {
 			continue;
 		}
 		if (lastChar === '<' && char !== '/') {
-			if(level > -1 && content.trim() !== '') {
+			if (level > -1 && content.trim() !== '') {
 				arr[level].children.push({
 					type: 'text',
 					content: content
@@ -58,12 +58,13 @@ export default function parseHtml(html) {
 				if(content[content.length - 1] === "/") {
 					content = content.substring(0, content.length - 1);
 				}
-				if(current.name === '') {
+				if (current.name === '') {
 					current.name = content;
-				} else if (content) {
+				} else if (content && attrName) {
 					current.attrs[attrName] = content;
 				}
 			}
+			attrName = '';
 			content = '';
 			level--;
 		} else if (outerTag && char === '>') {
@@ -71,8 +72,8 @@ export default function parseHtml(html) {
 			content = '';
 			outerTag = false;
 		} else if (inTag && (char === '>' || (char === ' ' && !inQuotes))) {
-			if(current.name === '') {
-				if(content === '!--') {
+			if (current.name === '') {
+				if (content === '!--') {
 					current.name = '#comment';
 					inTag = false;
 				} else {
@@ -80,9 +81,12 @@ export default function parseHtml(html) {
 				}
 			} else if (content && attrName) {
 				current.attrs[attrName] = content;
+			} else if (content && attrName !== null) {
+				current.attrs[content] = true;
 			}
+			attrName = '';
 			content = '';
-			if(char === '>') {
+			if (char === '>') {
 				inTag = false;
 			}
 		} else if (inTag && (char === '"' || char === '\'')) {

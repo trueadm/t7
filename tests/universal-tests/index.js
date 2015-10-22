@@ -231,7 +231,7 @@ export default function reactTests() {
                 }
             });
         });
-        it('should only accept html comments', () => {
+        it('should accept html comments', () => {
             let input = t7 `<div>
                                 <!-- hey I am a comment -->
                             </div>`;
@@ -242,6 +242,23 @@ export default function reactTests() {
                 children: {
                     tag: "#comment",
                     children: 'hey I am a comment'
+                }
+            });
+        });
+
+        it('should accept boolean attributes', () => {
+            let input = t7 `<div>
+                                <input disabled />
+                            </div>`;
+            expect(
+                input
+            ).to.deep.equal({
+                tag: 'div',
+                children: {
+                    tag: "input",
+                    attrs: {
+                        disabled: ""
+                    }
                 }
             });
         });
