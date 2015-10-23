@@ -97,11 +97,8 @@ function compileTemplateRoot(ast, rootStringBuilder) {
 	}
 }
 
-export default {
-	compile(ast) {
-		let templateStringBuilder = [];
-
-		compileTemplateRoot(ast[0], templateStringBuilder);
-		return templateStringBuilder.join(', ');
-	}
-};
+export default function transformer(ast) {
+	const templateStringBuilder = [];
+	compileTemplateRoot(ast[0], templateStringBuilder);
+	return templateStringBuilder.join(', ');
+}

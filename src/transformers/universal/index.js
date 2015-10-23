@@ -155,11 +155,8 @@ function compileTemplateRoot(root, rootStringBuilder) {
 	}
 }
 
-export default {
-	compile(ast) {
-		let templateStringBuilder = [];
-
-		compileTemplateRoot(transform(ast), templateStringBuilder);
-		return templateStringBuilder.join(', ');
-	}
-};
+export default function transformer(ast) {
+	const templateStringBuilder = [];
+	compileTemplateRoot(transform(ast), templateStringBuilder);
+	return templateStringBuilder.join(', ');
+}

@@ -1,5 +1,4 @@
 // TODO
-export default {
-    compile(ast) {
-    }
+export default function transformer(ast) {
+
 }
