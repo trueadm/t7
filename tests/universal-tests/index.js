@@ -245,6 +245,77 @@ export default function reactTests() {
                 }
             });
         });
+		
+		it('should handle a comment with words inside a tag', () => {
+            let input = t7 ` <b><!--comment text-->words</b>`;
+            expect(
+                input
+            ).to.deep.equal({
+                tag: 'div',
+                children: {
+                    tag: "#comment",
+                    children: 'hey I am a comment'
+                }
+            });
+        });
+
+         it('void elements should not have children!! #1', () => {
+            let input = t7`<circle><span></span><circle/>`;
+            expect(
+                input
+            ).to.deep.equal({
+                tag: 'circle'
+            });
+        });
+
+         it('void elements should not have children!! #2', () => {
+            let input = t7`<circle>working!<circle/>`;
+            expect(
+                input
+            ).to.deep.equal({
+                tag: 'circle'
+            });
+        });
+
+       it('should not handle attributes with whitespace between the equals', () => {
+            let input = t7 `<div hello  =   "world" foo    = bar></div>`;
+            expect(
+                input
+            ).to.deep.equal({
+                tag: 'div'
+            });
+        });
+		
+		it('should handle tag names with dots (ReactJS style)', () => {
+            let input = t7 `<Module.Class></Module.Class>`;
+            expect(
+                input
+            ).to.deep.equal({
+                tag: 'foo'
+            });
+        });
+		
+		 it('should handle XMP tag', () => {
+            let input = t7 `<XMP><A HREF="http://www.idocs.com">Cool Dude</A></XMP>`;
+            expect(
+                input
+            ).to.deep.equal({
+				children: {
+				children: 'Hello, World',
+					tag:'h1'
+				},
+                tag: 'div'
+            });
+        });
+		
+		 it('should handle quotes in attribute', () => {
+            let input = t7`<div xxx=\'a"b\'>`;
+            expect(
+                input
+            ).to.deep.equal({
+                tag: 'foo'
+            });
+        });
 
         it('should accept boolean attributes', () => {
             let input = t7 `<div>
