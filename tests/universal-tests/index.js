@@ -307,6 +307,22 @@ export default function reactTests() {
                 tag: 'div'
             });
         });
+
+
+ it('<dl itemscope itemtype="http://md.example.com/loco http://md.example.com/lighting"></dl>', () => {
+            let input = t7 `dl itemscope itemtype='http://md.example.com/loco http://md.example.com/lighting'></dl>`;
+            expect(
+                input
+            ).to.deep.equal({
+				attrs: {
+      'data-attr': '0',
+          disabled: 'disabled',
+          type: 'text'
+
+				},
+                tag: 'div'
+            });
+        });
 		
 		 it('should handle quotes in attribute', () => {
             let input = t7`<div xxx=\'a"b\'>`;
