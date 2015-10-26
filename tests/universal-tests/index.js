@@ -295,6 +295,15 @@ export default function reactTests() {
             });
         });
 		
+		it('should handle tag names with dots (ReactJS style) - without ES2015 template string  ', () => {
+            let input = t7('<Module.Class></Module.Class>');
+            expect(
+                input
+            ).to.deep.equal({
+                tag: 'foo'
+            });
+        });
+		
 		 it('should handle XMP tag', () => {
             let input = t7 `<XMP><A HREF="http://www.idocs.com">Cool Dude</A></XMP>`;
             expect(
@@ -309,8 +318,22 @@ export default function reactTests() {
         });
 
 
- it('<dl itemscope itemtype="http://md.example.com/loco http://md.example.com/lighting"></dl>', () => {
-            let input = t7 `dl itemscope itemtype='http://md.example.com/loco http://md.example.com/lighting'></dl>`;
+		 it('should handle XMP tag - without ES2015 template string ', () => {
+            let input = t7('<XMP><A HREF="http://www.idocs.com">Cool Dude</A></XMP>');
+            expect(
+                input
+            ).to.deep.equal({
+				children: {
+				children: 'Hello, World',
+					tag:'h1'
+				},
+                tag: 'div'
+            });
+        });
+
+
+		it('should handle strings starting at the end of attributes - without ES2015 template string', () => {
+            let input = t7('<div data-attr=0 type="text" disabled></div>');
             expect(
                 input
             ).to.deep.equal({
@@ -323,7 +346,8 @@ export default function reactTests() {
                 tag: 'div'
             });
         });
-		
+
+
 		 it('should handle quotes in attribute', () => {
             let input = t7`<div xxx=\'a"b\'>`;
             expect(
