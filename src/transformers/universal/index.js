@@ -19,10 +19,11 @@ function transform(ast) {
 				}
 				return children;
 			}
+		} else if (typeof ast === 'string') {
+			return ast;
 		} else {
-			let hasAttrs = ast.attrs && Object.keys(ast.attrs).length > 0;
-			let hasChildren = ast.children && ast.children.length > 0;
-			let childrenIsString = false;
+			const hasAttrs = ast.attrs && Object.keys(ast.attrs).length > 0;
+			const hasChildren = ast.children && ast.children.length > 0;
 
 			if (hasChildren && hasAttrs) {
 				return {
@@ -120,7 +121,7 @@ function compileTemplateRoot(root, rootStringBuilder) {
 		let rootString;
 
 		if(isComponent(root.tag)) {
-			let attrsParams = null;
+			let attrsParams = '';
 
 			if (root.attrs != null) {
 				attrsParams = compileTemplateAttributes(root);

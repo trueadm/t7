@@ -10,14 +10,14 @@ const excludedChars = {
 
 export default function parseHtml(html) {
 	let i = 0, size = html.length, char = "", result = [], current, inTag = false,
-		outerTag = false, inQuotes = false, content = '', level = -1, arr = [], lastChar = '', parent,
+		outerTag = false, inQuotes = false, inComment = false, content = '', level = -1, arr = [], lastChar = '', parent,
 		attrName = '';
 
 	while((char = html[i++]) || i < size) {
 		if (excludedChars[char]) {
 			continue;
 		}
-		if (lastChar === '<' && char !== '/') {
+		if (!inComment && lastChar === '<' && char !== '/') {
 			if (level > -1 && content.trim() !== '') {
 				arr[level].children.push({
 					type: 'text',
@@ -41,13 +41,10 @@ export default function parseHtml(html) {
 				parent.children.push(current);
 			}
 			arr[level] = current;
-		} else if ((lastChar === '<' && char === '/') || (lastChar === '/' && char === '>' && inTag)) {
+		} else if (!inComment && ((lastChar === '<' && char === '/') || (lastChar === '/' && char === '>' && inTag))) {
 			outerTag = true;
 			if(content !== '' && !inTag) {
 				if(content.trim() !== '') {
-					if(current.name === '#comment') {
-						content = content.substring(0, content.trim().length - 3);
-					}
 					arr[level].children.push({
 						type: 'text',
 						content: content
@@ -67,18 +64,24 @@ export default function parseHtml(html) {
 			attrName = '';
 			content = '';
 			level--;
-		} else if (outerTag && char === '>') {
+		} else if (inTag && char === '-' && lastChar === "-" && !inComment) {
+			if(content === "!-") {
+				inComment = true;
+				current.name = '#comment'
+			}
+		} else if (inComment && char === '>' && lastChar === '-' && content[content.length - 2] === '-') {
+			inComment = false;
+			current.children = content.substring(2, content.length - 2).trim();
+			level--;
+			inTag = false;
+			content = '';
+		} else if (outerTag && char === '>' && !inComment) {
 			//TODO validate tag
 			content = '';
 			outerTag = false;
-		} else if (inTag && (char === '>' || (char === ' ' && !inQuotes))) {
+		} else if (inTag && !inComment && (char === '>' || (char === ' ' && !inQuotes))) {
 			if (current.name === '') {
-				if (content === '!--') {
-					current.name = '#comment';
-					inTag = false;
-				} else {
-					current.name = content;
-				}
+				current.name = content;
 			} else if (content && attrName) {
 				current.attrs[attrName] = content;
 			} else if (content && attrName !== null) {
@@ -89,17 +92,21 @@ export default function parseHtml(html) {
 			if (char === '>') {
 				inTag = false;
 			}
-		} else if (inTag && (char === '"' || char === '\'')) {
+		} else if (!inComment && inTag && (char === '"' || char === '\'')) {
 			inQuotes = !inQuotes;
-		} else if (inTag && !inQuotes && char === '=') {
+		} else if (!inComment && inTag && !inQuotes && char === '=') {
 			if(validateAttribute(content)) {
-				attrName = content;
+				if(content) {
+					attrName = content;
+				} else {
+						throw Error('t7 expects no whitespace between attribute names and their values. e.g. foo="bar", not foo = "bar"');
+				}
 			} else {
 				//TODO throw error
 				attrName = null;
 			}
 			content = '';
-		} else if (char !== '<' && char !== '>') {
+		} else if (inComment || (char !== '<' && char !== '>')) {
 			content += char;
 		}
 		lastChar = char;

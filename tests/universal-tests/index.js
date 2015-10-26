@@ -245,17 +245,20 @@ export default function reactTests() {
                 }
             });
         });
-		
+
 		it('should handle a comment with words inside a tag', () => {
-            let input = t7 ` <b><!--comment text-->words</b>`;
+            let input = t7`<b><!--comment text-->words</b>`;
             expect(
                 input
             ).to.deep.equal({
-                tag: 'div',
-                children: {
-                    tag: "#comment",
-                    children: 'hey I am a comment'
-                }
+                tag: 'b',
+                children: [
+					{
+                    	tag: "#comment",
+                    	children: 'comment text'
+                	},
+					'words'
+				]
             });
         });
 
@@ -264,7 +267,10 @@ export default function reactTests() {
             expect(
                 input
             ).to.deep.equal({
-                tag: 'circle'
+                tag: 'circle',
+                children: {
+                    tag: 'span'
+                }
             });
         });
 
@@ -278,77 +284,44 @@ export default function reactTests() {
         });
 
        it('should not handle attributes with whitespace between the equals', () => {
-            let input = t7 `<div hello  =   "world" foo    = bar></div>`;
-            expect(
-                input
-            ).to.deep.equal({
-                tag: 'div'
-            });
+            let input = () => t7 `<div hello  =   "world" foo    = "bar"></div>`;
+
+            expect(input).to.throw();
         });
-		
+
 		it('should handle tag names with dots (ReactJS style)', () => {
-            let input = t7 `<Module.Class></Module.Class>`;
+            const Module = {
+                Class() {
+                    return t7`<div>Test</div>`;
+                }
+            }
+            let input = t7 `#include ${{Module}};<Module.Class></Module.Class>`;
             expect(
                 input
             ).to.deep.equal({
-                tag: 'foo'
+                tag: 'div',
+				children: "Test"
             });
         });
-		
-		it('should handle tag names with dots (ReactJS style) - without ES2015 template string  ', () => {
-            let input = t7('<Module.Class></Module.Class>');
-            expect(
-                input
-            ).to.deep.equal({
-                tag: 'foo'
-            });
-        });
-		
+
 		 it('should handle XMP tag', () => {
-            let input = t7 `<XMP><A HREF="http://www.idocs.com">Cool Dude</A></XMP>`;
-            expect(
-                input
-            ).to.deep.equal({
+			 let input = t7 `<XMP><A HREF="http://www.idocs.com">Cool Dude</A></XMP>`;
+
+			 expect(
+				 input
+			 ).to.deep.equal({
+				tag: "XMP",
 				children: {
-				children: 'Hello, World',
-					tag:'h1'
-				},
-                tag: 'div'
-            });
-        });
+					tag: "A",
+					attrs: {
+						HREF: "http://www.idocs.com"
+					},
+					children: "Cool Dude"
+				}
+			});
+		});
 
-
-		 it('should handle XMP tag - without ES2015 template string ', () => {
-            let input = t7('<XMP><A HREF="http://www.idocs.com">Cool Dude</A></XMP>');
-            expect(
-                input
-            ).to.deep.equal({
-				children: {
-				children: 'Hello, World',
-					tag:'h1'
-				},
-                tag: 'div'
-            });
-        });
-
-
-		it('should handle strings starting at the end of attributes - without ES2015 template string', () => {
-            let input = t7('<div data-attr=0 type="text" disabled></div>');
-            expect(
-                input
-            ).to.deep.equal({
-				attrs: {
-      'data-attr': '0',
-          disabled: 'disabled',
-          type: 'text'
-
-				},
-                tag: 'div'
-            });
-        });
-
-
-		 it('should handle quotes in attribute', () => {
+		it('should handle quotes in attribute', () => {
             let input = t7`<div xxx=\'a"b\'>`;
             expect(
                 input
