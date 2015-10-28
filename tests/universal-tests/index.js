@@ -23,7 +23,7 @@ export default function reactTests() {
         it('should handle a basic example #1b', () => {
             let foo = "Hello world";
             let className = "bar";
-            let input = t7 `<div className=${ className }><span className=${ className }>${ foo }</span></div>`;
+            let input = t7`<div className=${ className }><span className=${ className }>${ foo }</span></div>`;
 
             expect(
                 input
@@ -42,7 +42,7 @@ export default function reactTests() {
             });
         });
         it('should handle a basic example #2', () => {
-            let input = t7 `<div>
+            let input = t7`<div>
                                 <span>Hello world</span>
                             </div>`;
             expect(
@@ -56,7 +56,7 @@ export default function reactTests() {
             });
         });
         it('should handle a basic example #3', () => {
-            let input = t7 `<div><span>Hello world</span> this is a test!</div>`;
+            let input = t7`<div><span>Hello world</span> this is a test!</div>`;
 
             expect(
                 input
@@ -68,6 +68,26 @@ export default function reactTests() {
                 }, ' this is a test!']
             });
         });
+        it('should handle a basic example #4', () => {
+            let input = t7`<div class='hello'><span id='foo'></span></div>`;
+
+            expect(
+                input
+            ).to.deep.equal({
+                tag: 'div',
+                attrs: {
+                    class: 'hello'
+                },
+                children: {
+                    tag: 'span',
+                    attrs: {
+                        id: "foo"
+                    }
+                }
+            });
+        });
+
+
         it('should handle a basic component #1', () => {
             var Component = function(props) {
               return t7`<span>${ props.foo }</span>`;
@@ -91,7 +111,7 @@ export default function reactTests() {
 
     describe('parseTag - HTML5', () => {
         it('should handle custom attributes with quotes', () => {
-            let input = t7 `<div foo="bar">`;
+            let input = t7`<div foo="bar">`;
 
             expect(
                 input
@@ -103,7 +123,7 @@ export default function reactTests() {
             });
         });
         it('should handle custom attributes without quotes', () => {
-            let input = t7 `<div foo=bar something=54 quote='t7 '>`;
+            let input = t7`<div foo=bar something=54 quote='t7 '>`;
 
             expect(
                 input
@@ -117,7 +137,7 @@ export default function reactTests() {
             });
         });
         it('should handle text value as a child node', () => {
-            let input = t7 `<div class="foo"><p>Hello, t7!</p></div>`;
+            let input = t7`<div class="foo"><p>Hello, t7!</p></div>`;
 
             expect(
                 input
@@ -133,7 +153,7 @@ export default function reactTests() {
             });
         });
         it('should handle children with attributes', () => {
-            let input = t7 `<div class="hello"><span id="foo"></span></div>`;
+            let input = t7`<div class="hello"><span id="foo"></span></div>`;
 
             expect(
                 input
@@ -151,7 +171,7 @@ export default function reactTests() {
             });
         });
         it('should handle custom element tags', () => {
-            let input = t7 `<div-custom class="hello"></div-custom>`;
+            let input = t7`<div-custom class="hello"></div-custom>`;
 
             expect(
                 input
@@ -163,7 +183,7 @@ export default function reactTests() {
             });
         });
         it('should handle multiple classes and attributes', () => {
-            let input = t7 `<div class="handles multiple classes" and="attributes"></div>`;
+            let input = t7`<div class="handles multiple classes" and="attributes"></div>`;
             expect(
                 input
             ).to.deep.equal({
@@ -176,7 +196,7 @@ export default function reactTests() {
         });
 
         it('should handle void elements', () => {
-            let input = t7 `<img src='xxx.jpg' alt='t7Pic'/>`;
+            let input = t7`<img src='xxx.jpg' alt='t7Pic'/>`;
 
             expect(
                 input
@@ -190,7 +210,7 @@ export default function reactTests() {
         });
 
         it('should not accept empty attribute values', () => {
-            let input = t7 `<div disabled="true"></div>`;
+            let input = t7`<div disabled="true"></div>`;
             expect(
                 input
             ).to.deep.equal({
@@ -202,7 +222,7 @@ export default function reactTests() {
         });
 
         it('should handle overloaded attribute values', () => {
-            let input = t7 `<div disabled=${true}></div>`;
+            let input = t7`<div disabled=${true}></div>`;
             expect(
                 input
             ).to.deep.equal({
@@ -213,7 +233,7 @@ export default function reactTests() {
             });
         });
         it('should not render invalid attributes', () => {
-            let input = t7 `<div '14(/'=${true}></div>`;
+            let input = t7`<div '14(/'=${true}></div>`;
             expect(
                 input
             ).to.deep.equal({
@@ -221,7 +241,7 @@ export default function reactTests() {
             });
         });
         it('should only accept valid namespaces', () => {
-            let input = t7 `<div xmlns='http://www.w3.org/2000/svg'></div>`;
+            let input = t7`<div xmlns='http://www.w3.org/2000/svg'></div>`;
             expect(
                 input
             ).to.deep.equal({
@@ -232,9 +252,9 @@ export default function reactTests() {
             });
         });
         it('should accept html comments', () => {
-            let input = t7 `<div>
-                                <!-- hey I am a comment -->
-                            </div>`;
+            let input = t7`<div>
+                            <!-- hey I am a comment -->
+                           </div>`;
             expect(
                 input
             ).to.deep.equal({
