@@ -263,19 +263,16 @@ export default function reactTests() {
         });
 
          it('void elements should not have children!! #1', () => {
-            let input = t7`<circle><span></span><circle/>`;
+            let input = t7`<circle><span></span></circle>`;
             expect(
                 input
             ).to.deep.equal({
-                tag: 'circle',
-                children: {
-                    tag: 'span'
-                }
+                tag: 'circle'
             });
         });
 
          it('void elements should not have children!! #2', () => {
-            let input = t7`<circle>working!<circle/>`;
+            let input = t7`<circle>working!</circle>`;
             expect(
                 input
             ).to.deep.equal({

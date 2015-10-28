@@ -20,7 +20,7 @@ describe('t7 acceptance tests', () => {
 
 	describe('Utilities', () => {
 		it('should validate component names correctly #1', () => {
-			expect(isComponent('DOMINIC')).to.be.true;
+			expect(isComponent('DOMINIC')).to.be.false;
 		});
 		it('should validate component names correctly  #2', () => {
 			expect(isComponent('SPAN')).to.be.false;

@@ -1,4 +1,5 @@
 import validateAttribute from '../util/validateAttributeName';
+import voidTags from '../spec/voidTags';
 
 const excludedChars = {
 	"\n": true,
@@ -18,7 +19,7 @@ export default function parseHtml(html) {
 			continue;
 		}
 		if (!inComment && lastChar === '<' && char !== '/') {
-			if (level > -1 && content.trim() !== '') {
+			if (level > -1 && content.trim() !== '' && !arr[level].isVoid) {
 				arr[level].children.push({
 					type: 'text',
 					content: content
@@ -31,20 +32,21 @@ export default function parseHtml(html) {
 				type: 'tag',
 				name: '',
 				attrs: {},
-				children: []
+				children: [],
+				isVoid: false
 			};
 			if (level === 0) {
 				result.push(current);
 			}
 			parent = arr[level - 1];
-			if (parent) {
+			if (parent && !parent.isVoid) {
 				parent.children.push(current);
 			}
 			arr[level] = current;
 		} else if (!inComment && ((lastChar === '<' && char === '/') || (lastChar === '/' && char === '>' && inTag))) {
 			outerTag = true;
 			if(content !== '' && !inTag) {
-				if(content.trim() !== '') {
+				if(content.trim() !== '' && !arr[level].isVoid) {
 					arr[level].children.push({
 						type: 'text',
 						content: content
@@ -82,6 +84,9 @@ export default function parseHtml(html) {
 		} else if (inTag && !inComment && (char === '>' || (char === ' ' && !inQuotes))) {
 			if (current.name === '') {
 				current.name = content;
+				if(voidTags[content]) {
+					current.isVoid = true;
+				}
 			} else if (content && attrName) {
 				current.attrs[attrName] = content;
 			} else if (content && attrName !== null) {
