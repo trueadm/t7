@@ -338,6 +338,85 @@ export default function reactTests() {
 			});
 		});
 
+		 it('should handle XMP tag', () => { // Throw error in inComponent
+			 let input = t7`<a
+                         />`;
+
+			 expect(
+				 input
+			 ).to.deep.equal({
+				tag: "XMP",
+				children: {
+					tag: "A",
+					attrs: {
+						HREF: "http://www.idocs.com"
+					},
+					children: "Cool Dude"
+				}
+			});
+		});
+// Works in JSX
+		 it('should handle chinese tags, or not?', () => { 
+			 let input = t7`<日本語></日本語>`;
+
+			 expect(
+				 input
+			 ).to.deep.equal({
+				tag: '日本語'
+			});
+		});
+		
+		
+		// Works in JSX
+//		https://babeljs.io/repl/#?experimental=false&evaluate=true&loose=false&spec=false&code=%3CLeftRight%20left%3D%3Ca%20%2F%3E%20right%3D%3Cb%3Emonkeys%20%2F%3E%20gorillas%3C%2Fb%3E%20%2F%3E
+		 it('should handle weird attributes', () => { 
+			 let input = t7`<LeftRight left=<a /> right=<b>monkeys /> gorillas</b> />`;
+
+			 expect(
+				 input
+			 ).to.deep.equal({
+				tag: "XMP",
+				children: {
+					tag: "A",
+					attrs: {
+						HREF: "http://www.idocs.com"
+					},
+					children: "Cool Dude"
+				}
+			});
+		});
+		
+		// https://babeljs.io/repl/#?experimental=false&evaluate=true&loose=false&spec=false&code=%3CA%20aa%3D%7Baa.bb.cc%7D%20bb%3D%7Bbb.cc.dd%7D%3E%3Cdiv%3E%7Baa.b%7D%3C%2Fdiv%3E%3C%2FA%3E
+			 it('should handle triple components', () => { 
+			 let input = t7`<A aa={aa.bb.cc} bb={bb.cc.dd}><div>{aa.b}</div></A>`;
+
+			 expect(
+				 input
+			 ).to.deep.equal({
+				tag: "XMP",
+				children: {
+					tag: "A",
+					attrs: {
+						HREF: "http://www.idocs.com"
+					},
+					children: "Cool Dude"
+				}
+			});
+		});
+		
+// should extract the namespace
+ it('missing and not working namespace', () => { 
+			 let input = t7`<div dominic:t7='33'> </div>`;
+
+			 expect(
+				 input
+			 ).to.deep.equal({
+				tag: "XMP",
+				attrs: {
+					'dominic:t7': "33"
+				}
+			});
+		});
 		it('should handle quotes in attribute', () => {
             let input = t7`<div xxx=\'a"b\'>`;
             expect(
