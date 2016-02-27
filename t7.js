@@ -11,7 +11,7 @@ var t7 = (function() {
   "use strict";
 
   //we store created functions in the cache (key is the template string)
-  var isBrowser = typeof window != "undefined" && document != null;
+  var isBrowser = typeof window != "undefined" && typeof document != null && navigator.product != 'ReactNative';
   var docHead = null;
   //to save time later, we can pre-create a props object structure to re-use
   var output = null;
@@ -506,11 +506,15 @@ var t7 = (function() {
   function applyValues(string, values) {
     var index = 0;
     var re = /__\$props__\[([0-9]*)\]/;
+
     var placeholders = string.match(/__\$props__\[([0-9]*)\]/g);
-    for (var i = 0; i < placeholders.length; i++) {
-      index = re.exec(placeholders[i])[1];
-      string = string.replace(placeholders[i], values[index]);
-    }
+    if (placeholders !=null)
+      {
+        for (var i = 0; i < placeholders.length; i++) {
+          index = re.exec(placeholders[i])[1];
+          string = string.replace(placeholders[i], values[index]);
+        }
+      }
     return string;
   };
 
