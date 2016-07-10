@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>t7 - React Components Example</title>
+</head>
+<body>
+  <div id="example"></div>
+  <script src="https://fb.me/react-15.2.1.js"></script>
+  <script src="https://fb.me/react-dom-15.2.1.js"></script>
+  <script src="../t7.js"></script>
+  <script>
+
+    t7.module(function(t7) {
+
+      t7.setOutput(t7.Outputs.React);
+
+      function MyWidget(props) {
+        return t7`
+          <div>
+            <span>I'm a widget ${ props.welcome }</span>
+          </div>
+        `;
+      }
+
+      console.log("MyWidget", MyWidget({welcome : "123"}));
+      
+      t7.assign("Widget", MyWidget);
+
+      ReactDOM.render(
+         t7`
+            <div>
+              <header>
+                <Widget welcome="Hello world" />
+              </header>
+            </div>
+          `,
+        document.getElementById('example')
+      );
+
+    });
+
+  </script>
+</body>
+</html>
