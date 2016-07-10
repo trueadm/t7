@@ -508,8 +508,7 @@ var t7 = (function() {
     var re = /__\$props__\[([0-9]*)\]/;
 
     var placeholders = string.match(/__\$props__\[([0-9]*)\]/g);
-    if (placeholders !=null)
-      {
+    if (placeholders != null) {
         for (var i = 0; i < placeholders.length; i++) {
           index = re.exec(placeholders[i])[1];
           string = string.replace(placeholders[i], values[index]);
@@ -804,7 +803,6 @@ var t7 = (function() {
             template: 'return ' + scriptCode
           }
         }
-        return;
       } else {
         if (isBrowser === true) {
           scriptString = 't7._cache["' + templateKey + '"]=function(__$props__, __$components__, t7)';
