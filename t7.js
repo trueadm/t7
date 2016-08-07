@@ -6,6 +6,7 @@
   By Dominic Gannaway
 
 */
+/* eslint-disable */
 
 var t7 = (function() {
   "use strict";
@@ -181,7 +182,7 @@ var t7 = (function() {
               if (child.attrs) {
                 var attrsParams = [];
                 buildInfernoAttrsParams(child, nodeName + i, attrsParams, templateValues, templateParams, valueCounter);
-                templateParams.push("Inferno.dom.addAttributes(" + nodeName + i + ", {" + attrsParams.join(",") + "});");
+                templateParams.push("Inferno.dom.addAttributes(" + nodeName + i + ", " + joinAttrs(root.assignments, attrsParams) + ");");
               }
               if (child.children) {
                 buildInfernoTemplate(child, valueCounter, nodeName + i, templateValues, templateParams, component);
@@ -335,6 +336,48 @@ var t7 = (function() {
     return false;
   };
 
+  function joinAttrs (assignments, params) {
+    if (!assignments || !assignments.length) return "{" + params.join(',') + "}";
+
+    var str = "Object.assign(";
+    var insideLiteral = false;
+    var matches = null;
+
+    for (var i = 0, n = assignments.length; i < n; i++) {
+      var it = assignments[i];
+      if (typeof it === 'string') {
+        if (insideLiteral) {
+          str += " },";
+          insideLiteral = false;
+        }
+        str += it;
+        if (i < n - 1) str += ", "
+      } else {
+        if (!insideLiteral) {
+          str += "{ ";
+          insideLiteral = true;
+        }
+        matches = it[1].match(/__\$props__\[\d*\]/g);
+        if (matches === null) {
+          str += "'" + it[0] + "':'" + it[1] + "',";
+        } else {
+          str += "'" + it[0] + "':" + it[1] + ",";
+        }
+      }
+    }
+
+    var otherParams = params.join(',');
+    if (otherParams) {
+      if (insideLiteral) {
+        str += otherParams.join(',');
+      } else {
+        str += ", {" + otherParams.join(',') + "}";
+      }
+    }
+
+    return str + (insideLiteral ? " })" : ")");
+  }
+
   //This takes a vDom array and builds a new function from it, to improve
   //repeated performance at the cost of building new Functions()
   function buildFunction(root, functionText, component, templateKey) {
@@ -360,7 +403,7 @@ var t7 = (function() {
             //build the attrs
             if (root.attrs != null) {
               buildAttrsParams(root, attrsParams);
-              tagParams.push("attrs: {" + attrsParams.join(',') + "}");
+              tagParams.push("attrs: " + joinAttrs(root.assignments, attrsParams));
             }
             //build the children for this node
             buildUniversalChildren(root, tagParams, true, component);
@@ -372,11 +415,11 @@ var t7 = (function() {
             if (output === t7.Outputs.Universal) {
               //we need to apply the tag components
               buildAttrsParams(root, attrsParams);
-              functionText.push("__$components__." + root.tag + "({" + attrsParams.join(',') + "})");
+              functionText.push("__$components__." + root.tag + "(" + joinAttrs(root.assignments, attrsParams) + ")");
             } else if (output === t7.Outputs.Mithril) {
               //we need to apply the tag components
               buildAttrsParams(root, attrsParams);
-              functionText.push("m.component(__$components__." + root.tag + ",{" + attrsParams.join(',') + "})");
+              functionText.push("m.component(__$components__." + root.tag + "," + joinAttrs(root.assignments, attrsParams) + ")");
             }
           }
         } else {
@@ -404,12 +447,12 @@ var t7 = (function() {
         if (isComponentName(root.tag) === true) {
           buildAttrsParams(root, attrsParams);
           component = "__$components__." + root.tag;
-          props = " {" + attrsParams.join(',') + "}";
+          props = " " + joinAttrs(root.assignments, attrsParams);
         } else {
           templateParams.push("var root = Inferno.dom.createElement('" + root.tag + "');");
           if (root.attrs) {
             buildInfernoAttrsParams(root, "root", attrsParams, templateValues, templateParams, valueCounter);
-            templateParams.push("Inferno.dom.addAttributes(root, {" + attrsParams.join(",") + "});");
+            templateParams.push("Inferno.dom.addAttributes(root, " + joinAttrs(root.assignments, attrsParams) + ");");
           }
         }
 
@@ -465,7 +508,7 @@ var t7 = (function() {
             if (root.key != null) {
               attrsParams.push("'key':" + root.key);
             }
-            tagParams.push("{" + attrsParams.join(',') + "}");
+            tagParams.push(joinAttrs(root.assignments, attrsParams));
           } else {
             tagParams.push("null");
           }
@@ -590,6 +633,7 @@ var t7 = (function() {
           vElement = {
             tag: tagName,
             attrs: (tagData && tagData.attrs) ? tagData.attrs : null,
+            assignments: (tagData && tagData.assignments) ? tagData.assignments : null,
             children: [],
             closed: tagContent[tagContent.length - 1] === "/" || selfClosingTags[tagName] ? true : false
           };
@@ -653,6 +697,7 @@ var t7 = (function() {
     var attrParts = [];
     var attrs = {};
     var key = '';
+    var assignments = [];
 
     //build the parts of the tag
     for (i = 0, n = tagText.length; i < n; i++) {
@@ -712,12 +757,18 @@ var t7 = (function() {
       if (attrParts.length > 1) {
         var matches = attrParts[1].match(/__\$props__\[\d*\]/g);
         if (matches !== null) {
-          attrs[attrParts[0]] = attrParts[1];
+          if (attrParts[0] === "@@assign") {
+            assignments.push(attrParts[1]);
+          } else {
+            assignments.push(attrParts);
+            // attrs[attrParts[0]] = attrParts[1];
+          }
         } else {
           if (attrParts[0] === "key") {
             key = attrParts[1];
           } else {
-            attrs[attrParts[0]] = attrParts[1];
+            assignments.push(attrParts);
+            // attrs[attrParts[0]] = attrParts[1];
           }
         }
       }
@@ -727,7 +778,8 @@ var t7 = (function() {
     return {
       tag: parts[0],
       attrs: attrs,
-      key: key
+      key: key,
+      assignments: assignments,
     }
   };
 
@@ -776,6 +828,8 @@ var t7 = (function() {
       for (i = 0, n = template.length; i < n; i++) {
         if (i === template.length - 1) {
           fullHtml += template[i];
+        } else if (template[i].slice(-4) === ' ...') {
+          fullHtml += template[i].slice(0, template[i].length - 3) + "@@assign=__$props__[" + i + "]";
         } else {
           fullHtml += template[i] + "__$props__[" + i + "]";
         }
@@ -807,6 +861,7 @@ var t7 = (function() {
         if (isBrowser === true) {
           scriptString = 't7._cache["' + templateKey + '"]=function(__$props__, __$components__, t7)';
           scriptString += '{"use strict";return ' + scriptCode + '}';
+          console.log(scriptCode);
 
           addNewScriptFunction(scriptString, templateKey);
         } else {
