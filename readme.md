@@ -140,6 +140,19 @@ as `<Foo></Foo>` this ensures that the component gets picked up by t7 properly.
 
 - [Handling nested React components](examples/react-complex-components.html)
 
+## Splats
+Splat syntax (`...`) is supported if you would like to pass multiple props to an element. Insertion order
+of the props is maintained with subsequent values overriding preceeding ones.
+
+```javascript
+const a = 'a';
+const props = { b: 'b', c: 'NOT C' };
+const moreProps = { d: 'd' };
+
+t7`<div a=${a} b='NOT B' ...${props} c='c' ...${moreProps}></div>`;
+// => div will receive { a: 'a', b: 'b', c: 'c', d: 'd' }
+```
+
 ## Control Flow
 
 To help reduce boilerplate and speed up development, t7 comes with a few essential
