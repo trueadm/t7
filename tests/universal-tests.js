@@ -77,6 +77,19 @@ describe("Universal tests", function() {
     assert(output === expected);
   });
 
+  it('should handle the splat example', function() {
+    const a = 'a';
+    const props = { b: 'b', c: 'NOT C' };
+    const moreProps = { d: 'd' };
+
+    const input = t7`<div a=${a} b='NOT B' ...${props} c='c' ...${moreProps}></div>`;
+
+    expect(input).to.deep.equal({
+      tag: 'div',
+      attrs: { a: 'a', b: 'b', c: 'c', d: 'd' }
+    });
+  });
+
   it('should throw an error upon when there is a missing closing tag', function() {
     var fooBar = "Foo";
     var test = "123"
