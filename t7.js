@@ -6,7 +6,6 @@
   By Dominic Gannaway
 
 */
-/* eslint-disable */
 
 var t7 = (function() {
   "use strict";
@@ -807,8 +806,6 @@ var t7 = (function() {
         if (isBrowser === true) {
           scriptString = 't7._cache["' + templateKey + '"]=function(__$props__, __$components__, t7)';
           scriptString += '{"use strict";return ' + scriptCode + '}';
-          console.log(scriptCode);
-
           addNewScriptFunction(scriptString, templateKey);
         } else {
           t7._cache[templateKey] = new Function('"use strict";var __$props__ = arguments[0];var __$components__ = arguments[1];var t7 = arguments[2];return ' + scriptCode);
