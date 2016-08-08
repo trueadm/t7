@@ -178,7 +178,7 @@ var t7 = (function() {
             } else {
               templateParams.push("var " + nodeName + i + " = Inferno.dom.createElement('" + child.tag + "');");
               if (child.assignments) {
-                var infernoHelper = infernoTemplateHelper.bind(null, child, nodeName + i, templateValues, templateParams, valueCounter);
+                var infernoHelper = infernoTemplateHelper.bind(null, child, nodeName + i, templateValues, templateParams, valueCounter, null);
                 templateParams.push("Inferno.dom.addAttributes(" + nodeName + i + ", " + joinAttrs(root.assignments, infernoHelper) + ");");
               }
               if (child.children) {
@@ -238,7 +238,7 @@ var t7 = (function() {
   };
 
   function infernoTemplateHelper (root, rootElement, templateValues, templateParams, valueCounter, propRefs, name, val) {
-    valueName = "fragment.templateValues[" + valueCounter.index + "]";
+    var valueName = "fragment.templateValues[" + valueCounter.index + "]";
     if (!propRefs) {
       switch (name) {
         case "class":
@@ -409,7 +409,7 @@ var t7 = (function() {
         } else {
           templateParams.push("var root = Inferno.dom.createElement('" + root.tag + "');");
           if (root.assignments) {
-            var helper = infernoTemplateHelper.bind(null, root, "root", templateValues, templateParams, valueCounter);
+            var helper = infernoTemplateHelper.bind(null, root, "root", templateValues, templateParams, valueCounter, null);
             templateParams.push("Inferno.dom.addAttributes(root, " + joinAttrs(root.assignments, helper) + ");");
           }
         }
