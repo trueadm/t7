@@ -11,7 +11,7 @@ var t7 = (function() {
   "use strict";
 
   //we store created functions in the cache (key is the template string)
-  var isBrowser = typeof window != "undefined" && typeof document != null && navigator.product != 'ReactNative';
+  var isBrowser = typeof window != "undefined" && typeof document !== 'undefined' && navigator.product !== 'ReactNative';
   var docHead = null;
   //to save time later, we can pre-create a props object structure to re-use
   var output = null;
