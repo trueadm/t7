@@ -15,7 +15,7 @@
     "url": "git+https://github.com/trueadm/t7.git"
   },
   "author": "Dominic Gannaway",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/trueadm/t7/issues"
   },
