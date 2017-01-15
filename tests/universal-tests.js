@@ -18,6 +18,13 @@ describe("Universal tests", function() {
     assert(output === expected);
   });
 
+  it('should handle a very simple single element with a class expression', function() {
+    var input = t7`<div class="foo ${1 + 1}">Hello world</div>`;
+    var output = JSON.stringify(input);
+    var expected = '{"tag":"div","attrs":{"class":"foo 2"},"children":"Hello world"}';
+    assert(output === expected);
+  });
+
   it('should handle a very simple single element with some quotes and double quotes', function() {
     var input = t7`<div class="foo">Hello 'world' or should I say, "world"</div>`;
     var output = JSON.stringify(input);

@@ -332,7 +332,7 @@ var t7 = (function() {
         if (matches === null) {
           str += "'" + it[0] + "':'" + it[1] + "',";
         } else {
-          str += "'" + it[0] + "':" + it[1] + ",";
+          str += "'" + it[0] + "':'" + it[1].replace(/__\$props__\[(\d+)\]/g, "'+__$props__[$1]+'") + "',";
           if (boundTemplateHelper) boundTemplateHelper(it[0], it[1]);
         }
       }
